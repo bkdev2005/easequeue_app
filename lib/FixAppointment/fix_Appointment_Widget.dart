@@ -1,0 +1,710 @@
+import 'dart:async';
+import 'dart:developer';
+import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
+import 'package:eqlite/function.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+import '../apiFunction.dart';
+import '../websocket.dart';
+import '/flutter_flow/flutter_flow_icon_button.dart';
+import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_util.dart';
+import '/flutter_flow/flutter_flow_widgets.dart';
+import 'dart:ui';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'dart:io';
+import 'fix_appointment_model.dart';
+export 'fix_appointment_model.dart';
+
+class FixAppointmentWidget extends StatefulWidget {
+  const FixAppointmentWidget(
+      {super.key,
+      required this.services,
+      required this.date,
+      required this.uuid});
+  final List<dynamic> services;
+  final String date;
+  final String uuid;
+  @override
+  State<FixAppointmentWidget> createState() => _FixAppointmentWidgetState();
+}
+
+class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
+  late FixAppointmentModel _model;
+  WebSocket? _webSocket;
+  final scaffoldKey = GlobalKey<ScaffoldState>();
+  List<dynamic> queueList = [];
+  dynamic messageList;
+  String url = 'running_queues/?';
+  StreamController<dynamic>? _messageStreamController;
+  // final webSocketClient = WebSocketClient();
+  WebSocketChannel? webSocketChannel;
+  WebSocketService? _webSocketService;
+  String? _token; // Token to be passed
+  dynamic selectQueue;
+  List<dynamic> serviceSelectQueue = [];
+
+  void addIdInUrl() {
+    for (int index = 0; index < widget.services.length; index++) {
+      if (index == 0) {
+        setState(() {
+          url +=
+              'business_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+        });
+      } else {
+        setState(() {
+          url +=
+              '&business_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+        });
+      }
+    }
+  }
+
+  Future<void> connect(String url) async {
+    String token = FFAppState().token;
+    log('token: $token');
+    log('queueId: ${queueList[0]['queue_id']}');
+    log('date: ${widget.date}');
+    try {
+      _webSocket = await WebSocket.connect(
+          'ws://15.206.84.199/api/v1/ws/${queueList[0]['queue_id']}/${widget.date}',
+          headers: {'Authorization': 'Bearer $token'});
+      print("Connected to WebSocket at $url");
+
+      // Listen to incoming messages
+      _webSocket?.listen(
+        (message) {
+          _messageStreamController?.add(message);
+          messageList = getJsonField(jsonDecode(message), r'''$.data''');
+          log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
+          log("Received: $message");
+        },
+        onError: (error) {
+          print("WebSocket error: $error");
+        },
+        onDone: () {
+          print("WebSocket connection closed");
+        },
+      );
+    } catch (e) {
+      print("Failed to connect to WebSocket: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    addIdInUrl();
+    fetchData(url, context)?.then((value) {
+      setState(() {
+        queueList =
+            getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
+      });
+      log('value: $value');
+      _messageStreamController = StreamController<dynamic>();
+      connect(queueList[0]['queue_id']);
+      setState(() {
+        selectQueue = queueList[0];
+        serviceSelectQueue = queueList[0]['services'];
+      });
+    });
+    _model = createModel(context, () => FixAppointmentModel());
+  }
+
+  @override
+  void dispose() {
+    _model.dispose();
+    // webSocketClient.close();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        FocusScope.of(context).unfocus();
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: Scaffold(
+          key: scaffoldKey,
+          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+          appBar: AppBar(
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            automaticallyImplyLeading: false,
+            leading: backIcon(context),
+            actions: [],
+            centerTitle: false,
+            elevation: 0,
+          ),
+          body: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Material(
+                          color: Colors.transparent,
+                          elevation: 2,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(15),
+                              bottomRight: Radius.circular(15),
+                              topLeft: Radius.circular(0),
+                              topRight: Radius.circular(0),
+                            ),
+                          ),
+                          child: Container(
+                              width: MediaQuery.of(context).size.width,
+                              decoration: BoxDecoration(
+                                color: FlutterFlowTheme.of(context).primary,
+                                borderRadius: const BorderRadius.only(
+                                  bottomLeft: Radius.circular(15),
+                                  bottomRight: Radius.circular(15),
+                                  topLeft: Radius.circular(0),
+                                  topRight: Radius.circular(0),
+                                ),
+                              ),
+                              child: StreamBuilder(
+                                  stream: _messageStreamController?.stream,
+                                  builder: (context, snapshot) {
+                                    final snap = snapshot.data;
+                                    dynamic data;
+                                    if (snap != null) {
+                                      data = getJsonField(
+                                          jsonDecode(snap), r'''$.data''');
+                                    }
+                                    return Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsetsDirectional.all(
+                                                  0),
+                                          child: Text(
+                                            'Current serving number',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily: 'Inter',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryBackground,
+                                                  fontSize: 16,
+                                                  letterSpacing: 0.0,
+                                                ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0, 2, 0, 15),
+                                          child: Text(
+                                            data != null
+                                                ? data['current_token']??'00'
+                                                : '00',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                                  fontFamily: 'Inter',
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primaryBackground,
+                                                  fontSize: 40,
+                                                  letterSpacing: 0.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                          ),
+                                        ),
+                                        Divider(
+                                          height: 0,
+                                          thickness: 1,
+                                          color: FlutterFlowTheme.of(context)
+                                              .tertiary,
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceAround,
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
+                                              child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      'Approx time',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryBackground,
+                                                            fontSize: 16,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0, 0, 0, 0),
+                                                      child: Text(
+                                                        data != null
+                                                            ? data['estimated_wait_time']
+                                                                .toString()
+                                                            : '00',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
+                                                                  fontSize: 30,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                  ]),
+                                            ),
+                                            SizedBox(
+                                              height: 90,
+                                              child: VerticalDivider(
+                                                thickness: 1,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryBackground,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(0, 0, 10, 0),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Text(
+                                                    'Number of Waiting',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBackground,
+                                                          fontSize: 16,
+                                                          letterSpacing: 0.0,
+                                                        ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                0, 0, 0, 0),
+                                                    child: Text(
+                                                      data != null
+                                                          ? data['waiting_count']
+                                                              .toString()
+                                                          : '00',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryBackground,
+                                                            fontSize: 30,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    );
+                                  })),
+                        )
+                      ],
+                    ),
+                  ],
+                ),
+                Expanded(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(15, 15, 0, 0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            Text(
+                              'Counter/Employee',
+                              style: FlutterFlowTheme.of(context)
+                                  .bodyMedium
+                                  .override(
+                                    fontFamily: 'Inter',
+                                    fontSize: 18,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: List.generate(queueList.length, (index) {
+                            final queue = queueList[index];
+
+                            if (queueList.isEmpty) {
+                              return Center(
+                                child: emptyList(),
+                              );
+                            }
+
+                            return Padding(
+                                padding: EdgeInsetsDirectional.fromSTEB(
+                                    15, 10, 15, 0),
+                                child: GestureDetector(
+                                  onTap: () {
+                                    setState(() {
+                                      selectQueue = queue;
+                                    });
+                                  },
+                                  child: Container(
+                                    height: 80,
+                                    decoration: BoxDecoration(
+                                      color: FlutterFlowTheme.of(context)
+                                          .secondaryBackground,
+                                      borderRadius: BorderRadius.circular(10),
+                                      border: Border.all(
+                                        color: FlutterFlowTheme.of(context)
+                                            .secondaryText,
+                                      ),
+                                    ),
+                                    child: Padding(
+                                      padding: EdgeInsets.all(12),
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: [
+                                          Container(
+                                            width: 60,
+                                            height: 60,
+                                            clipBehavior: Clip.antiAlias,
+                                            decoration: BoxDecoration(
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Image.network(
+                                              'https://picsum.photos/seed/273/600',
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                          Expanded(
+                                            child: Padding(
+                                              padding: EdgeInsetsDirectional
+                                                  .fromSTEB(10, 0, 0, 0),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    queue['employee_name'],
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: queue[
+                                                                  'is_counter']
+                                                              ? 16
+                                                              : 18,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                  ),
+                                                  if (queue['is_counter'])
+                                                    Text(
+                                                      'Counter: ${queue['queue_name']}',
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 16,
+                                                            letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w400,
+                                                          ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Material(
+                                            color: Colors.transparent,
+                                            elevation: 2,
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                            ),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .secondaryBackground,
+                                                borderRadius:
+                                                    BorderRadius.circular(30),
+                                                border: Border.all(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .tertiary,
+                                                ),
+                                              ),
+                                              child: Align(
+                                                alignment:
+                                                    AlignmentDirectional(0, 0),
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(15),
+                                                  child: Text(
+                                                    (queue['current_length'] ??
+                                                            00)
+                                                        .toString(),
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 18,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ));
+                          }),
+                        ),
+                      )),
+                      Container(
+                        decoration: const BoxDecoration(
+                          color: Color(0xFFE9E9E9),
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(0),
+                            bottomRight: Radius.circular(0),
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                        ),
+                        child:  Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0, 10, 0, 0),
+                          child: Column(children: [
+                          Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children: List.generate(serviceSelectQueue.length,
+                                  (index) {
+                                final queueData = serviceSelectQueue[index];
+                                return Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(
+                                      20, 10, 20, 10),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                      Text(
+                                        queueData['business_service_name'],
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 16,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w500,
+                                            ),
+                                      ),
+                                        Text(
+                                          ':- '
+                                              '${queueData['fee_type']}',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 12,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w400,
+                                          ),
+                                        )
+                                      ]),
+                                      Text(
+                                        '₹ ${queueData['service_fee']}/-',
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 18,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              })),
+                          Divider(
+                            thickness: 1,
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(20, 5, 20, 10),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  'Total :',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontSize: 18,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                                Text(
+                                  '₹ ${totalPrice(serviceSelectQueue)}/-',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontSize: 18,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          )
+                        ]),
+                      ),
+                      )],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                  child: FFButtonWidget(
+                    onPressed: () {
+                      final services = [];
+                      for (final s in widget.services) {
+                        setState(() {
+                          services.add(getJsonField(s, r'''$.uuid''')
+                              .toString());
+                        });
+                      }
+                      log('services: $services');
+                      sendData({
+                        "user_id": widget.uuid,
+                        "priority": false,
+                        "queue_id": queueList[0]['queue_id'],
+                        "queue_date": widget.date,
+                        "token_number": "string",
+                        "turn_time": 0,
+                        "queue_services": services
+                      }, 'queue_user')
+                          .then((value) {
+                        log('response: $value');
+                        if (value != null) {
+                          return showDialog(
+                              context: context,
+                              builder: (context) {
+                                return Center(
+                                  child: CongratulationWidget(
+                                    response: value,
+                                  ),
+                                );
+                              });
+                        }
+                      });
+                    },
+                    text: 'Fix Appointment',
+                    options: FFButtonOptions(
+                      width: double.infinity,
+                      height: 70,
+                      padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
+                      iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                      color: FlutterFlowTheme.of(context).primary,
+                      textStyle:
+                          FlutterFlowTheme.of(context).titleSmall.override(
+                                fontFamily: 'Inter Tight',
+                                color: Colors.white,
+                                letterSpacing: 0.0,
+                              ),
+                      elevation: 0,
+                      borderRadius: BorderRadius.circular(0),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          )),
+    );
+  }
+
+  String totalPrice(List<dynamic> dataList){
+    double total = 0;
+
+    for(final d in dataList){
+      setState(() {
+        total += (d['service_fee']);
+      });
+      log('price: $total');
+    }
+    return total.toString();
+  }
+}

@@ -507,8 +507,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           borderRadius: const BorderRadius.only(
                                               bottomRight: Radius.circular(16),
                                               bottomLeft: Radius.circular(16))),
-                                      height: 180,
-                                      child: Stack(children: [
+                                      height: 180,)),
+                              Padding( padding: EdgeInsets.fromLTRB(0, 15, 0, 0), child:
+                              Material(
+
+                                  elevation: 0,
+                                  borderRadius: BorderRadius.circular(16),
+                                  child: Stack(children: [
                                         if (appointments.isNotEmpty &&
                                             messageList != null)
                                           StreamBuilder(
@@ -539,72 +544,72 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                             borderRadius: const BorderRadius.only(
                                                                 bottomLeft: Radius
                                                                     .circular(
-                                                                        16),
+                                                                    16),
                                                                 bottomRight: Radius
                                                                     .circular(
-                                                                        16)),
-                                                        color: FlutterFlowTheme.of(context).primaryBackground
+                                                                    16)),
+                                                            color: FlutterFlowTheme.of(context).primaryBackground
                                                         ),
                                                         child: Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(
-                                                                      20,
-                                                                      20,
-                                                                      20,
-                                                                      15),
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              20,
+                                                              20,
+                                                              20,
+                                                              15),
                                                           child: Column(
                                                             mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
+                                                            MainAxisSize
+                                                                .max,
                                                             mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .spaceBetween,
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
                                                             children: [
                                                               Row(
                                                                 mainAxisSize:
-                                                                    MainAxisSize
-                                                                        .max,
+                                                                MainAxisSize
+                                                                    .max,
                                                                 children: [
                                                                   ClipRRect(
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(8),
+                                                                    BorderRadius
+                                                                        .circular(8),
                                                                     child: Image
                                                                         .network(
                                                                       'https://picsum.photos/seed/577/600',
                                                                       width: 60,
                                                                       height:
-                                                                          60,
+                                                                      60,
                                                                       fit: BoxFit
                                                                           .cover,
                                                                     ),
                                                                   ),
                                                                   Expanded(
                                                                     child:
-                                                                        Padding(
+                                                                    Padding(
                                                                       padding: EdgeInsetsDirectional
                                                                           .fromSTEB(
-                                                                              10,
-                                                                              0,
-                                                                              0,
-                                                                              0),
+                                                                          10,
+                                                                          0,
+                                                                          0,
+                                                                          0),
                                                                       child:
-                                                                          Column(
+                                                                      Column(
                                                                         mainAxisSize:
-                                                                            MainAxisSize.max,
+                                                                        MainAxisSize.max,
                                                                         crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
+                                                                        CrossAxisAlignment.start,
                                                                         children: [
                                                                           Text(
                                                                             appointments[0]['business_name'] ??
                                                                                 'N/A',
                                                                             style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                  fontFamily: 'Inter',
-                                                                                  fontSize: 16,
-                                                                                  letterSpacing: 0.0,
-                                                                                  fontWeight: FontWeight.w500,
-                                                                                ),
+                                                                              fontFamily: 'Inter',
+                                                                              fontSize: 16,
+                                                                              letterSpacing: 0.0,
+                                                                              fontWeight: FontWeight.w500,
+                                                                            ),
                                                                           ),
                                                                           Padding(
                                                                             padding: EdgeInsetsDirectional.fromSTEB(
@@ -613,16 +618,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                                Text(
+                                                                            Text(
                                                                               '${(getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].building''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].street_1''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].country''')).toString()}' + '-${(getJsonField(appointments[0], r'''$.business_address[0].postal_code''')).toString()}',
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 14,
-                                                                                    letterSpacing: 0.0,
-                                                                                    fontWeight: FontWeight.normal,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 14,
+                                                                                letterSpacing: 0.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                           Padding(
@@ -632,14 +637,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                 0,
                                                                                 0),
                                                                             child:
-                                                                                Text(
+                                                                            Text(
                                                                               '🕐 21 min - 8.0km',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 12,
-                                                                                    letterSpacing: 0.0,
-                                                                                    fontWeight: FontWeight.normal,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 12,
+                                                                                letterSpacing: 0.0,
+                                                                                fontWeight: FontWeight.normal,
+                                                                              ),
                                                                             ),
                                                                           ),
                                                                         ],
@@ -662,49 +667,49 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            15,
-                                                                            0,
-                                                                            15,
-                                                                            0),
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                    15,
+                                                                    0,
+                                                                    15,
+                                                                    0),
                                                                 child: Row(
                                                                   mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .max,
+                                                                  MainAxisSize
+                                                                      .max,
                                                                   mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceEvenly,
+                                                                  MainAxisAlignment
+                                                                      .spaceEvenly,
                                                                   children: [
                                                                     Expanded(
                                                                       child:
-                                                                          Padding(
+                                                                      Padding(
                                                                         padding: EdgeInsetsDirectional.fromSTEB(
                                                                             5,
                                                                             0,
                                                                             5,
                                                                             0),
                                                                         child:
-                                                                            Column(
+                                                                        Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                          MainAxisSize.max,
                                                                           children: [
                                                                             Text(
                                                                               '${messageList['current_token'] ?? ''}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 20,
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 20,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                             Text(
                                                                               'Current token',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 12,
-                                                                                    color: Color(0xFFADADAD),
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 12,
+                                                                                color: Color(0xFFADADAD),
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                           ],
                                                                         ),
@@ -712,44 +717,44 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                     ),
                                                                     SizedBox(
                                                                       height:
-                                                                          50,
+                                                                      50,
                                                                       child:
-                                                                          VerticalDivider(
+                                                                      VerticalDivider(
                                                                         thickness:
-                                                                            1,
+                                                                        1,
                                                                         color: Color(
                                                                             0xB2D0D0D0),
                                                                       ),
                                                                     ),
                                                                     Expanded(
                                                                       child:
-                                                                          Padding(
+                                                                      Padding(
                                                                         padding: EdgeInsetsDirectional.fromSTEB(
                                                                             5,
                                                                             0,
                                                                             5,
                                                                             0),
                                                                         child:
-                                                                            Column(
+                                                                        Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                          MainAxisSize.max,
                                                                           children: [
                                                                             Text(
                                                                               '${messageList['waiting_count'] ?? ''}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 20,
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 20,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                             Text(
                                                                               'Waiting count',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 12,
-                                                                                    color: Color(0xFFADADAD),
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 12,
+                                                                                color: Color(0xFFADADAD),
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                           ],
                                                                         ),
@@ -757,47 +762,47 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                     ),
                                                                     const SizedBox(
                                                                       height:
-                                                                          50,
+                                                                      50,
                                                                       child:
-                                                                          VerticalDivider(
+                                                                      VerticalDivider(
                                                                         thickness:
-                                                                            1,
+                                                                        1,
                                                                         color: Color(
                                                                             0xB2D0D0D0),
                                                                       ),
                                                                     ),
                                                                     Expanded(
                                                                       child:
-                                                                          Padding(
+                                                                      Padding(
                                                                         padding: EdgeInsetsDirectional.fromSTEB(
                                                                             5,
                                                                             0,
                                                                             0,
                                                                             0),
                                                                         child:
-                                                                            Column(
+                                                                        Column(
                                                                           mainAxisSize:
-                                                                              MainAxisSize.max,
+                                                                          MainAxisSize.max,
                                                                           mainAxisAlignment:
-                                                                              MainAxisAlignment.center,
+                                                                          MainAxisAlignment.center,
                                                                           children: [
                                                                             Text(
                                                                               '${messageList['estimated_wait_time'] ?? ''}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 20,
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 20,
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                             Text(
                                                                               'Waiting time',
                                                                               textAlign: TextAlign.center,
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                    fontFamily: 'Inter',
-                                                                                    fontSize: 12,
-                                                                                    color: Color(0xFFADADAD),
-                                                                                    letterSpacing: 0.0,
-                                                                                  ),
+                                                                                fontFamily: 'Inter',
+                                                                                fontSize: 12,
+                                                                                color: Color(0xFFADADAD),
+                                                                                letterSpacing: 0.0,
+                                                                              ),
                                                                             ),
                                                                           ],
                                                                         ),

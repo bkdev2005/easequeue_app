@@ -29,6 +29,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<String> favBusinessList = [];
+  List<dynamic> services = [];
+  List<String> selectServiceId = [];
 
   @override
   void initState() {
@@ -42,6 +44,14 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       selectDay = next7Days.first;
     });
     callBusinessApi();
+    fetchData('services/${widget.categoryId}', context)?.then((value) {
+      log('value: $value');
+      if (value != null) {
+        setState(() {
+          services = getJsonField(value, r'''$.data[:]''', true);
+        });
+      }
+    });
     controller.addListener(() {
       log('hasMore: $hasMore');
       if (hasMore) {
@@ -152,15 +162,17 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             data.clear();
                           });
                           fetchData(
-                              'business_list?category_id=${widget.categoryId}&search=$_',
-                              // '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
-                              context)
+                                  'business_list?category_id=${widget.categoryId}&search=$_',
+                                  // '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
+                                  context)
                               ?.then((value) {
                             log('value: $value');
                             if (value != null) {
                               setState(() {
-                                data =
-                                    getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+                                data = getJsonField(
+                                            value, r'''$.data.data[:]''', true)
+                                        ?.toList() ??
+                                    [];
                                 if (value.length < limit) {
                                   hasMore = false;
                                 } else {
@@ -235,7 +247,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-
                 SizedBox(
                     height: 85,
                     child: ListView(
@@ -308,6 +319,42 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                   thickness: 1,
                   height: 0,
                 ),
+                Padding(
+                    padding: EdgeInsets.only(top: 10, left: 5),
+                    child: Row(
+                      children: List.generate(services.length, (index) {
+                        final service = services[index];
+                        return Padding(padding: EdgeInsets.only(left: 10) ,child: GestureDetector(
+                            onTap: (){
+                              if(selectServiceId.contains(getJsonField(service, r'''$.uuid'''))){
+                              setState(() {
+                                selectServiceId.remove(getJsonField(service, r'''$.uuid'''));
+                              });
+                              }else{
+                                setState(() {
+                                  selectServiceId.add(getJsonField(service, r'''$.uuid'''));
+                                });
+                              }
+                            },
+                            child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black),
+                              color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? FlutterFlowTheme.of(context).primary : Colors.transparent,
+                              borderRadius: BorderRadius.circular(30)),
+                          child: Padding(
+                            padding: EdgeInsets.fromLTRB(15, 8, 15, 8),
+                            child: Text(
+                              getJsonField(service, r'''$.name'''),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? Colors.white: Colors.black,
+                              ),
+                            ),
+                          ),
+                        )));
+                      }),
+                    )),
+                Divider(),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
@@ -529,24 +576,21 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                 page = 1;
                                                 data.clear();
                                               });
-                                                sendData({
-                                                  "user_id":
-                                                      FFAppState().userId,
-                                                  "business_id":
-                                                      businessListItem['uuid']
-                                                }, 'favourite')
-                                                    .then((value) {
-                                                  log('value: $value');
-                                                  callBusinessApi();
-                                                });
-
+                                              sendData({
+                                                "user_id": FFAppState().userId,
+                                                "business_id":
+                                                    businessListItem['uuid']
+                                              }, 'favourite')
+                                                  .then((value) {
+                                                log('value: $value');
+                                                callBusinessApi();
+                                              });
                                             },
                                             child: Padding(
                                               padding: EdgeInsets.only(
                                                   top: 10, right: 10),
                                               child: Icon(
-                                                businessListItem[
-                                                            'is_favourite']
+                                                businessListItem['is_favourite']
                                                     ? Icons.favorite_rounded
                                                     : Icons
                                                         .favorite_border_rounded,

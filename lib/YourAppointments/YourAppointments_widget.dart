@@ -180,7 +180,7 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                       ),
                                     ),
                                   ),
-                                  Divider(
+                                 const Divider(
                                     thickness: 1,
                                   ),
                                   Padding(

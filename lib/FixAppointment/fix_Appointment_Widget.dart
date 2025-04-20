@@ -97,6 +97,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
     super.initState();
     addIdInUrl();
     fetchData(url, context)?.then((value) {
+
+      log('queue: ${getJsonField(value!, r'''$.data[:]''', true)}');
       setState(() {
         queueList =
             getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];

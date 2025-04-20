@@ -207,9 +207,9 @@ class _LoginWidgetState extends State<LoginWidget> {
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                 child: FFButtonWidget(
-                  onPressed: () {
+                  onPressed: () async{
                     if(_model.phoneTextController.text.length == 10){
-                      preAuthApi(
+                      final response = await preAuthApi(
                           {
                             "phone_number": _model.phoneTextController.text
                           },

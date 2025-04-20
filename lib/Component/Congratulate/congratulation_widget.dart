@@ -82,7 +82,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                         borderRadius: BorderRadius.circular(8),
                                         child: Image.asset(
                                           'assets/images/stamp.png',
-                                          width: 250,
+                                          width: 200,
                                           fit: BoxFit.cover,
                                         ),
                                       ),
@@ -93,6 +93,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                         0, 20, 0, 0),
                                     child: Text(
                                       'Your Appointment Booked Successfully!',
+                                      textAlign: TextAlign.center,
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
@@ -269,6 +270,40 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                         Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              'Queue :',
+                                              style:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .override(
+                                                fontFamily: 'Inter',
+                                                fontSize: 18,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                            Text(
+                                              widget.response['queue_id'][
+                                              'name']??'',
+                                              style:
+                                              FlutterFlowTheme.of(context)
+                                                  .bodyMedium
+                                                  .override(
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                letterSpacing: 0.0,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        const Divider(
+                                          thickness: 1,
+                                          color: Color(0xFF929292),
+                                        ),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Text(
@@ -283,7 +318,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                                       ),
                                             ),
                                             Text(
-                                              'Hair cut',
+                                              serviceName(getJsonField(widget.response, r'''$.queue_user_services[:]''', true)),
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
@@ -316,7 +351,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                                       ),
                                             ),
                                             Text(
-                                              'Hair cut',
+                                             widget.response['queue_date'],
                                               style:
                                                   FlutterFlowTheme.of(context)
                                                       .bodyMedium
@@ -408,6 +443,19 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                       ),
                     )));
   }
+
+  String serviceName(List<dynamic> services) {
+    // Use a list to collect the service names
+    List<String> names = [];
+    // Iterate over each service in the list
+    for (final serv in services) {
+      // Access the 'name' field inside 'service_id' and add it to the names list
+      names.add((serv['queue_service_id']['service_id']['name']));
+    }
+    // Join the list of names with a comma and return the result
+    return names.join(', ');
+  }
+
 
   Future<void> decodeBase64ToFile() async {
     try {

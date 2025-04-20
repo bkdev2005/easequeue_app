@@ -30,25 +30,26 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
     setState(() {
       isMainLoading = true;
     });
-    fetchData('customer_appointments/${FFAppState().userId}', context)?.then((value) {
-      if(value != null){
-      if (value['data'] != null) {
-        log('response: ${value['data']}');
-        final data =
-            getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
-        setState(() {
-          appointments = data;
-          isMainLoading = false;
-        });
+    fetchData('customer_appointments/${FFAppState().userId}', context)
+        ?.then((value) {
+      if (value != null) {
+        if (value['data'] != null) {
+          log('response: ${value['data']}');
+          final data =
+              getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
+          setState(() {
+            appointments = data;
+            isMainLoading = false;
+          });
+        } else {
+          setState(() {
+            isMainLoading = false;
+          });
+        }
       } else {
         setState(() {
           isMainLoading = false;
         });
-      }
-      } else {
-      setState(() {
-      isMainLoading = false;
-      });
       }
       log('value: $value');
     });
@@ -98,10 +99,9 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                       itemCount: appointmentList.length,
                       itemBuilder: (context, addressListIndex) {
                         final appointmentListItem =
-                        appointmentList[addressListIndex];
+                            appointmentList[addressListIndex];
                         return Padding(
-                          padding:
-                          EdgeInsetsDirectional.fromSTEB(15, 8, 15, 0),
+                          padding: EdgeInsetsDirectional.fromSTEB(15, 8, 15, 0),
                           child: Card(
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             color: FlutterFlowTheme.of(context)
@@ -119,32 +119,35 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                   Row(
                                     mainAxisSize: MainAxisSize.max,
                                     mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                     children: [
                                       Expanded(
                                         child: Text(
-                                          appointmentListItem['business_name']?? 'N/A',
+                                          appointmentListItem[
+                                                  'business_name'] ??
+                                              'N/A',
                                           style: FlutterFlowTheme.of(context)
                                               .bodyMedium
                                               .override(
-                                            fontFamily: 'Inter',
-                                            fontSize: 16,
-                                            letterSpacing: 0.0,
-                                            fontWeight: FontWeight.w500,
-                                          ),
+                                                fontFamily: 'Inter',
+                                                fontSize: 16,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
                                         ),
                                       ),
                                       Text(
-                                        appointmentListItem['user_status']?? 'N/A',
+                                        appointmentListItem['user_status'] ??
+                                            'N/A',
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
-                                          fontFamily: 'Inter',
-                                          color: Color(0xFF165222),
-                                          fontSize: 12,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.normal,
-                                        ),
+                                              fontFamily: 'Inter',
+                                              color: Color(0xFF165222),
+                                              fontSize: 12,
+                                              letterSpacing: 0.0,
+                                              fontWeight: FontWeight.normal,
+                                            ),
                                       ),
                                     ],
                                   ),
@@ -152,19 +155,19 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 5, 0, 0),
                                     child: Text(
-                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].unit_number''')).toString()}, '+
-                                           '${(getJsonField(appointmentListItem, r'''$.business_address[0].building''')).toString()}, '+
-                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].street_1''')).toString()}, '+
-                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].country''')).toString()}'+
+                                      '${(getJsonField(appointmentListItem, r'''$.business_address[0].unit_number''')).toString()}, ' +
+                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].building''')).toString()}, ' +
+                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].street_1''')).toString()}, ' +
+                                          '${(getJsonField(appointmentListItem, r'''$.business_address[0].country''')).toString()}' +
                                           '-${(getJsonField(appointmentListItem, r'''$.business_address[0].postal_code''')).toString()}',
-                                       // newFormatAddress(getJsonField(appointmentListItem, r'''$.business_address[0]''', true)),
+                                      // newFormatAddress(getJsonField(appointmentListItem, r'''$.business_address[0]''', true)),
                                       // 'N/A',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                        fontFamily: 'Inter',
-                                        letterSpacing: 0.0,
-                                      ),
+                                            fontFamily: 'Inter',
+                                            letterSpacing: 0.0,
+                                          ),
                                     ),
                                   ),
                                   Padding(
@@ -175,12 +178,12 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                        fontFamily: 'Inter',
-                                        letterSpacing: 0.0,
-                                      ),
+                                            fontFamily: 'Inter',
+                                            letterSpacing: 0.0,
+                                          ),
                                     ),
                                   ),
-                                 const Divider(
+                                  const Divider(
                                     thickness: 1,
                                   ),
                                   Padding(
@@ -191,24 +194,29 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        letterSpacing: 0.0,
-                                      ),
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            letterSpacing: 0.0,
+                                          ),
                                     ),
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 5, 0, 0),
                                     child: Text(
-                                        (appointmentListItem['appointment_time'] != null)?
-                                        (appointmentListItem['appointment_time'])??'': '',
+                                      (appointmentListItem[
+                                                  'appointment_time'] !=
+                                              null)
+                                          ? (appointmentListItem[
+                                                  'appointment_time']) ??
+                                              ''
+                                          : '',
                                       style: FlutterFlowTheme.of(context)
                                           .bodyMedium
                                           .override(
-                                        fontFamily: 'Inter',
-                                        letterSpacing: 0.0,
-                                      ),
+                                            fontFamily: 'Inter',
+                                            letterSpacing: 0.0,
+                                          ),
                                     ),
                                   ),
                                 ],

@@ -72,7 +72,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     fetchData(
         'customer_appointments/${FFAppState().userId}?start_date=${todayDate()}&status=1',
         context)
-        ?.then((value) {
+        ?.then((value) async {
       if (value != null) {
         if (value['data'] != null) {
           log('response: ${value['data']}');
@@ -82,7 +82,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             appointments = data;
             isMainLoading = false;
           });
-          connect();
+
+          log('Appointments Customer: $appointments');
+          await connect();
         } else {
           setState(() {
             isMainLoading = false;
@@ -110,10 +112,12 @@ class _HomePageWidgetState extends State<HomePageWidget> {
       // Listen to incoming messages
       _webSocket?.listen(
         (message) {
+          log('message data: $message');
           _messageStreamController?.add(message);
           setState(() {
             messageList = getJsonField(jsonDecode(message), r'''$.data''');
           });
+
 
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
           log("Received: $message");
@@ -507,7 +511,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           borderRadius: const BorderRadius.only(
                                               bottomRight: Radius.circular(16),
                                               bottomLeft: Radius.circular(16))),
-                                      height: 180,)),
+                                      height: 150,)),
                               Padding( padding: EdgeInsets.fromLTRB(0, 15, 0, 0), child:
                               Material(
 

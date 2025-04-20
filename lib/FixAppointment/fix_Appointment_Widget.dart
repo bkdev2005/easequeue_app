@@ -50,12 +50,12 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
       if (index == 0) {
         setState(() {
           url +=
-              'business_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+              'queue_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
         });
       } else {
         setState(() {
           url +=
-              '&business_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+              '&queue_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
         });
       }
     }
@@ -261,8 +261,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                   0, 0, 0, 0),
                                                       child: Text(
                                                         data != null
-                                                            ? data['estimated_wait_time']
-                                                                .toString()
+                                                            ? (data['estimated_wait_time']!= null)? data['estimated_wait_time'].toString() : '0'
                                                             : '00',
                                                         style:
                                                             FlutterFlowTheme.of(
@@ -321,9 +320,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                 0, 0, 0, 0),
                                                     child: Text(
                                                       data != null
-                                                          ? data['waiting_count']
-                                                              .toString()
-                                                          : '00',
+                                                          ? (data['waiting_count']!= null)? data['waiting_count'].toString() : '0'
+                                                          : '0',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -567,6 +565,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               fontWeight: FontWeight.w500,
                                             ),
                                       ),
+                                            if(queueData['fee_type']!= null)
                                         Text(
                                           ':- '
                                               '${queueData['fee_type']}',
@@ -581,7 +580,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         )
                                       ]),
                                       Text(
-                                        '₹ ${queueData['service_fee']}/-',
+                                        (queueData['service_fee']!= null)? '₹ ${queueData['service_fee']}/-' : '-/- ' ,
                                         style: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .override(
@@ -601,13 +600,13 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 5, 20, 10),
+                                EdgeInsetsDirectional.fromSTEB(20, 5, 25, 10),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
-                                  'Total :',
+                                  'Total Price:',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
@@ -618,7 +617,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                       ),
                                 ),
                                 Text(
-                                  '₹ ${totalPrice(serviceSelectQueue)}/-',
+                                (totalPrice(serviceSelectQueue) != '')? '₹ ${totalPrice(serviceSelectQueue)}/-' : '-/-',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
@@ -700,10 +699,14 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
     double total = 0;
 
     for(final d in dataList){
+      if(d['service_fee'] != null){
       setState(() {
         total += (d['service_fee']);
       });
       log('price: $total');
+    }else{
+        return '';
+      }
     }
     return total.toString();
   }

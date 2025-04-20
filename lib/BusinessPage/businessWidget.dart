@@ -304,7 +304,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                             Text(
                                               day['month'],
                                               style: TextStyle(
-                                                  fontSize: 14,
+                                                  fontSize: 13,
                                                   fontWeight: FontWeight.w300,
                                                   color: (next7Days[index] ==
                                                           selectDay)
@@ -342,7 +342,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                               color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? FlutterFlowTheme.of(context).primary : Colors.transparent,
                               borderRadius: BorderRadius.circular(30)),
                           child: Padding(
-                            padding: EdgeInsets.fromLTRB(15, 8, 15, 8),
+                            padding: EdgeInsets.fromLTRB(15 , 6, 15, 6),
                             child: Text(
                               getJsonField(service, r'''$.name'''),
                               style: TextStyle(

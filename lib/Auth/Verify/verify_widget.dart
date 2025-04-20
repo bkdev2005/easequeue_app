@@ -193,7 +193,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                 child: FFButtonWidget(
                   onPressed: () async {
                     if (_model.pinCodeController!.text.isNotEmpty) {
-                      preAuthApi({
+                      final response = await preAuthApi({
                         "country_code": "+91",
                         "phone_number": widget.phone.toString(),
                         "otp": _model.pinCodeController.text.toString()

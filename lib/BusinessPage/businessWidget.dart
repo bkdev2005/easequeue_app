@@ -53,30 +53,18 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       }
     });
     controller.addListener(() {
-      log('hasMore: $hasMore');
-      if (hasMore) {
         if (controller.position.maxScrollExtent == controller.offset) {
-          fetchData(
-                  'business_list?page=$page&page_size=$limit&category_id=${widget.categoryId}&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
-                  context)
-              ?.then((value) {
-            log('value: $value');
-            setState(() {
-              data.addAll(value!);
-              if (value.length < limit) {
-                hasMore = false;
-              } else {
-                hasMore = true;
-                page++;
-              }
-            });
-          });
+          if (hasMore) {
+          callBusinessApi();
         }
       }
     });
   }
 
   void callBusinessApi() {
+    setState(() {
+      hasMore= false;
+    });
     fetchData(
             'business_list?page=$page&page_size=$limit&category_id=${widget.categoryId}',
             // '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
@@ -84,16 +72,19 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
         ?.then((value) {
       log('value: $value');
       if (value != null) {
+        List<dynamic> newData =
+            getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+        if(newData.isNotEmpty){
         setState(() {
-          data =
-              getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
-          if (value.length < limit) {
+          data.addAll(newData);
+          if (newData.length < limit) {
             hasMore = false;
           } else {
             hasMore = true;
             page++;
           }
         });
+        }
         setState(() {
           isMainLoading = false;
         });
@@ -108,10 +99,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   bool searchBar = false;
   final controller = ScrollController();
   List<dynamic> data = [];
-  bool hasMore = false;
+  bool hasMore = true;
   bool isMainLoading = false;
   int page = 1;
-  int limit = 3;
+  int limit = 10;
   String selectDay = '';
   List<dynamic> next7Days = [];
 
@@ -322,7 +313,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                 Padding(
                     padding: EdgeInsets.only(top: 10, left: 5),
                     child: Row(
-                      children: List.generate(services.length, (index) {
+                      children: List.generate(
+
+                          services.length, (index) {
                         final service = services[index];
                         return Padding(padding: EdgeInsets.only(left: 10) ,child: GestureDetector(
                             onTap: (){
@@ -389,10 +382,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             childAspectRatio: 1,
                           ),
                           scrollDirection: Axis.vertical,
-                          itemCount: businessList.length,
+                          itemCount: data.length,
                           itemBuilder: (context, businessListIndex) {
                             final businessListItem =
-                                businessList[businessListIndex];
+                            data[businessListIndex];
                             return Padding(
                                 padding:
                                     EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),

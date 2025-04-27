@@ -699,7 +699,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           MainAxisSize.max,
                                                                           children: [
                                                                             Text(
-                                                                              '${messageList['current_token'] ?? ''}',
+                                                                              '${messageList['current_token'] ?? '0'}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                 fontFamily: 'Inter',
                                                                                 fontSize: 20,
@@ -791,7 +791,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           MainAxisAlignment.center,
                                                                           children: [
                                                                             Text(
-                                                                              '${messageList['estimated_wait_time'] ?? ''}',
+                                                                              '${messageList['estimated_appointment_time'] ?? ''}',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                 fontFamily: 'Inter',
                                                                                 fontSize: 20,

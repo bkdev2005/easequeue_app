@@ -455,6 +455,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                             businessListItem[
                                                                     'name'] ??
                                                                 'N/A',
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
                                                             style: FlutterFlowTheme
                                                                     .of(context)
                                                                 .bodyMedium

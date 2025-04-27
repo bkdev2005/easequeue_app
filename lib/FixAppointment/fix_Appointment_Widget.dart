@@ -263,7 +263,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                   0, 0, 0, 0),
                                                       child: Text(
                                                         data != null
-                                                            ? (data['average_wait_time']!= null)? data['estimated_wait_time'].toString() : '0'
+                                                            ? (data['average_wait_time']!= null)? data['average_wait_time'].toString() : '0'
                                                             : '00',
                                                         style:
                                                             FlutterFlowTheme.of(

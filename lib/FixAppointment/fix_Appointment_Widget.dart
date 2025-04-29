@@ -36,6 +36,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> queueList = [];
   dynamic messageList;
+  String? selectedQueueId;
   String url = 'running_queues/?';
   StreamController<dynamic>? _messageStreamController;
   // final webSocketClient = WebSocketClient();
@@ -68,7 +69,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
     log('date: ${widget.date}');
     try {
       _webSocket = await WebSocket.connect(
-          'ws://15.206.84.199/api/v1/ws/${queueList[0]['queue_id']}/${widget.date}',
+          'ws://15.206.84.199/api/v1/ws/$url/${widget.date}',
           headers: {'Authorization': 'Bearer $token'});
       print("Connected to WebSocket at $url");
 
@@ -108,6 +109,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
       connect(queueList[0]['queue_id']);
       setState(() {
         selectQueue = queueList[0];
+        selectedQueueId = queueList[0]['queue_id'];
         serviceSelectQueue = queueList[0]['services'];
       });
     });
@@ -243,7 +245,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     Text(
-                                                      'Approx time',
+                                                      'Waiting time',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -263,7 +265,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                   0, 0, 0, 0),
                                                       child: Text(
                                                         data != null
-                                                            ? (data['average_wait_time']!= null)? data['average_wait_time'].toString() : '0'
+                                                            ? (data['formatted_wait_time']!= null)? data['formatted_wait_time'].toString() : '0'
                                                             : '00',
                                                         style:
                                                             FlutterFlowTheme.of(
@@ -302,7 +304,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                 mainAxisSize: MainAxisSize.max,
                                                 children: [
                                                   Text(
-                                                    'Number of Waiting',
+                                                    'Your position will be',
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
@@ -322,7 +324,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                 0, 0, 0, 0),
                                                     child: Text(
                                                       data != null
-                                                          ? (data['waiting_count']!= null)? data['waiting_count'].toString() : '0'
+                                                          ? (data['position']!= null)? data['position'].toString() : '0'
                                                           : '0',
                                                       style: FlutterFlowTheme
                                                               .of(context)
@@ -357,7 +359,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(15, 15, 0, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(15, 20, 0, 0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -377,7 +379,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       ),
                       Expanded(
                           child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                         child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: List.generate(queueList.length, (index) {
@@ -394,12 +396,16 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     15, 10, 15, 0),
                                 child: GestureDetector(
                                   onTap: () {
+
                                     setState(() {
                                       selectQueue = queue;
+                                      selectedQueueId = queue['queue_id'];
+                                      serviceSelectQueue = queue['services'];
                                     });
+                                    connect(queue['queue_id']);
                                   },
                                   child: Container(
-                                    height: 80,
+                                    height: 70,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
@@ -410,13 +416,13 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                       ),
                                     ),
                                     child: Padding(
-                                      padding: EdgeInsets.all(12),
+                                      padding: EdgeInsets.fromLTRB(10, 8, 15, 8),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Container(
-                                            width: 60,
-                                            height: 60,
+                                            width: 50,
+                                            height: 50,
                                             clipBehavior: Clip.antiAlias,
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
@@ -474,50 +480,10 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               ),
                                             ),
                                           ),
-                                          Material(
-                                            color: Colors.transparent,
-                                            elevation: 2,
-                                            shape: RoundedRectangleBorder(
-                                              borderRadius:
-                                                  BorderRadius.circular(30),
-                                            ),
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                borderRadius:
-                                                    BorderRadius.circular(30),
-                                                border: Border.all(
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .tertiary,
-                                                ),
-                                              ),
-                                              child: Align(
-                                                alignment:
-                                                    AlignmentDirectional(0, 0),
-                                                child: Padding(
-                                                  padding: EdgeInsets.all(15),
-                                                  child: Text(
-                                                    (queue['current_length'] ??
-                                                            00)
-                                                        .toString(),
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'Inter',
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ),
+                                          Icon(
+                                            (selectedQueueId != queue['queue_id'])?
+                                            Icons.radio_button_off_outlined : Icons.radio_button_checked_rounded,
+                                            color: FlutterFlowTheme.of(context).primary,)
                                         ],
                                       ),
                                     ),

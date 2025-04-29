@@ -472,7 +472,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 fontSize: 16,
                                                 letterSpacing: 0.0,
                                               ),
-                                          maxLines: null,
+                                          maxLines: 1,
                                           minLines: 1,
                                           cursorColor:
                                               FlutterFlowTheme.of(context)
@@ -533,7 +533,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                         r'''$.data''');
                                                   });
                                                 }
-                                                return GestureDetector(
+                                                return
+                                                    GestureDetector(
                                                     onTap: () {
                                                       Navigator.push(
                                                           context,
@@ -707,7 +708,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               ),
                                                                             ),
                                                                             Text(
-                                                                              'Current token',
+                                                                              'Your token',
                                                                               style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                                 fontFamily: 'Inter',
                                                                                 fontSize: 12,

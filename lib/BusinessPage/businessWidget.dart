@@ -53,18 +53,30 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       }
     });
     controller.addListener(() {
+      log('hasMore: $hasMore');
+      if (hasMore) {
         if (controller.position.maxScrollExtent == controller.offset) {
-          if (hasMore) {
-          callBusinessApi();
+          fetchData(
+                  'business_list?page=$page&page_size=$limit&category_id=${widget.categoryId}&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
+                  context)
+              ?.then((value) {
+            log('value: $value');
+            setState(() {
+              data.addAll(value!);
+              if (value.length < limit) {
+                hasMore = false;
+              } else {
+                hasMore = true;
+                page++;
+              }
+            });
+          });
         }
       }
     });
   }
 
   void callBusinessApi() {
-    setState(() {
-      hasMore= false;
-    });
     fetchData(
             'business_list?page=$page&page_size=$limit&category_id=${widget.categoryId}',
             // '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
@@ -72,19 +84,16 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
         ?.then((value) {
       log('value: $value');
       if (value != null) {
-        List<dynamic> newData =
-            getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
-        if(newData.isNotEmpty){
         setState(() {
-          data.addAll(newData);
-          if (newData.length < limit) {
+          data =
+              getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+          if (value.length < limit) {
             hasMore = false;
           } else {
             hasMore = true;
             page++;
           }
         });
-        }
         setState(() {
           isMainLoading = false;
         });
@@ -99,10 +108,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   bool searchBar = false;
   final controller = ScrollController();
   List<dynamic> data = [];
-  bool hasMore = true;
+  bool hasMore = false;
   bool isMainLoading = false;
   int page = 1;
-  int limit = 10;
+  int limit = 3;
   String selectDay = '';
   List<dynamic> next7Days = [];
 
@@ -313,9 +322,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                 Padding(
                     padding: EdgeInsets.only(top: 10, left: 5),
                     child: Row(
-                      children: List.generate(
-
-                          services.length, (index) {
+                      children: List.generate(services.length, (index) {
                         final service = services[index];
                         return Padding(padding: EdgeInsets.only(left: 10) ,child: GestureDetector(
                             onTap: (){
@@ -350,7 +357,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                 Divider(),
                 Expanded(
                   child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                    padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                     child: Builder(
                       builder: (context) {
                         final businessList = data.toList() ?? [];
@@ -366,244 +373,123 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             child: emptyList(),
                           );
                         }
-                        return GridView.builder(
+                        return ListView.builder(
                           controller: controller,
-                          padding: const EdgeInsets.fromLTRB(
-                            0,
-                            10,
-                            0,
-                            10,
-                          ),
-                          gridDelegate:
-                              const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 10,
-                            mainAxisSpacing: 10,
-                            childAspectRatio: 1,
-                          ),
-                          scrollDirection: Axis.vertical,
-                          itemCount: data.length,
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          itemCount: businessList.length,
                           itemBuilder: (context, businessListIndex) {
-                            final businessListItem =
-                            data[businessListIndex];
-                            return Padding(
-                                padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
-                                child: Stack(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) =>
-                                                    AddServicePageWidget(
-                                                        businessDetail:
-                                                            businessListItem,
-                                                        date: selectDay)));
-                                      },
-                                      child: Card(
-                                          clipBehavior:
-                                              Clip.antiAliasWithSaveLayer,
-                                          color: FlutterFlowTheme.of(context)
-                                              .secondaryBackground,
-                                          elevation: 2,
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(8),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    12, 16, 12, 12),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.center,
-                                              children: [
-                                                ClipRRect(
-                                                  borderRadius:
-                                                      BorderRadius.circular(8),
-                                                  child: Image.network(
-                                                    'https://picsum.photos/seed/132/600',
-                                                    width: 65,
-                                                    height: 65,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                            final businessListItem = businessList[businessListIndex];
+                            final isFavourite = favBusinessList.contains(businessListItem['uuid']);
+
+                            return GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => AddServicePageWidget(
+                                      businessDetail: businessListItem,
+                                      date: selectDay,
+                                    ),
+                                  ),
+                                );
+                              },
+                              child: Material(
+                                elevation: 2,
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.white,
+                                child: Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
+                                  padding: const EdgeInsets.all(12),
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Row(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      // Favourite Icon
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            page = 1;
+                                            data.clear();
+                                          });
+                                          sendData({
+                                            "user_id": FFAppState().userId,
+                                            "business_id": businessListItem['uuid']
+                                          }, 'favourite').then((value) {
+                                            log('value: $value');
+                                            callBusinessApi();
+                                          });
+                                        },
+                                        child: Icon(
+                                          businessListItem['is_favourite']
+                                              ? Icons.favorite_rounded
+                                              : Icons.favorite_border_rounded,
+                                          size: 28,
+                                          color: isFavourite
+                                              ? FlutterFlowTheme.of(context).primary
+
+                                              : FlutterFlowTheme.of(context).primary
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 12),
+
+                                      // Business Info
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              businessListItem['name'] ?? 'N/A',
+                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                fontSize: 18,
+                                                fontFamily: 'Inter',
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            if (businessListItem['address'] != null)
+                                              Text(
+                                                businessListItem['address']['building'] ?? '',
+                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                  fontSize: 14,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: 0.0,
                                                 ),
-                                                Expanded(
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                                0, 0, 0, 0),
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.max,
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .center,
-                                                      children: [
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(0,
-                                                                      10, 0, 0),
-                                                          child: Text(
-                                                            businessListItem[
-                                                                    'name'] ??
-                                                                'N/A',
-                                                            maxLines: 1,
-                                                            overflow: TextOverflow.ellipsis,
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontSize: 16,
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(0,
-                                                                      3, 0, 0),
-                                                          child: Text(
-                                                            (businessListItem[
-                                                                        'address'] !=
-                                                                    null)
-                                                                ? businessListItem[
-                                                                        'address']
-                                                                    ['building']
-                                                                : 'N/A',
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontSize: 14,
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                ),
-                                                          ),
-                                                        ),
-                                                        Padding(
-                                                          padding:
-                                                              EdgeInsetsDirectional
-                                                                  .fromSTEB(0,
-                                                                      5, 0, 0),
-                                                          child: Row(
-                                                            mainAxisAlignment:
-                                                                MainAxisAlignment
-                                                                    .center,
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .max,
-                                                            children: [
-                                                              Icon(
-                                                                Icons
-                                                                    .timer_sharp,
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryText,
-                                                                size: 16,
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                    EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                            2,
-                                                                            0,
-                                                                            0,
-                                                                            0),
-                                                                child: Text(
-                                                                  '${businessListItem['distance_time']} - ',
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontSize:
-                                                                            12,
-                                                                        fontFamily:
-                                                                            'Inter',
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                      ),
-                                                                ),
-                                                              ),
-                                                              Text(
-                                                                '${businessListItem['distance']}',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontFamily:
-                                                                          'Inter',
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                    ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ],
-                                                    ),
+                                              ),
+                                            const SizedBox(height: 4),
+                                            Row(
+                                              children: [
+                                                const Icon(Icons.timer_sharp, size: 16),
+                                                const SizedBox(width: 4),
+                                                Text(
+                                                  '${businessListItem['distance_time']} - ${businessListItem['distance']}',
+                                                  style:
+                                                  FlutterFlowTheme.of(context).bodyMedium.override(
+                                                    fontSize: 12,
+                                                    fontFamily: 'Inter',
+                                                    letterSpacing: 0.0,
                                                   ),
                                                 ),
                                               ],
                                             ),
-                                          )),
-                                    ),
-                                    Align(
-                                        alignment: Alignment.topRight,
-                                        child: GestureDetector(
-                                            onTap: () {
-                                              setState(() {
-                                                page = 1;
-                                                data.clear();
-                                              });
-                                              sendData({
-                                                "user_id": FFAppState().userId,
-                                                "business_id":
-                                                    businessListItem['uuid']
-                                              }, 'favourite')
-                                                  .then((value) {
-                                                log('value: $value');
-                                                callBusinessApi();
-                                              });
-                                            },
-                                            child: Padding(
-                                              padding: EdgeInsets.only(
-                                                  top: 10, right: 10),
-                                              child: Icon(
-                                                businessListItem['is_favourite']
-                                                    ? Icons.favorite_rounded
-                                                    : Icons
-                                                        .favorite_border_rounded,
-                                                size: 28,
-                                                color:
-                                                    (favBusinessList.contains(
-                                                            businessListItem[
-                                                                'uuid']))
-                                                        ? FlutterFlowTheme.of(
-                                                                context)
-                                                            .primary
-                                                        : Colors.black54,
-                                              ),
-                                            )))
-                                  ],
-                                ));
+                                          ],
+                                        ),
+                                      ),
+
+                                      const SizedBox(width: 12),
+
+                                      // Info Icon
+                                      const Icon(Icons.info_outline_rounded, color: Colors.grey),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            );
                           },
                         );
+
                       },
                     ),
                   ),

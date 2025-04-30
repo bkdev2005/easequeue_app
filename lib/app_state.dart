@@ -63,6 +63,9 @@ class FFAppState extends ChangeNotifier {
       _queueID = prefs.getString('ff_queueID') ?? _queueID;
     });
     _safeInit(() {
+      _fistTimeUser = prefs.getBool('ff_fistTimeUser') ?? _fistTimeUser;
+    });
+    _safeInit(() {
       _punch = prefs.getBool('ff_punch') ?? _punch;
     });
     _safeInit(() {
@@ -114,6 +117,13 @@ class FFAppState extends ChangeNotifier {
   set employeeId(String _value) {
     _employeeId = _value;
     prefs.setString('ff_employeeId', _value);
+  }
+
+  bool _fistTimeUser = false;
+  bool get fistTimeUser => _fistTimeUser;
+  set fistTimeUser(bool _value) {
+    _fistTimeUser = _value;
+    prefs.setBool('ff_fistTimeUser', _value);
   }
 
   String _whoAreU = '0';

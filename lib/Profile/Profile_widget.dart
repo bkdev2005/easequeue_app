@@ -267,8 +267,14 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                         });
                       });
                       if(widget.backButton != true){
+                        setState(() {
+                          FFAppState().fistTimeUser = true;
+                        });
                       navigateTo(context, const HomePageWidget());
                       }else{
+                        setState(() {
+                          FFAppState().fistTimeUser = false;
+                        });
                        context.pop();
                       }
                     }

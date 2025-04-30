@@ -409,7 +409,14 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         8, 25, 0, 0),
                                     child: FFButtonWidget(
-                                      onPressed: () {
+                                      onPressed: () async{
+                                        if(FFAppState().fistTimeUser){
+                                          final response = await fetchData('user/me',
+                                          context)?.then((value) {
+                                          if(value != null){
+                                            FFAppState().token = getJsonField(value, r'''$.access_token''');
+                                          }});
+                                        }
                                         context.pop();
                                         context.pop();
                                         context.pop();

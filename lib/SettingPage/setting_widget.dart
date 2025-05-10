@@ -1,7 +1,13 @@
+import 'dart:developer';
+
+import 'package:eqlite/Auth/Login/Login_widget.dart';
 import 'package:eqlite/SettingPage/setting_model.dart';
+import 'package:eqlite/apiFunction.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
+import '../Component/Confirmation/permissionConfirmation.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
@@ -93,7 +99,7 @@ class _SettingPageWidgetState extends State<SettingPageWidget> {
                 ),
                 tileColor: FlutterFlowTheme.of(context).secondaryBackground,
                 activeColor: FlutterFlowTheme.of(context).primary,
-                activeTrackColor: FlutterFlowTheme.of(context).accent1,
+                activeTrackColor: FlutterFlowTheme.of(context).accent2,
                 dense: false,
                 controlAffinity: ListTileControlAffinity.trailing,
                 contentPadding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
@@ -125,18 +131,35 @@ class _SettingPageWidgetState extends State<SettingPageWidget> {
               ),
               tileColor: FlutterFlowTheme.of(context).secondaryBackground,
               activeColor: FlutterFlowTheme.of(context).primary,
-              activeTrackColor: FlutterFlowTheme.of(context).accent1,
+              activeTrackColor: FlutterFlowTheme.of(context).accent2,
               dense: false,
               controlAffinity: ListTileControlAffinity.trailing,
               contentPadding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
             ),
           ),
-          Divider(
+          const Divider(
             thickness: 1,
           ),
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-            child: Container(
+            child: GestureDetector( onTap: (){
+              showDialog(context: context, builder: (context) {
+                return const ConfirmationWidget(title: 'Delete Account', subtitle: 'Are you sure want to delete this account?',);
+              }).then((value) async{
+                if(value){
+                  await deleteData({}, 'user/${FFAppState().userId}').then((value) {
+                    log('response: $value');
+                    log('user_id: ${FFAppState().userId}');
+                    log('token: ${FFAppState().token}');
+                    if(value){
+                    Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginWidget()));
+                    }else{
+                      Fluttertoast.showToast(msg: 'Something went wrong');
+                    }
+                  });
+                }
+              });
+            },  child: Container(
               decoration: BoxDecoration(
                 color: FlutterFlowTheme.of(context).primaryBackground,
               ),
@@ -170,7 +193,7 @@ class _SettingPageWidgetState extends State<SettingPageWidget> {
                 ),
               ),
             ),
-          ),
+          )),
           Divider(
             thickness: 1,
           ),

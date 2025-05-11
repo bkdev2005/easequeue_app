@@ -12,6 +12,7 @@ import 'package:eqlite/function.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
+import 'package:screenshot/screenshot.dart';
 
 import '../Component/Confirmation/exitConfirmation.dart';
 import '../apiFunction.dart';
@@ -69,6 +70,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   }
 
   void callAppointments(){
+    log('Calling Appointments');
     fetchData(
         'customer_appointments/${FFAppState().userId}?start_date=${todayDate()}&status=1',
         context)
@@ -96,6 +98,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
         });
       }
       log('value: $value');
+      log('Called Appointments');
     }).then((value) {
 
     });
@@ -105,10 +108,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     String token = FFAppState().token;
     log('token: $token');
     try {
+
       _webSocket = await WebSocket.connect(
           'ws://15.206.84.199/api/v1/ws/${appointments[0]['queue_id']}/${todayDate()}',
-          headers: {'Authorization': 'Bearer $token'});
-
+          headers: {'Authorization': 'Bearer ${FFAppState().token}'});
       // Listen to incoming messages
       _webSocket?.listen(
         (message) {
@@ -533,292 +536,299 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                         r'''$.data''');
                                                   });
                                                 }
-                                                return
-                                                    GestureDetector(
-                                                    onTap: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder: (context) =>
-                                                                  DetailAppointmentsWidget())).then((value) {
-                                                        callAppointments();
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                        decoration: BoxDecoration(
-                                                            borderRadius: const BorderRadius.only(
-                                                                bottomLeft: Radius
-                                                                    .circular(
-                                                                    16),
-                                                                bottomRight: Radius
-                                                                    .circular(
-                                                                    16)),
-                                                            color: FlutterFlowTheme.of(context).primaryBackground
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              20,
-                                                              20,
-                                                              20,
-                                                              15),
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                            MainAxisSize
-                                                                .max,
-                                                            mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                            children: [
-                                                              Row(
+                                                return SingleChildScrollView(
+                                                    scrollDirection: Axis.horizontal,
+                                                    child: Row(
+                                                  children: List.generate(appointments.length, (index) {
+                                                    return GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                              context,
+                                                              MaterialPageRoute(
+                                                                  builder: (context) =>
+                                                                      DetailAppointmentsWidget())).then((value) {
+                                                            log('call Appointments');
+                                                            callAppointments();
+                                                          });
+                                                        },
+                                                        child: Container(
+                                                          height: 200,
+                                                            width: MediaQuery.of(context).size.width,
+                                                            decoration: BoxDecoration(
+                                                                borderRadius: const BorderRadius.only(
+                                                                    bottomLeft: Radius
+                                                                        .circular(
+                                                                        16),
+                                                                    bottomRight: Radius
+                                                                        .circular(
+                                                                        16)),
+                                                                color: FlutterFlowTheme.of(context).primaryBackground
+                                                            ),
+                                                            child: Expanded( child: Padding(
+                                                              padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  20,
+                                                                  20,
+                                                                  20,
+                                                                  15),
+                                                              child: Column(
                                                                 mainAxisSize:
                                                                 MainAxisSize
                                                                     .max,
+                                                                mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
                                                                 children: [
-                                                                  ClipRRect(
-                                                                    borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(8),
-                                                                    child: Image
-                                                                        .network(
-                                                                      'https://picsum.photos/seed/577/600',
-                                                                      width: 60,
-                                                                      height:
-                                                                      60,
-                                                                      fit: BoxFit
-                                                                          .cover,
-                                                                    ),
-                                                                  ),
-                                                                  Expanded(
-                                                                    child:
-                                                                    Padding(
-                                                                      padding: EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                          10,
-                                                                          0,
-                                                                          0,
-                                                                          0),
-                                                                      child:
-                                                                      Column(
-                                                                        mainAxisSize:
-                                                                        MainAxisSize.max,
-                                                                        crossAxisAlignment:
-                                                                        CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Text(
-                                                                            appointments[0]['business_name'] ??
-                                                                                'N/A',
-                                                                            style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                              fontFamily: 'Inter',
-                                                                              fontSize: 16,
-                                                                              letterSpacing: 0.0,
-                                                                              fontWeight: FontWeight.w500,
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0,
-                                                                                0,
-                                                                                0,
-                                                                                0),
-                                                                            child:
-                                                                            Text(
-                                                                              '${(getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].building''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].street_1''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].country''')).toString()}' + '-${(getJsonField(appointments[0], r'''$.business_address[0].postal_code''')).toString()}',
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 14,
-                                                                                letterSpacing: 0.0,
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          Padding(
-                                                                            padding: EdgeInsetsDirectional.fromSTEB(
-                                                                                0,
-                                                                                3,
-                                                                                0,
-                                                                                0),
-                                                                            child:
-                                                                            Text(
-                                                                              '🕐 21 min - 8.0km',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 12,
-                                                                                letterSpacing: 0.0,
-                                                                                fontWeight: FontWeight.normal,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
+                                                              Expanded( child:
+                                                                  Row(
+                                                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                                                    mainAxisSize:
+                                                                    MainAxisSize
+                                                                        .max,
+                                                                    children: [
+                                                                      ClipRRect(
+                                                                        borderRadius:
+                                                                        BorderRadius
+                                                                            .circular(8),
+                                                                        child: Image
+                                                                            .network(
+                                                                          'https://picsum.photos/seed/577/600',
+                                                                          width: 60,
+                                                                          height:
+                                                                          60,
+                                                                          fit: BoxFit
+                                                                              .cover,
+                                                                        ),
                                                                       ),
+                                                                      Expanded( child:
+                                                                        Padding(
+                                                                          padding: EdgeInsetsDirectional
+                                                                              .fromSTEB(
+                                                                              10,
+                                                                              0,
+                                                                              0,
+                                                                              0),
+                                                                          child:
+                                                                          Column(
+                                                                            mainAxisSize:
+                                                                            MainAxisSize.max,
+                                                                            crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                            children: [
+                                                                              Text(
+                                                                                appointments[0]['business_name'] ??
+                                                                                    'N/A',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                  fontFamily: 'Inter',
+                                                                                  fontSize: 16,
+                                                                                  letterSpacing: 0.0,
+                                                                                  fontWeight: FontWeight.w500,
+                                                                                ),
+                                                                              ),
+                                                                              Padding(
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                    0,
+                                                                                    0,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
+                                                                                Expanded( child:
+                                                                                 Text(
+                                                                                  '${((getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString() != '')? (getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString()+', ': ''}' + '${(getJsonField(appointments[0], r'''$.business_address[0].building''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].street_1''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].country''')).toString()}' + '-${(getJsonField(appointments[0], r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                  maxLines: null,
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 14,
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                                ),
+                                                                                )),
+                                                                              Padding(
+                                                                                padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                    0,
+                                                                                    3,
+                                                                                    0,
+                                                                                    0),
+                                                                                child:
+                                                                                Text(
+                                                                                  '🕐 21 min - 8.0km',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 12,
+                                                                                    letterSpacing: 0.0,
+                                                                                    fontWeight: FontWeight.normal,
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+
+                                                                      // GestureDetector(
+                                                                      //   onTap: (){},
+                                                                      //   child: const Row( children: [
+                                                                      //     Icon(Icons.info_outlined, size: 16,),
+                                                                      //     Padding(padding: EdgeInsets.only(left: 2),child: Text('INFO'))]
+                                                                      // ))
+                                                                      )],
+                                                                  )),
+                                                                  Divider(
+                                                                    thickness: 1,
+                                                                    height: 20,
+                                                                    color: Color(
+                                                                        0xB2BABABA),
+                                                                  ),
+                                                                  Padding(
+                                                                    padding:
+                                                                    EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        15,
+                                                                        0,
+                                                                        15,
+                                                                        0),
+                                                                    child: Row(
+                                                                      mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .max,
+                                                                      mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceEvenly,
+                                                                      children: [
+
+                                                                          Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                5,
+                                                                                0,
+                                                                                5,
+                                                                                0),
+                                                                            child:
+                                                                            Column(
+                                                                              mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                              children: [
+                                                                                Text(
+                                                                                  '${messageList['current_token'] ?? '0'}',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 20,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                                Text(
+                                                                                  'Your token',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 12,
+                                                                                    color: Color(0xFFADADAD),
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+
+                                                                        const SizedBox(
+                                                                          height:
+                                                                          50,
+                                                                          child:
+                                                                          VerticalDivider(
+                                                                            thickness:
+                                                                            1,
+                                                                            color: Color(
+                                                                                0xB2D0D0D0),
+                                                                          ),
+                                                                        ),
+
+                                                                          Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                5,
+                                                                                0,
+                                                                                5,
+                                                                                0),
+                                                                            child:
+                                                                            Column(
+                                                                              mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                              children: [
+                                                                                Text(
+                                                                                  '${messageList['waiting_count'] ?? ''}',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 20,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                                Text(
+                                                                                  'Waiting count',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 12,
+                                                                                    color: Color(0xFFADADAD),
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+
+                                                                        const SizedBox(
+                                                                          height:
+                                                                          50,
+                                                                          child:
+                                                                          VerticalDivider(
+                                                                            thickness:
+                                                                            1,
+                                                                            color: Color(
+                                                                                0xB2D0D0D0),
+                                                                          ),
+                                                                        ),
+
+                                                                          Padding(
+                                                                            padding: EdgeInsetsDirectional.fromSTEB(
+                                                                                5,
+                                                                                0,
+                                                                                0,
+                                                                                0),
+                                                                            child:
+                                                                            Column(
+                                                                              mainAxisSize:
+                                                                              MainAxisSize.max,
+                                                                              mainAxisAlignment:
+                                                                              MainAxisAlignment.center,
+                                                                              children: [
+                                                                                Text(
+                                                                                  '${messageList['estimated_appointment_time'] ?? ''}',
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 20,
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                                Text(
+                                                                                  'Waiting time',
+                                                                                  textAlign: TextAlign.center,
+                                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                    fontFamily: 'Inter',
+                                                                                    fontSize: 12,
+                                                                                    color: Color(0xFFADADAD),
+                                                                                    letterSpacing: 0.0,
+                                                                                  ),
+                                                                                ),
+                                                                              ],
+                                                                            ),
+                                                                          ),
+
+                                                                      ],
                                                                     ),
                                                                   ),
-                                                                  // GestureDetector(
-                                                                  //   onTap: (){},
-                                                                  //   child: const Row( children: [
-                                                                  //     Icon(Icons.info_outlined, size: 16,),
-                                                                  //     Padding(padding: EdgeInsets.only(left: 2),child: Text('INFO'))]
-                                                                  // ))
                                                                 ],
                                                               ),
-                                                              Divider(
-                                                                thickness: 1,
-                                                                height: 20,
-                                                                color: Color(
-                                                                    0xB2BABABA),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    15,
-                                                                    0,
-                                                                    15,
-                                                                    0),
-                                                                child: Row(
-                                                                  mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                                  mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceEvenly,
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                      Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                                                            5,
-                                                                            0,
-                                                                            5,
-                                                                            0),
-                                                                        child:
-                                                                        Column(
-                                                                          mainAxisSize:
-                                                                          MainAxisSize.max,
-                                                                          children: [
-                                                                            Text(
-                                                                              '${messageList['current_token'] ?? '0'}',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 20,
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              'Your token',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 12,
-                                                                                color: Color(0xFFADADAD),
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                      height:
-                                                                      50,
-                                                                      child:
-                                                                      VerticalDivider(
-                                                                        thickness:
-                                                                        1,
-                                                                        color: Color(
-                                                                            0xB2D0D0D0),
-                                                                      ),
-                                                                    ),
-                                                                    Expanded(
-                                                                      child:
-                                                                      Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                                                            5,
-                                                                            0,
-                                                                            5,
-                                                                            0),
-                                                                        child:
-                                                                        Column(
-                                                                          mainAxisSize:
-                                                                          MainAxisSize.max,
-                                                                          children: [
-                                                                            Text(
-                                                                              '${messageList['waiting_count'] ?? ''}',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 20,
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              'Waiting count',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 12,
-                                                                                color: Color(0xFFADADAD),
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                    const SizedBox(
-                                                                      height:
-                                                                      50,
-                                                                      child:
-                                                                      VerticalDivider(
-                                                                        thickness:
-                                                                        1,
-                                                                        color: Color(
-                                                                            0xB2D0D0D0),
-                                                                      ),
-                                                                    ),
-                                                                    Expanded(
-                                                                      child:
-                                                                      Padding(
-                                                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                                                            5,
-                                                                            0,
-                                                                            0,
-                                                                            0),
-                                                                        child:
-                                                                        Column(
-                                                                          mainAxisSize:
-                                                                          MainAxisSize.max,
-                                                                          mainAxisAlignment:
-                                                                          MainAxisAlignment.center,
-                                                                          children: [
-                                                                            Text(
-                                                                              '${messageList['estimated_appointment_time'] ?? ''}',
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 20,
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                            Text(
-                                                                              'Waiting time',
-                                                                              textAlign: TextAlign.center,
-                                                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                                fontFamily: 'Inter',
-                                                                                fontSize: 12,
-                                                                                color: Color(0xFFADADAD),
-                                                                                letterSpacing: 0.0,
-                                                                              ),
-                                                                            ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        )));
+                                                            ))));
+                                                  })
+                                                ));
+
                                               })
                                       ]))),
                               Padding(

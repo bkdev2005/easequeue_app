@@ -564,7 +564,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                         16)),
                                                                 color: FlutterFlowTheme.of(context).primaryBackground
                                                             ),
-                                                            child: Expanded( child: Padding(
+                                                            child: Padding(
                                                               padding:
                                                               const EdgeInsetsDirectional
                                                                   .fromSTEB(
@@ -633,7 +633,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                     0,
                                                                                     0),
                                                                                 child:
-                                                                                Expanded( child:
+
                                                                                  Text(
                                                                                   '${((getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString() != '')? (getJsonField(appointments[0], r'''$.business_address[0].unit_number''')).toString()+', ': ''}' + '${(getJsonField(appointments[0], r'''$.business_address[0].building''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].street_1''')).toString()}, ' + '${(getJsonField(appointments[0], r'''$.business_address[0].country''')).toString()}' + '-${(getJsonField(appointments[0], r'''$.business_address[0].postal_code''')).toString()}',
                                                                                   maxLines: null,
@@ -644,7 +644,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                     fontWeight: FontWeight.normal,
                                                                                   ),
                                                                                 ),
-                                                                                )),
+                                                                                ),
                                                                               Padding(
                                                                                 padding: EdgeInsetsDirectional.fromSTEB(
                                                                                     0,
@@ -825,7 +825,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                   ),
                                                                 ],
                                                               ),
-                                                            ))));
+                                                            )));
                                                   })
                                                 ));
 

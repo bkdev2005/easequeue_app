@@ -91,11 +91,15 @@ class _SettingWidgetState extends State<SettingWidget> {
               children: [
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 1, 0, 0),
-                  child: Container(
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileWidget(backButton: true,)));
+                    },
+                    child: Container(
                     width: double.infinity,
                     decoration: BoxDecoration(
                       color: FlutterFlowTheme.of(context).secondaryBackground,
-                      boxShadow: [
+                      boxShadow:  const [
                         BoxShadow(
                           blurRadius: 3,
                           color: Color(0x33000000),
@@ -112,8 +116,8 @@ class _SettingWidgetState extends State<SettingWidget> {
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           Container(
-                            width: 70,
-                            height: 70,
+                            width: 60,
+                            height: 60,
                             decoration: BoxDecoration(
                               color: FlutterFlowTheme.of(context).accent2,
                               shape: BoxShape.circle,
@@ -132,8 +136,8 @@ class _SettingWidgetState extends State<SettingWidget> {
                                   errorBuilder: (context, error, stackTrace) {
                                     return const Icon(Icons.person_rounded, size: 40, color: Colors.white,); // Show fallback image
                                   },
-                                  width: 60,
-                                  height: 60,
+                                  width: 40,
+                                  height: 40,
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -178,7 +182,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                       ),
                     ),
                   ),
-                ),
+                )),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 16, 0, 0),
                   child: Text(

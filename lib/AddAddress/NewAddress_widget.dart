@@ -156,10 +156,12 @@ class _BusinessLocationWidgetState extends State<BusinessLocationWidget> {
                             latitude: location?[1], longitude: location?[2],
                           )));
                     },
-                      child: Container(
+                      child: Material( elevation: 2,
+                        borderRadius: BorderRadius.circular(30),
+                        child: Container(
                         decoration: BoxDecoration(
                           color: FlutterFlowTheme.of(context).primary,
-                          borderRadius: BorderRadius.circular(10),
+                          borderRadius: BorderRadius.circular(30),
                         ),
                         child: Padding(
                           padding: EdgeInsets.all(15),
@@ -191,7 +193,14 @@ class _BusinessLocationWidgetState extends State<BusinessLocationWidget> {
                           ),
                         ),
                       ),
-                    )),
+                    ))),
+                Padding(padding: EdgeInsets.all(20), child:
+                FFButtonWidget(text: 'Add other location',
+                    onPressed: (){
+                      Navigator.push(context, MaterialPageRoute(
+                          builder: (context)=> BusinessCompletelocationWidget()));
+                    },
+                    options: buttonStyle(context)))
               ],
             ),
               if(showLoad)

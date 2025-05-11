@@ -131,7 +131,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           }
                         });
                       },
-                        child: Container(
+                        child: Stack( children: [ Container(
                         width: 100,
                         height: 100,
                         decoration: BoxDecoration(
@@ -157,6 +157,20 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                           ),
                         ),
                       ),
+                          SizedBox(height: 105, width: 105, child:
+                          Align(
+                            alignment: Alignment.bottomRight,
+                            child: Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.white
+                                ),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(8),
+                                    child: Icon(Icons.camera_alt, size: 20, )),
+                            ),
+                          ))
+                        ])
                       )],
                   ),
                 ),

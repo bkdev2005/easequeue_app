@@ -606,19 +606,25 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                   child: FFButtonWidget(
-                    onPressed: () {
+                    onPressed: () async{
                       final services = [];
+                      for (final x in serviceSelectQueue) {
                       for (final s in widget.services) {
+                        log('service: $s');
+                        if(x['service_id'] == s['service_id']['uuid']){
                         setState(() {
                           services.add(getJsonField(s, r'''$.uuid''')
                               .toString());
                         });
+                        }
+                      }
                       }
                       log('services: $services');
-                      sendData({
+                      log('servicesSelect: $serviceSelectQueue');
+                      final apiCall = await sendData({
                         "user_id": widget.uuid,
                         "priority": false,
-                        "queue_id": queueList[0]['queue_id'],
+                        "queue_id": selectedQueueId,
                         "queue_date": widget.date,
                         "token_number": "string",
                         "turn_time": 0,

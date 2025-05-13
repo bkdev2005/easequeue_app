@@ -414,7 +414,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                           final response = await fetchData('user/me',
                                           context)?.then((value) {
                                           if(value != null){
-                                            FFAppState().token = getJsonField(value, r'''$.access_token''');
+                                            // FFAppState().token = getJsonField(value, r'''$.data.access_token''');
                                           }});
                                         }
                                         context.pop();

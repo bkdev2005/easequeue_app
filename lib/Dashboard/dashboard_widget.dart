@@ -510,7 +510,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           image: const DecorationImage(
                                               image: AssetImage(
                                                   'assets/images/GOLDEN (2).gif'),
-                                              fit: BoxFit.cover),
+                                              fit: BoxFit.contain),
                                           borderRadius: const BorderRadius.only(
                                               bottomRight: Radius.circular(16),
                                               bottomLeft: Radius.circular(16))),
@@ -1050,7 +1050,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                   ),
                                   child: Image.asset(
                                     'assets/images/Live_your.png',
-                                    fit: BoxFit.cover,
+                                    fit: BoxFit.fill,
                                   ),
                                 ),
                               ),

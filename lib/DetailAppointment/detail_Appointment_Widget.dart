@@ -15,7 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class DetailAppointmentsWidget extends StatefulWidget {
-  const DetailAppointmentsWidget({super.key});
+  const   DetailAppointmentsWidget({super.key});
 
   @override
   State<DetailAppointmentsWidget> createState() => _DetailAppointmentsWidgetState();

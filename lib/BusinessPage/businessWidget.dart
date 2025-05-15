@@ -393,7 +393,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   ),
                                 );
                               },
-                              child: Material(
+                              child: Padding( padding: EdgeInsets.only(top: 12), child: Material(
                                 elevation: 2,
                                 borderRadius: BorderRadius.circular(12),
                                 color: Colors.white,
@@ -486,7 +486,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   ),
                                 ),
                               ),
-                            );
+                            ));
                           },
                         );
 

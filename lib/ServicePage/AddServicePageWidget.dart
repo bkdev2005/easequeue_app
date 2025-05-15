@@ -567,7 +567,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
-                                                          fontSize: 14,
+                                                          fontSize: 16,
                                                           letterSpacing: 0.0,
                                                         ),
                                               ),
@@ -583,7 +583,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontSize: 10,
+                                                          fontSize: 14,
                                                           fontFamily: 'Inter',
                                                           letterSpacing: 0.0,
                                                         ),
@@ -606,8 +606,15 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
                 child: FFButtonWidget(
                     onPressed: () {
-                      final selectDateJson = jsonDecode(widget.date);
-                      String date = '${(selectDateJson['year'])}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date']}';
+                      String date;
+                      if (widget.date == null) {
+                        // Fallback to today's date
+                        final now = DateTime.now();
+                        date = DateFormat('yyyy-MM-dd').format(now);
+                      } else {
+                        final selectDateJson = jsonDecode(widget.date);
+                        date = '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
+                      }
                       log('date select: $date');
                       if(selectedServiceData.isNotEmpty){
                         log('services: $selectedServiceData');

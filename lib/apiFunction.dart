@@ -19,7 +19,7 @@ import 'flutter_flow/flutter_flow_util.dart';
 // API url
 
 const String apiUrl =
-    'http://15.206.84.199/api/v1';
+    'http://15.207.20.38/api/v1';
 
 // Get API
 

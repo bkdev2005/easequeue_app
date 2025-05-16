@@ -58,11 +58,15 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   bool isLoading = false;
   String appointeeUUID = '';
 
+
   @override
   void dispose() {
     _model.dispose();
     super.dispose();
   }
+
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -119,19 +123,19 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                FlutterFlowIconButton(
-                  borderRadius: 8,
-                  buttonSize: 40,
-                  fillColor: FlutterFlowTheme.of(context).primary,
-                  icon: FaIcon(
-                    FontAwesomeIcons.ellipsisV,
-                    color: FlutterFlowTheme.of(context).info,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    print('IconButton pressed ...');
-                  },
-                ),
+                // FlutterFlowIconButton(
+                //   borderRadius: 8,
+                //   buttonSize: 40,
+                //   fillColor: FlutterFlowTheme.of(context).primary,
+                //   icon: FaIcon(
+                //     FontAwesomeIcons.ellipsisV,
+                //     color: FlutterFlowTheme.of(context).info,
+                //     size: 24,
+                //   ),
+                //   onPressed: () {
+                //     print('IconButton pressed ...');
+                //   },
+                // ),
               ],
             ),
           ],

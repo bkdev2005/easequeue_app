@@ -69,7 +69,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
     log('date: ${widget.date}');
     try {
       _webSocket = await WebSocket.connect(
-          'ws://15.206.84.199/api/v1/ws/$url/${widget.date}',
+          'ws://15.207.20.38/api/v1/ws/$url/${widget.date}',
           headers: {'Authorization': 'Bearer $token'});
       print("Connected to WebSocket at $url");
 

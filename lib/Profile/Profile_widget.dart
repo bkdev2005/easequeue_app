@@ -51,7 +51,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
     _model.dobFocusNode4 ??= FocusNode();
 
     imageUrl =
-        'http://15.206.84.199/shared/${FFAppState().user['profile_picture']}';
+        'http://15.207.20.38/shared/${FFAppState().user['profile_picture']}';
 
     genderSelected = (FFAppState().user['gender'] == 'Male' ||
             FFAppState().user['gender'] == 1)
@@ -134,7 +134,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                     log('user: ${FFAppState().user}');
                                     setState(() {
                                       imageUrl =
-                                          "http://15.206.84.199/shared/${value['image_url']}";
+                                          "http://15.207.20.38/shared/${value['image_url']}";
                                     });
 
                                     log('image: $imageUrl');

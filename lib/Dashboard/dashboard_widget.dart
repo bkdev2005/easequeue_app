@@ -110,7 +110,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     try {
 
       _webSocket = await WebSocket.connect(
-          'ws://15.206.84.199/api/v1/ws/${appointments[0]['queue_id']}/${todayDate()}',
+          'ws://15.207.20.38/api/v1/ws/${appointments[0]['queue_id']}/${todayDate()}',
           headers: {'Authorization': 'Bearer ${FFAppState().token}'});
       // Listen to incoming messages
       _webSocket?.listen(
@@ -221,7 +221,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             child: Image.network(
-                                              'http://15.206.84.199/shared/${FFAppState().user['profile_picture']}',
+                                              'http://15.207.20.38/shared/${FFAppState().user['profile_picture']}',
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Icon(

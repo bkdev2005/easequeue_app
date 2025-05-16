@@ -1,7 +1,8 @@
 import 'dart:developer';
 
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
-
+import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import '../apiFunction.dart';
 import '../function.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -31,6 +32,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   List<String> favBusinessList = [];
   List<dynamic> services = [];
   List<String> selectServiceId = [];
+  Location location = Location();
+  LocationData? _locationData;
+  bool _serviceEnabled = false;
+  PermissionStatus? _permissionGranted;
 
   @override
   void initState() {
@@ -38,6 +43,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     _model = createModel(context, () => BusinessPageModel());
     setState(() {
       isMainLoading = true;
+    });
+    getLocation();
+    location.onLocationChanged.listen((LocationData currentLocation) {
+      print('Updated Location: ${currentLocation.latitude}, ${currentLocation.longitude}');
     });
     next7Days = getNext7DaysAsMap();
     setState(() {
@@ -76,25 +85,49 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     });
   }
 
+  Future<void> getLocation() async {
+    _serviceEnabled = await location.serviceEnabled();
+    if (!_serviceEnabled) {
+      _serviceEnabled = await location.requestService();
+      if (!_serviceEnabled) return;
+    }
+
+    _permissionGranted = await location.hasPermission();
+    if (_permissionGranted == PermissionStatus.denied) {
+      _permissionGranted = await location.requestPermission();
+      if (_permissionGranted != PermissionStatus.granted) return;
+    }
+
+    _locationData = await location.getLocation();
+
+    log('Latitude: ${_locationData?.latitude}');
+    log('Longitude: ${_locationData?.longitude}');
+
+    setState(() {}); // Update UI
+  }
+
   void callBusinessApi() {
-    fetchData(
-            'business_list?page=$page&page_size=$limit&category_id=${widget.categoryId}',
-            // '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
-            context)
-        ?.then((value) {
+    // Construct services query
+    final servicesQuery = selectServiceId
+        .map((id) => 'services=$id')
+        .join('&');
+
+    // Construct full URL
+    final url = 'business_list?page=$page&page_size=$limit'
+        '&category_id=${widget.categoryId}'
+        '${servicesQuery.isNotEmpty ? '&$servicesQuery' : ''}';
+
+    fetchData(url, context)?.then((value) {
       log('value: $value');
       if (value != null) {
         setState(() {
-          data =
-              getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+          data = getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
           if (value.length < limit) {
             hasMore = false;
           } else {
             hasMore = true;
             page++;
           }
-        });
-        setState(() {
           isMainLoading = false;
         });
       } else {
@@ -111,7 +144,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   bool hasMore = false;
   bool isMainLoading = false;
   int page = 1;
-  int limit = 3;
+  int limit = 10;
   String selectDay = '';
   List<dynamic> next7Days = [];
 
@@ -325,21 +358,22 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                       children: List.generate(services.length, (index) {
                         final service = services[index];
                         return Padding(padding: EdgeInsets.only(left: 10) ,child: GestureDetector(
-                            onTap: (){
-                              if(selectServiceId.contains(getJsonField(service, r'''$.uuid'''))){
+                            onTap: () {
+                              final uuid = getJsonField(service, r'''$.uuid''');
                               setState(() {
-                                selectServiceId.remove(getJsonField(service, r'''$.uuid'''));
+                                if (selectServiceId.contains(uuid)) {
+                                  selectServiceId.remove(uuid);
+                                } else {
+                                  selectServiceId.add(uuid);
+                                }
                               });
-                              }else{
-                                setState(() {
-                                  selectServiceId.add(getJsonField(service, r'''$.uuid'''));
-                                });
-                              }
+                              callBusinessApi();
                             },
                             child: Container(
                           decoration: BoxDecoration(
-                              border: Border.all(color: Colors.black),
-                              color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? FlutterFlowTheme.of(context).primary : Colors.transparent,
+                              border: Border.all(color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? Colors.transparent : Colors.black26),
+                              color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))?
+                              FlutterFlowTheme.of(context).primary : Colors.transparent,
                               borderRadius: BorderRadius.circular(30)),
                           child: Padding(
                             padding: EdgeInsets.fromLTRB(15 , 6, 15, 6),
@@ -375,7 +409,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                         }
                         return ListView.builder(
                           controller: controller,
-                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          padding: const EdgeInsets.only(bottom: 20),
                           itemCount: businessList.length,
                           itemBuilder: (context, businessListIndex) {
                             final businessListItem = businessList[businessListIndex];
@@ -406,38 +440,24 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   child: Row(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      // Favourite Icon
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            page = 1;
-                                            data.clear();
-                                          });
-                                          sendData({
-                                            "user_id": FFAppState().userId,
-                                            "business_id": businessListItem['uuid']
-                                          }, 'favourite').then((value) {
-                                            log('value: $value');
-                                            callBusinessApi();
-                                          });
-                                        },
-                                        child: Icon(
-                                          businessListItem['is_favourite']
-                                              ? Icons.favorite_rounded
-                                              : Icons.favorite_border_rounded,
-                                          size: 28,
-                                          color: isFavourite
-                                              ? FlutterFlowTheme.of(context).primary
-
-                                              : FlutterFlowTheme.of(context).primary
-                                        ),
-                                      ),
-
-                                      const SizedBox(width: 12),
-
+                                  Padding( padding: EdgeInsets.only(top: 5), child:
+                                      Container(
+                                        width: 35,
+                                          height: 35,
+                                          decoration: BoxDecoration(
+                                            border: Border.all(
+                                              color: Colors.black26,
+                                            ),
+                                            borderRadius: BorderRadius.circular(5)
+                                          ),
+                                          child: Padding( padding: EdgeInsets.all(8), child: (businessListItem['profile_picture']!= null)?
+                                              Image.network('http://15.207.20.38/shared/${businessListItem['profile_picture']}',
+                                                fit: BoxFit.contain,):
+                                      Image.asset('assets/images/images.png'))
+                                      )),
                                       // Business Info
                                       Expanded(
-                                        child: Column(
+                                        child: Padding( padding: EdgeInsets.only(left: 10), child:  Column(
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
                                             Text(
@@ -476,12 +496,39 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                             ),
                                           ],
                                         ),
-                                      ),
+                                      )),
 
                                       const SizedBox(width: 12),
 
                                       // Info Icon
-                                      const Icon(Icons.info_outline_rounded, color: Colors.grey),
+                                      // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
+
+                                      GestureDetector(
+                                        onTap: () {
+                                          // setState(() {
+                                          //   page = 1;
+                                          //   // data.clear();
+                                          // });
+                                          sendData({
+                                            "user_id": FFAppState().userId,
+                                            "business_id": businessListItem['uuid']
+                                          }, 'favourite').then((value) {
+                                            log('value: $value');
+                                            callBusinessApi();
+                                          });
+                                        },
+                                        child: Icon(
+                                          businessListItem['is_favourite']
+                                              ? Icons.favorite_rounded
+                                              : Icons.favorite_border_rounded,
+                                          size: 28,
+                                          color: isFavourite
+                                              ? FlutterFlowTheme.of(context).primary
+
+                                              : FlutterFlowTheme.of(context).primary
+                                        ),
+                                      ),
+
                                     ],
                                   ),
                                 ),

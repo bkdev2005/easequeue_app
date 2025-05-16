@@ -155,7 +155,7 @@ class _NavBarPageState extends State<NavBarPage> {
           return false;
         },
         child: Scaffold(
-        body:  HomePageWidget())
+        body: HomePageWidget())
     );
   }
 }

@@ -104,12 +104,12 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                         appointmentList[addressListIndex];
                         return Padding(
                           padding:
-                          EdgeInsetsDirectional.fromSTEB(15, 8, 15, 0),
-                          child: Card(
+                          EdgeInsetsDirectional.fromSTEB(15, 15, 15, 0),
+                          child: Material(
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             color: FlutterFlowTheme.of(context)
                                 .secondaryBackground,
-                            elevation: 1,
+                            elevation: 2,
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),
                             ),

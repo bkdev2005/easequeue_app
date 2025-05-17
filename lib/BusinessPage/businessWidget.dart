@@ -2,14 +2,13 @@ import 'dart:developer';
 
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:flutter/material.dart';
-import 'package:location/location.dart';
-import '../apiFunction.dart';
 import '../function.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
+import '../apiFunction.dart';
 import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:easy_debounce/easy_debounce.dart';
 import 'package:flutter/material.dart';
@@ -19,8 +18,10 @@ import 'package:provider/provider.dart';
 import 'businessModel.dart';
 
 class BusinessPageWidget extends StatefulWidget {
-  const BusinessPageWidget({super.key, required this.categoryId});
+  const BusinessPageWidget({super.key, required this.categoryId, this.latitude, this.longitude});
   final String categoryId;
+  final String? latitude;
+  final String? longitude;
   @override
   State<BusinessPageWidget> createState() => _BusinessPageWidgetState();
 }
@@ -32,10 +33,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   List<String> favBusinessList = [];
   List<dynamic> services = [];
   List<String> selectServiceId = [];
-  Location location = Location();
-  LocationData? _locationData;
-  bool _serviceEnabled = false;
-  PermissionStatus? _permissionGranted;
+  String? latitude;
+  String? longitude;
 
   @override
   void initState() {
@@ -44,15 +43,26 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     setState(() {
       isMainLoading = true;
     });
-    getLocation();
-    location.onLocationChanged.listen((LocationData currentLocation) {
-      print('Updated Location: ${currentLocation.latitude}, ${currentLocation.longitude}');
+    if(widget.longitude == null && widget.latitude == null){
+    getLocation().then((value) {
+      log('location: ${value?[1]}, ${value?[2]}');
+      latitude = value?[1].toString();
+      longitude = value?[2].toString();
+      callBusinessApi();
     });
+    }else{
+      latitude = widget.latitude;
+      longitude = widget.longitude;
+      callBusinessApi();
+    }
+
+
+
     next7Days = getNext7DaysAsMap();
     setState(() {
       selectDay = next7Days.first;
     });
-    callBusinessApi();
+
     fetchData('services/${widget.categoryId}', context)?.then((value) {
       log('value: $value');
       if (value != null) {
@@ -85,39 +95,24 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     });
   }
 
-  Future<void> getLocation() async {
-    _serviceEnabled = await location.serviceEnabled();
-    if (!_serviceEnabled) {
-      _serviceEnabled = await location.requestService();
-      if (!_serviceEnabled) return;
-    }
-
-    _permissionGranted = await location.hasPermission();
-    if (_permissionGranted == PermissionStatus.denied) {
-      _permissionGranted = await location.requestPermission();
-      if (_permissionGranted != PermissionStatus.granted) return;
-    }
-
-    _locationData = await location.getLocation();
-
-    log('Latitude: ${_locationData?.latitude}');
-    log('Longitude: ${_locationData?.longitude}');
-
-    setState(() {}); // Update UI
-  }
 
   void callBusinessApi() {
     // Construct services query
-    final servicesQuery = selectServiceId
-        .map((id) => 'services=$id')
-        .join('&');
+    final servicesQuery = selectServiceId.map((id) => 'services=$id').join('&');
+
+    // Construct location query if available
+    final locationQuery = (latitude != null && longitude != null)
+        ? '&user_location=$latitude&user_location=$longitude'
+        : '';
 
     // Construct full URL
     final url = 'business_list?page=$page&page_size=$limit'
         '&category_id=${widget.categoryId}'
-        '${servicesQuery.isNotEmpty ? '&$servicesQuery' : ''}';
+        '${servicesQuery.isNotEmpty ? '&$servicesQuery' : ''}'
+        '$locationQuery';
 
     fetchData(url, context)?.then((value) {
+      log('url: $url');
       log('value: $value');
       if (value != null) {
         setState(() {
@@ -137,6 +132,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       }
     });
   }
+
 
   bool searchBar = false;
   final controller = ScrollController();
@@ -433,7 +429,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                 color: Colors.white,
                                 child: Container(
                                   margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-                                  padding: const EdgeInsets.all(12),
+                                  padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(12),
                                   ),
@@ -521,7 +517,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                           businessListItem['is_favourite']
                                               ? Icons.favorite_rounded
                                               : Icons.favorite_border_rounded,
-                                          size: 28,
+                                          size: 24,
                                           color: isFavourite
                                               ? FlutterFlowTheme.of(context).primary
 

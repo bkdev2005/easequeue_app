@@ -545,8 +545,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               MainAxisAlignment.spaceAround,
                                           children: [
                                             Container(
-                                              width: 40,
-                                              height: 40,
+                                              width: 35,
+                                              height: 35,
                                               clipBehavior: Clip.antiAlias,
                                               decoration: BoxDecoration(
                                                 shape: BoxShape.circle,
@@ -587,7 +587,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
-                                                          fontSize: 14,
+                                                          fontSize: 12,
                                                           fontFamily: 'Inter',
                                                           letterSpacing: 0.0,
                                                         ),

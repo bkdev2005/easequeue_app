@@ -380,11 +380,10 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       Expanded(
                           child: Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
-                        child: Column(
+                        child: SingleChildScrollView( child: Column(
                           mainAxisSize: MainAxisSize.max,
                           children: List.generate(queueList.length, (index) {
                             final queue = queueList[index];
-
                             if (queueList.isEmpty) {
                               return Center(
                                 child: emptyList(),
@@ -393,7 +392,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
 
                             return Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
-                                    15, 10, 15, 0),
+                                    15, 10, 15, (index == queueList.length - 1)? 10 : 0),
                                 child: GestureDetector(
                                   onTap: () {
 
@@ -491,7 +490,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                 ));
                           }),
                         ),
-                      )),
+                      ))),
                       Container(
                         decoration: const BoxDecoration(
                           color: Color(0xFFE9E9E9),

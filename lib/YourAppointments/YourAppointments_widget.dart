@@ -90,7 +90,7 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                   return ListView.builder(
                       padding: const EdgeInsets.fromLTRB(
                         0,
-                        5,
+                        0,
                         0,
                         20,
                       ),
@@ -101,7 +101,7 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                         final appointmentListItem =
                             appointmentList[addressListIndex];
                         return Padding(
-                          padding: EdgeInsetsDirectional.fromSTEB(20, 8, 20, 0),
+                          padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
                           child: Material(
                             clipBehavior: Clip.antiAliasWithSaveLayer,
                             color: FlutterFlowTheme.of(context)

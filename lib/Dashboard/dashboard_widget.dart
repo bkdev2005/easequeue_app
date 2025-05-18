@@ -44,7 +44,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   WebSocket? _webSocket;
   StreamController<dynamic>? _messageStreamController;
-  dynamic messageList;
+  List<dynamic> messageList = [];
   final PageController _pageController = PageController();
   int _currentPage = 0;
   String? latitude;
@@ -98,7 +98,19 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           });
 
           log('Appointments Customer: $appointments');
-          await connect();
+          log('length: ${appointments.length}');
+          for(int i=0; i<appointments.length; i++){
+            log('appoint: ${appointments[i]['queue_id']}');
+            if(i%2 == 0){
+            await connect(appointments[i]['queue_id']);
+            callAppointments();
+            }else{
+              await connect(appointments[i]['queue_id']);
+            }
+          }
+          setState(() {
+            isMainLoading = false;
+          });
         } else {
           setState(() {
             isMainLoading = false;
@@ -114,12 +126,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     }).then((value) {});
   }
 
-  Future<void> connect() async {
+  Future<void> connect(String queueId) async {
+    log('calling Queue: $queueId websocket');
     String token = FFAppState().token;
     log('token: $token');
     try {
       _webSocket = await WebSocket.connect(
-          'ws://15.207.20.38/api/v1/ws/${appointments[0]['queue_id']}/${todayDate()}',
+          'ws://15.207.20.38/api/v1/ws/$queueId/${todayDate()}',
           headers: {'Authorization': 'Bearer ${FFAppState().token}'});
       // Listen to incoming messages
       _webSocket?.listen(
@@ -127,8 +140,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           log('message data: $message');
           _messageStreamController?.add(message);
           setState(() {
-            messageList = getJsonField(jsonDecode(message), r'''$.data''');
+            messageList.add(getJsonField(jsonDecode(message), r'''$.data'''));
           });
+          log('messageList: ${messageList.length}');
 
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
           log("Received: $message");
@@ -529,7 +543,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 child: Stack(
                                   children: [
                                     if (appointments.isNotEmpty &&
-                                        messageList != null)
+                                        messageList.isNotEmpty)
                                       StreamBuilder(
                                         stream:
                                             _messageStreamController?.stream,
@@ -623,15 +637,31 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           crossAxisAlignment:
                                                                               CrossAxisAlignment.start,
                                                                           children: [
-                                                                            ClipRRect(
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                              child: Image.network(
-                                                                                'https://picsum.photos/seed/577/600',
-                                                                                width: 60,
-                                                                                height: 60,
-                                                                                fit: BoxFit.cover,
-                                                                              ),
-                                                                            ),
+                                                                            Padding(
+                                                                                padding: EdgeInsets.only(top: 3),
+                                                                                child: Container(
+                                                                                    width: 45,
+                                                                                    height: 45,
+                                                                                    decoration: BoxDecoration(
+                                                                                        border: Border.all(
+                                                                                          color: Colors.black26,
+                                                                                        ),
+                                                                                        borderRadius:
+                                                                                        BorderRadius.circular(
+                                                                                            5)),
+                                                                                    child:  (appointmentDetail[
+                                                                                    'profile_picture'] !=
+                                                                                        null)
+                                                                                        ? Image.network(
+                                                                                      'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
+                                                                                      fit: BoxFit
+                                                                                          .contain,
+                                                                                    )
+                                                                                        : Padding(
+                                                                                        padding:
+                                                                                        EdgeInsets.all(8),
+                                                                                        child: Image.asset(
+                                                                                            'assets/images/images.png')))),
                                                                             Expanded(
                                                                               child: Padding(
                                                                                 padding: const EdgeInsetsDirectional.only(start: 10),
@@ -678,13 +708,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                               MainAxisAlignment.spaceEvenly,
                                                                           children: [
                                                                             _buildInfoColumn('Your token',
-                                                                                '${messageList['current_token'] ?? '0'}'),
+                                                                                '${messageList[index]['current_token'] ?? '0'}'),
                                                                             _buildDivider(),
                                                                             _buildInfoColumn('Waiting count',
-                                                                                '${messageList['waiting_count'] ?? ''}'),
+                                                                                '${messageList[index]['waiting_count'] ?? ''}'),
                                                                             _buildDivider(),
                                                                             _buildInfoColumn('Waiting time',
-                                                                                '${messageList['estimated_appointment_time'] ?? ''}'),
+                                                                                '${messageList[index]['estimated_appointment_time'] ?? ''}'),
                                                                           ],
                                                                         ),
                                                                       ),

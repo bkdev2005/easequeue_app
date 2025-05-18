@@ -18,7 +18,8 @@ import 'package:provider/provider.dart';
 import 'businessModel.dart';
 
 class BusinessPageWidget extends StatefulWidget {
-  const BusinessPageWidget({super.key, required this.categoryId, this.latitude, this.longitude});
+  const BusinessPageWidget(
+      {super.key, required this.categoryId, this.latitude, this.longitude});
   final String categoryId;
   final String? latitude;
   final String? longitude;
@@ -43,20 +44,18 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     setState(() {
       isMainLoading = true;
     });
-    if(widget.longitude == null && widget.latitude == null){
-    getLocation().then((value) {
-      log('location: ${value?[1]}, ${value?[2]}');
-      latitude = value?[1].toString();
-      longitude = value?[2].toString();
-      callBusinessApi();
-    });
-    }else{
+    if (widget.longitude == null && widget.latitude == null) {
+      getLocation().then((value) {
+        log('location: ${value?[1]}, ${value?[2]}');
+        latitude = value?[1].toString();
+        longitude = value?[2].toString();
+        callBusinessApi();
+      });
+    } else {
       latitude = widget.latitude;
       longitude = widget.longitude;
       callBusinessApi();
     }
-
-
 
     next7Days = getNext7DaysAsMap();
     setState(() {
@@ -95,7 +94,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     });
   }
 
-
   void callBusinessApi() {
     // Construct services query
     final servicesQuery = selectServiceId.map((id) => 'services=$id').join('&');
@@ -116,7 +114,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       log('value: $value');
       if (value != null) {
         setState(() {
-          data = getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+          data =
+              getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
           if (value.length < limit) {
             hasMore = false;
           } else {
@@ -132,7 +131,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       }
     });
   }
-
 
   bool searchBar = false;
   final controller = ScrollController();
@@ -353,35 +351,50 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                     child: Row(
                       children: List.generate(services.length, (index) {
                         final service = services[index];
-                        return Padding(padding: EdgeInsets.only(left: 10) ,child: GestureDetector(
-                            onTap: () {
-                              final uuid = getJsonField(service, r'''$.uuid''');
-                              setState(() {
-                                if (selectServiceId.contains(uuid)) {
-                                  selectServiceId.remove(uuid);
-                                } else {
-                                  selectServiceId.add(uuid);
-                                }
-                              });
-                              callBusinessApi();
-                            },
-                            child: Container(
-                          decoration: BoxDecoration(
-                              border: Border.all(color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? Colors.transparent : Colors.black26),
-                              color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))?
-                              FlutterFlowTheme.of(context).primary : Colors.transparent,
-                              borderRadius: BorderRadius.circular(30)),
-                          child: Padding(
-                            padding: EdgeInsets.fromLTRB(15 , 6, 15, 6),
-                            child: Text(
-                              getJsonField(service, r'''$.name'''),
-                              style: TextStyle(
-                                fontSize: 16,
-                                color: (selectServiceId.contains(getJsonField(service, r'''$.uuid''')))? Colors.white: Colors.black,
-                              ),
-                            ),
-                          ),
-                        )));
+                        return Padding(
+                            padding: EdgeInsets.only(left: 10),
+                            child: GestureDetector(
+                                onTap: () {
+                                  final uuid =
+                                      getJsonField(service, r'''$.uuid''');
+                                  setState(() {
+                                    if (selectServiceId.contains(uuid)) {
+                                      selectServiceId.remove(uuid);
+                                    } else {
+                                      selectServiceId.add(uuid);
+                                    }
+                                  });
+                                  callBusinessApi();
+                                },
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color: (selectServiceId.contains(
+                                                  getJsonField(
+                                                      service, r'''$.uuid''')))
+                                              ? Colors.transparent
+                                              : Colors.black26),
+                                      color: (selectServiceId.contains(
+                                              getJsonField(
+                                                  service, r'''$.uuid''')))
+                                          ? FlutterFlowTheme.of(context).primary
+                                          : Colors.transparent,
+                                      borderRadius: BorderRadius.circular(30)),
+                                  child: Padding(
+                                    padding: EdgeInsets.fromLTRB(15, 6, 15, 6),
+                                    child: Text(
+                                      getJsonField(service, r'''$.name'''),
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        color: (selectServiceId.contains(
+                                                getJsonField(
+                                                    service, r'''$.uuid''')))
+                                            ? Colors.white
+                                            : Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                )));
                       }),
                     )),
                 Divider(),
@@ -408,131 +421,171 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                           padding: const EdgeInsets.only(bottom: 20),
                           itemCount: businessList.length,
                           itemBuilder: (context, businessListIndex) {
-                            final businessListItem = businessList[businessListIndex];
-                            final isFavourite = favBusinessList.contains(businessListItem['uuid']);
+                            final businessListItem =
+                                businessList[businessListIndex];
+                            final isFavourite = favBusinessList
+                                .contains(businessListItem['uuid']);
 
                             return GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddServicePageWidget(
-                                      businessDetail: businessListItem,
-                                      date: selectDay,
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddServicePageWidget(
+                                        businessDetail: businessListItem,
+                                        date: selectDay,
+                                      ),
                                     ),
-                                  ),
-                                );
-                              },
-                              child: Padding( padding: EdgeInsets.only(top: 12), child: Material(
-                                elevation: 2,
-                                borderRadius: BorderRadius.circular(12),
-                                color: Colors.white,
-                                child: Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: 0, vertical: 6),
-                                  padding: const EdgeInsets.fromLTRB(15, 8, 15, 8),
-                                  decoration: BoxDecoration(
+                                  );
+                                },
+                                child: Padding(
+                                  padding: EdgeInsets.only(top: 12),
+                                  child: Material(
+                                    elevation: 2,
                                     borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Row(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                  Padding( padding: EdgeInsets.only(top: 5), child:
-                                      Container(
-                                        width: 35,
-                                          height: 35,
-                                          decoration: BoxDecoration(
-                                            border: Border.all(
-                                              color: Colors.black26,
-                                            ),
-                                            borderRadius: BorderRadius.circular(5)
-                                          ),
-                                          child: Padding( padding: EdgeInsets.all(8), child: (businessListItem['profile_picture']!= null)?
-                                              Image.network('http://15.207.20.38/shared/${businessListItem['profile_picture']}',
-                                                fit: BoxFit.contain,):
-                                      Image.asset('assets/images/images.png'))
-                                      )),
-                                      // Business Info
-                                      Expanded(
-                                        child: Padding( padding: EdgeInsets.only(left: 10), child:  Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              businessListItem['name'] ?? 'N/A',
-                                              style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                fontSize: 18,
-                                                fontFamily: 'Inter',
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w500,
-                                              ),
-                                            ),
-                                            if (businessListItem['address'] != null)
-                                              Text(
-                                                businessListItem['address']['building'] ?? '',
-                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                  fontSize: 14,
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: 0.0,
-                                                ),
-                                              ),
-                                            const SizedBox(height: 4),
-                                            Row(
+                                    color: Colors.white,
+                                    child: Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          horizontal: 0, vertical: 6),
+                                      padding: const EdgeInsets.fromLTRB(
+                                          15, 8, 15, 8),
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                      child: Row(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                              padding: EdgeInsets.only(top: 5),
+                                              child: Container(
+                                                  width: 35,
+                                                  height: 35,
+                                                  decoration: BoxDecoration(
+                                                      border: Border.all(
+                                                        color: Colors.black26,
+                                                      ),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              5)),
+                                                  child:  (businessListItem[
+                                                                  'profile_picture'] !=
+                                                              null)
+                                                          ? Image.network(
+                                                              'http://15.207.20.38/shared/${businessListItem['profile_picture']}',
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                            )
+                                                          : Padding(
+                                                      padding:
+                                                      EdgeInsets.all(8),
+                                                      child: Image.asset(
+                                                              'assets/images/images.png')))),
+                                          // Business Info
+                                          Expanded(
+                                              child: Padding(
+                                            padding: EdgeInsets.only(left: 10),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
-                                                const Icon(Icons.timer_sharp, size: 16),
-                                                const SizedBox(width: 4),
                                                 Text(
-                                                  '${businessListItem['distance_time']} - ${businessListItem['distance']}',
-                                                  style:
-                                                  FlutterFlowTheme.of(context).bodyMedium.override(
-                                                    fontSize: 12,
-                                                    fontFamily: 'Inter',
-                                                    letterSpacing: 0.0,
+                                                  businessListItem['name'] ??
+                                                      'N/A',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontSize: 18,
+                                                        fontFamily: 'Inter',
+                                                        letterSpacing: 0.0,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                ),
+                                                if (businessListItem[
+                                                        'address'] !=
+                                                    null)
+                                                  Text(
+                                                    businessListItem['address']
+                                                            ['building'] ??
+                                                        '',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontSize: 14,
+                                                          fontFamily: 'Inter',
+                                                          letterSpacing: 0.0,
+                                                        ),
                                                   ),
+                                                const SizedBox(height: 4),
+                                                Row(
+                                                  children: [
+                                                    const Icon(
+                                                        Icons.timer_sharp,
+                                                        size: 16),
+                                                    const SizedBox(width: 4),
+                                                    Text(
+                                                      '${businessListItem['distance_time']} - ${businessListItem['distance']}',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontSize: 12,
+                                                            fontFamily: 'Inter',
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ],
                                             ),
-                                          ],
-                                        ),
-                                      )),
+                                          )),
 
-                                      const SizedBox(width: 12),
+                                          const SizedBox(width: 12),
 
-                                      // Info Icon
-                                      // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
+                                          // Info Icon
+                                          // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
 
-                                      GestureDetector(
-                                        onTap: () {
-                                          // setState(() {
-                                          //   page = 1;
-                                          //   // data.clear();
-                                          // });
-                                          sendData({
-                                            "user_id": FFAppState().userId,
-                                            "business_id": businessListItem['uuid']
-                                          }, 'favourite').then((value) {
-                                            log('value: $value');
-                                            callBusinessApi();
-                                          });
-                                        },
-                                        child: Icon(
-                                          businessListItem['is_favourite']
-                                              ? Icons.favorite_rounded
-                                              : Icons.favorite_border_rounded,
-                                          size: 24,
-                                          color: isFavourite
-                                              ? FlutterFlowTheme.of(context).primary
-
-                                              : FlutterFlowTheme.of(context).primary
-                                        ),
+                                          GestureDetector(
+                                            onTap: () {
+                                              // setState(() {
+                                              //   page = 1;
+                                              //   // data.clear();
+                                              // });
+                                              sendData({
+                                                "user_id": FFAppState().userId,
+                                                "business_id":
+                                                    businessListItem['uuid']
+                                              }, 'favourite')
+                                                  .then((value) {
+                                                log('value: $value');
+                                                callBusinessApi();
+                                              });
+                                            },
+                                            child: Icon(
+                                                businessListItem['is_favourite']
+                                                    ? Icons.favorite_rounded
+                                                    : Icons
+                                                        .favorite_border_rounded,
+                                                size: 24,
+                                                color: isFavourite
+                                                    ? FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary
+                                                    : FlutterFlowTheme.of(
+                                                            context)
+                                                        .primary),
+                                          ),
+                                        ],
                                       ),
-
-                                    ],
+                                    ),
                                   ),
-                                ),
-                              ),
-                            ));
+                                ));
                           },
                         );
-
                       },
                     ),
                   ),

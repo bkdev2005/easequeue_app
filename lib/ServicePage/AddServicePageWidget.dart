@@ -38,11 +38,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     _model = createModel(context, () => AddServicePageModel());
     isLoading = true;
     log('selectData: ${widget.businessDetail}');
-    fetchData('business/${widget.businessDetail['uuid']}/services', context)
+    fetchData('business/${widget.businessDetail['uuid']}/services?page=1&page_size=20', context)
         ?.then((value) {
       setState(() {
         serviceList =
-            getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
+            getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
       });
       setState(() {
         isLoading = false;
@@ -123,19 +123,20 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                // FlutterFlowIconButton(
-                //   borderRadius: 8,
-                //   buttonSize: 40,
-                //   fillColor: FlutterFlowTheme.of(context).primary,
-                //   icon: FaIcon(
-                //     FontAwesomeIcons.ellipsisV,
-                //     color: FlutterFlowTheme.of(context).info,
-                //     size: 24,
-                //   ),
-                //   onPressed: () {
-                //     print('IconButton pressed ...');
-                //   },
-                // ),
+                const SizedBox(width: 15,)
+                /*FlutterFlowIconButton(
+                  borderRadius: 8,
+                  buttonSize: 40,
+                  fillColor: FlutterFlowTheme.of(context).primary,
+                  icon: FaIcon(
+                    FontAwesomeIcons.ellipsisV,
+                    color: FlutterFlowTheme.of(context).info,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    print('IconButton pressed ...');
+                  },
+                ),*/
               ],
             ),
           ],
@@ -506,6 +507,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               itemBuilder: (context, serviceListIndex) {
                                 final serviceListItem =
                                     services[serviceListIndex];
+                                log('service: $serviceListItem');
                                 return GestureDetector(
                                     onTap: () {
                                       setState(() {
@@ -560,9 +562,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(0, 9, 0, 0),
                                               child: Text(
-                                                serviceListItem['service_id']
-                                                        ['name'] ??
-                                                    '',
+                                                serviceListItem['service_name'],
                                                 maxLines: 1,
                                                 overflow: TextOverflow.ellipsis,
                                                 textAlign: TextAlign.center,
@@ -577,11 +577,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               ),
                                             ),
                                             if(serviceListItem
-                                            ['service_fee'] != null) Padding(
+                                            ['max_price'] != null) Padding(
                                               padding: EdgeInsetsDirectional
                                                   .fromSTEB(0, 0, 0, 0),
                                               child: Text(
-                                                '₹ ${serviceListItem['service_fee']}',
+                                                '₹ ${serviceListItem['max_price']}',
                                                 textAlign: TextAlign.center,
                                                 style:
                                                     FlutterFlowTheme.of(context)

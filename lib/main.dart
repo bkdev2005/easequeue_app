@@ -15,18 +15,21 @@ import 'flutter_flow/flutter_flow_util.dart';
 import 'flutter_flow/internationalization.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:floating_bottom_navigation_bar/floating_bottom_navigation_bar.dart';
-
 import 'flutter_flow/nav/nav.dart';
 import 'package:firebase_core/firebase_core.dart';
-
 import 'function.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp(); // Initialize Firebase
   usePathUrlStrategy();
   await FlutterFlowTheme.initialize();
-
+  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  getToken().then((token){
+    if(token != null){
+      FFAppState().firebaseToken = token;
+    }
+  });
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
   SystemChrome.setSystemUIOverlayStyle(

@@ -39,6 +39,9 @@ class FFAppState extends ChangeNotifier {
       _token = prefs.getString('ff_token') ?? _token;
     });
     _safeInit(() {
+      _firebaseToken = prefs.getString('ff_firebaseToken') ?? _firebaseToken;
+    });
+    _safeInit(() {
       _phone = prefs.getString('ff_phone') ?? _phone;
     });
     _safeInit(() {
@@ -89,6 +92,13 @@ class FFAppState extends ChangeNotifier {
   set token(String _value) {
     _token = _value;
     prefs.setString('ff_token', _value);
+  }
+
+  String _firebaseToken = '';
+  String get firebaseToken => _firebaseToken;
+  set firebaseToken(String _value) {
+    _firebaseToken = _value;
+    prefs.setString('ff_firebaseToken', _value);
   }
 
   String _phone = '';

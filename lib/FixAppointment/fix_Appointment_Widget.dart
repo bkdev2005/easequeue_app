@@ -47,16 +47,17 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   List<dynamic> serviceSelectQueue = [];
 
   void addIdInUrl() {
+
     for (int index = 0; index < widget.services.length; index++) {
       if (index == 0) {
         setState(() {
           url +=
-              'queue_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+              'service_ids=${getJsonField(widget.services[index], r'''$.service_id''')}';
         });
       } else {
         setState(() {
           url +=
-              '&queue_service_ids=${getJsonField(widget.services[index], r'''$.uuid''')}';
+              '&service_ids=${getJsonField(widget.services[index], r'''$.service_id''')}';
         });
       }
     }
@@ -395,7 +396,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     15, 10, 15, (index == queueList.length - 1)? 10 : 0),
                                 child: GestureDetector(
                                   onTap: () {
-
                                     setState(() {
                                       selectQueue = queue;
                                       selectedQueueId = queue['queue_id'];
@@ -609,10 +609,11 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       final services = [];
                       for (final x in serviceSelectQueue) {
                       for (final s in widget.services) {
-                        log('service: $s');
-                        if(x['service_id'] == s['service_id']['uuid']){
+                        log('service s: $s');
+                        log('service x: $x');
+                        if(x['service_id'] == s['service_id']){
                         setState(() {
-                          services.add(getJsonField(s, r'''$.uuid''')
+                          services.add(getJsonField(s, r'''$.service_id''')
                               .toString());
                         });
                         }

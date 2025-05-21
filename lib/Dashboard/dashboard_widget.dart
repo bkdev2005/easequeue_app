@@ -48,6 +48,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   final PageController _pageController = PageController();
   int _currentPage = 0;
   String? latitude;
+  final Map<String, dynamic> messageMap = {};
+  final Map<String, WebSocket> _webSocketMap = {};
   String? longitude;
 
   void trackLocation() {
@@ -99,15 +101,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
           log('Appointments Customer: $appointments');
           log('length: ${appointments.length}');
-          for(int i=0; i<appointments.length; i++){
-            log('appoint: ${appointments[i]['queue_id']}');
-            if(i%2 == 0){
-            await connect(appointments[i]['queue_id']);
-            callAppointments();
-            }else{
-              await connect(appointments[i]['queue_id']);
+          for (final appointment in appointments) {
+            final queueId = appointment['queue_id'];
+            if (queueId != null && queueId != '') {
+              connect(queueId); // Don't await; connect all simultaneously
             }
           }
+
           setState(() {
             isMainLoading = false;
           });
@@ -127,35 +127,39 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   }
 
   Future<void> connect(String queueId) async {
-    log('calling Queue: $queueId websocket');
-    String token = FFAppState().token;
-    log('token: $token');
+    log('Calling Queue: $queueId websocket');
     try {
-      _webSocket = await WebSocket.connect(
-          'ws://15.207.20.38/api/v1/ws/$queueId/${todayDate()}',
-          headers: {'Authorization': 'Bearer ${FFAppState().token}'});
-      // Listen to incoming messages
-      _webSocket?.listen(
+      final socket = await WebSocket.connect(
+        'ws://15.207.20.38/api/v1/ws/$queueId/${todayDate()}',
+        headers: {'Authorization': 'Bearer ${FFAppState().token}'},
+      );
+
+      _webSocketMap[queueId] = socket;
+
+      socket.listen(
         (message) {
           log('message data: $message');
           _messageStreamController?.add(message);
-          setState(() {
-            messageList.add(getJsonField(jsonDecode(message), r'''$.data'''));
-          });
-          log('messageList: ${messageList.length}');
 
-          log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
+          final msgData = getJsonField(jsonDecode(message), r'''$.data''');
+          log('message data: $msgData');
+
+          setState(() {
+            messageMap[queueId] = msgData;
+            messageList.add(msgData);
+          });
+
           log("Received: $message");
         },
         onError: (error) {
-          print("WebSocket error: $error");
+          print("WebSocket error for $queueId: $error");
         },
         onDone: () {
-          print("WebSocket connection closed");
+          print("WebSocket closed for $queueId");
         },
       );
     } catch (e) {
-      print("Failed to connect to WebSocket: $e");
+      print("Failed to connect WebSocket for $queueId: $e");
     }
   }
 
@@ -542,224 +546,220 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                 child: Stack(
                                   children: [
-                                    if (appointments.isNotEmpty &&
-                                        messageList.isNotEmpty)
-                                      StreamBuilder(
-                                        stream:
-                                            _messageStreamController?.stream,
-                                        builder: (context, snapshot) {
-                                          final snap = snapshot.data;
-                                          dynamic data;
-                                          if (snap != null) {
-                                            setState(() {
-                                              data = getJsonField(
-                                                  jsonDecode(snap),
-                                                  r'''$.data''');
-                                            });
-                                          }
+                                    if(appointments.isNotEmpty)
+                                    StreamBuilder(
+                                      stream: _messageStreamController?.stream,
+                                      builder: (context, snapshot) {
+                                        final snap = snapshot.data;
+                                        dynamic data;
+                                        if (snap != null) {
+                                          setState(() {
+                                            data = getJsonField(
+                                                jsonDecode(snap),
+                                                r'''$.data''');
+                                          });
+                                        }
 
-                                          return Column(
-                                            children: [
-                                              SizedBox(
-                                                height: 200,
-                                                child: PageView.builder(
-                                                  controller: _pageController,
-                                                  itemCount:
-                                                      appointments.length,
-                                                  onPageChanged: (index) {
-                                                    setState(() {
-                                                      _currentPage = index;
-                                                    });
-                                                  },
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    final appointmentDetail =
-                                                        appointments[index];
-                                                    return Padding(
-                                                        padding:
-                                                            EdgeInsets.all(15),
-                                                        child: Material(
-                                                            clipBehavior: Clip
-                                                                .antiAliasWithSaveLayer,
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                            elevation: 2,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        16),
-                                                            child:
-                                                                GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            DetailAppointmentsWidget(),
-                                                                  ),
-                                                                ).then((value) {
-                                                                  callAppointments();
-                                                                });
-                                                              },
-                                                              child: Container(
-                                                                margin: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10),
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              16),
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryBackground,
+                                        return Column(
+                                          children: [
+                                            SizedBox(
+                                              height: 200,
+                                              child: PageView.builder(
+                                                controller: _pageController,
+                                                itemCount: appointments.length,
+                                                onPageChanged: (index) {
+                                                  setState(() {
+                                                    _currentPage = index;
+                                                  });
+                                                },
+                                                itemBuilder: (context, index) {
+                                                  final appointmentDetail =
+                                                      appointments[index];
+                                                  final queueId =
+                                                      appointmentDetail[
+                                                          'queue_id'];
+                                                  final message =
+                                                      messageMap[queueId] ?? {};
+                                                  return Padding(
+                                                      padding:
+                                                          EdgeInsets.all(15),
+                                                      child: Material(
+                                                          clipBehavior: Clip
+                                                              .antiAliasWithSaveLayer,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBackground,
+                                                          elevation: 2,
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(16),
+                                                          child:
+                                                              GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DetailAppointmentsWidget(),
                                                                 ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                          10,
-                                                                          20,
-                                                                          10,
-                                                                          15),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            Row(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Padding(
-                                                                                padding: EdgeInsets.only(top: 3),
-                                                                                child: Container(
-                                                                                    width: 45,
-                                                                                    height: 45,
-                                                                                    decoration: BoxDecoration(
-                                                                                        border: Border.all(
-                                                                                          color: Colors.black26,
-                                                                                        ),
-                                                                                        borderRadius:
-                                                                                        BorderRadius.circular(
-                                                                                            5)),
-                                                                                    child:  (appointmentDetail[
-                                                                                    'profile_picture'] !=
-                                                                                        null)
-                                                                                        ? Image.network(
-                                                                                      'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
-                                                                                      fit: BoxFit
-                                                                                          .contain,
-                                                                                    )
-                                                                                        : Padding(
-                                                                                        padding:
-                                                                                        EdgeInsets.all(8),
-                                                                                        child: Image.asset(
-                                                                                            'assets/images/images.png')))),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.only(start: 10),
-                                                                                child: Column(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Text(
-                                                                                      appointmentDetail['business_name'] ?? 'N/A',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                                fontFamily: 'Inter',
-                                                                                                fontSize: 16,
-                                                                                                fontWeight: FontWeight.w500,
-                                                                                              ) ??
-                                                                                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                                                                                    ),
-                                                                                    Text(
-                                                                                      '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                                fontFamily: 'Inter',
-                                                                                                fontSize: 14,
-                                                                                              ) ??
-                                                                                          TextStyle(fontSize: 14),
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
+                                                              ).then((value) {
+                                                                callAppointments();
+                                                              });
+                                                            },
+                                                            child: Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .symmetric(
+                                                                      horizontal:
+                                                                          10),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            16),
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryBackground,
+                                                              ),
+                                                              child: Padding(
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        10,
+                                                                        20,
+                                                                        10,
+                                                                        15),
+                                                                child: Column(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Expanded(
+                                                                      child:
+                                                                          Row(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
+                                                                        children: [
+                                                                          Padding(
+                                                                              padding: EdgeInsets.only(top: 3),
+                                                                              child: Container(
+                                                                                  width: 45,
+                                                                                  height: 45,
+                                                                                  decoration: BoxDecoration(
+                                                                                      border: Border.all(
+                                                                                        color: Colors.black26,
+                                                                                      ),
+                                                                                      borderRadius: BorderRadius.circular(5)),
+                                                                                  child: (appointmentDetail['profile_picture'] != null)
+                                                                                      ? Image.network(
+                                                                                          'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
+                                                                                          fit: BoxFit.contain,
+                                                                                        )
+                                                                                      : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
+                                                                          Expanded(
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsetsDirectional.only(start: 10),
+                                                                              child: Column(
+                                                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                children: [
+                                                                                  Text(
+                                                                                    appointmentDetail['business_name'] ?? 'N/A',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                              fontFamily: 'Inter',
+                                                                                              fontSize: 16,
+                                                                                              fontWeight: FontWeight.w500,
+                                                                                            ) ??
+                                                                                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                                                  ),
+                                                                                  Text(
+                                                                                    '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                              fontFamily: 'Inter',
+                                                                                              fontSize: 14,
+                                                                                            ) ??
+                                                                                        TextStyle(fontSize: 14),
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                             ),
-                                                                          ],
-                                                                        ),
+                                                                          ),
+                                                                        ],
                                                                       ),
-                                                                      const Divider(
-                                                                          thickness:
-                                                                              1,
-                                                                          color:
-                                                                              Color(0xB2BABABA)),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                15),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
-                                                                          children: [
-                                                                            _buildInfoColumn('Your token',
-                                                                                '${messageList[index]['current_token'] ?? '0'}'),
-                                                                            _buildDivider(),
-                                                                            _buildInfoColumn('Waiting count',
-                                                                                '${messageList[index]['waiting_count'] ?? ''}'),
-                                                                            _buildDivider(),
-                                                                            _buildInfoColumn('Waiting time',
-                                                                                '${messageList[index]['estimated_appointment_time'] ?? ''}'),
-                                                                          ],
-                                                                        ),
+                                                                    ),
+                                                                    const Divider(
+                                                                        thickness:
+                                                                            1,
+                                                                        color: Color(
+                                                                            0xB2BABABA)),
+                                                                    Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .symmetric(
+                                                                          horizontal:
+                                                                              15),
+                                                                      child:
+                                                                          Row(
+                                                                        mainAxisAlignment:
+                                                                            MainAxisAlignment.spaceEvenly,
+                                                                        children: [
+                                                                          _buildInfoColumn(
+                                                                              'Your token',
+                                                                              '${message['current_token'] ?? '0'}'),
+                                                                          _buildDivider(),
+                                                                          _buildInfoColumn(
+                                                                              'Waiting count',
+                                                                              '${message['waiting_count'] ?? ''}'),
+                                                                          _buildDivider(),
+                                                                          _buildInfoColumn(
+                                                                              'Waiting time',
+                                                                              '${message['estimated_appointment_time'].toString()}'),
+                                                                        ],
                                                                       ),
-                                                                    ],
-                                                                  ),
+                                                                    ),
+                                                                  ],
                                                                 ),
                                                               ),
-                                                            )));
-                                                  },
-                                                ),
+                                                            ),
+                                                          )));
+                                                },
                                               ),
-                                              // Dot indicator
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    top: 8),
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                  children: List.generate(
-                                                      appointments.length,
-                                                      (index) {
-                                                    return Container(
-                                                      width: 8,
-                                                      height: 8,
-                                                      margin: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 4),
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        color: _currentPage ==
-                                                                index
-                                                            ? FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primary
-                                                            : Colors
-                                                                .grey.shade300,
-                                                      ),
-                                                    );
-                                                  }),
-                                                ),
-                                              )
-                                            ],
-                                          );
-                                        },
-                                      )
+                                            ),
+                                            // Dot indicator
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.only(top: 8),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: List.generate(
+                                                    appointments.length,
+                                                    (index) {
+                                                  return Container(
+                                                    width: 8,
+                                                    height: 8,
+                                                    margin: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 4),
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      color: _currentPage ==
+                                                              index
+                                                          ? FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary
+                                                          : Colors
+                                                              .grey.shade300,
+                                                    ),
+                                                  );
+                                                }),
+                                              ),
+                                            )
+                                          ],
+                                        );
+                                      },
+                                    )
                                   ],
                                 ),
                               ),
@@ -816,20 +816,21 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               categoriesList[categoryListIndex];
                                           return GestureDetector(
                                               onTap: () async {
-
-                                                    Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                        builder: (context) => BusinessPageWidget(
-                                                          categoryId: categoryListItem['uuid'],
-                                                          latitude: latitude,
-                                                          longitude: longitude,
-                                                        ),
-                                                      ),
-                                                    ).then((value) {
-                                                      callAppointments();
-                                                    });
-
+                                                Navigator.push(
+                                                  context,
+                                                  MaterialPageRoute(
+                                                    builder: (context) =>
+                                                        BusinessPageWidget(
+                                                      categoryId:
+                                                          categoryListItem[
+                                                              'uuid'],
+                                                      latitude: latitude,
+                                                      longitude: longitude,
+                                                    ),
+                                                  ),
+                                                ).then((value) {
+                                                  callAppointments();
+                                                });
                                               },
                                               child: Container(
                                                   width: (MediaQuery.of(context)

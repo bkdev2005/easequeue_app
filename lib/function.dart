@@ -480,4 +480,13 @@ String serviceName(List<dynamic> services) {
 }
 
 
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  await Firebase.initializeApp();
+  print('Handling background message: ${message.messageId}');
+}
 
+Future<String?> getToken() async {
+  String? token = await FirebaseMessaging.instance.getToken();
+  print("Firebase Token: $token");
+  return token;
+}

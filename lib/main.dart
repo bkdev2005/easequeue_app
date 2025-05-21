@@ -21,15 +21,15 @@ import 'function.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(); // Initialize Firebase
+  // await Firebase.initializeApp(); // Initialize Firebase
   usePathUrlStrategy();
   await FlutterFlowTheme.initialize();
-  FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  getToken().then((token){
-    if(token != null){
-      FFAppState().firebaseToken = token;
-    }
-  });
+  // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
+  // getToken().then((token){
+  //   if(token != null){
+  //     FFAppState().firebaseToken = token;
+  //   }
+  // });
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
   SystemChrome.setSystemUIOverlayStyle(

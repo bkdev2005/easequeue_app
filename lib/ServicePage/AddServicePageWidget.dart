@@ -47,7 +47,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       setState(() {
         isLoading = false;
       });
-      log('value: $value');
+      log('Service: $value');
     });
 
   }

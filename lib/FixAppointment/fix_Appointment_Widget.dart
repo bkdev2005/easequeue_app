@@ -46,18 +46,18 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   dynamic selectQueue;
   List<dynamic> serviceSelectQueue = [];
 
-  void addIdInUrl() {
+  void addIdInUrl(List<String> serviceUUID) {
 
-    for (int index = 0; index < widget.services.length; index++) {
+    for (int index = 0; index < serviceUUID.length; index++) {
       if (index == 0) {
         setState(() {
           url +=
-              'service_ids=${getJsonField(widget.services[index], r'''$.service_id''')}';
+              'queue_service_ids=${serviceUUID[index]}';
         });
       } else {
         setState(() {
           url +=
-              '&service_ids=${getJsonField(widget.services[index], r'''$.service_id''')}';
+              '&queue_service_ids=${serviceUUID[index]}';
         });
       }
     }
@@ -97,7 +97,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   @override
   void initState() {
     super.initState();
-    addIdInUrl();
+    List<String> allQueueServiceUuids = getAllQueueServiceUuids(widget.services);
+    addIdInUrl(allQueueServiceUuids);
     fetchData(url, context)?.then((value) {
 
       log('queue: ${getJsonField(value!, r'''$.data[:]''', true)}');
@@ -613,7 +614,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                         log('service x: $x');
                         if(x['service_id'] == s['service_id']){
                         setState(() {
-                          services.add(getJsonField(s, r'''$.service_id''')
+                          services.add(s['queue_service_uuids']
                               .toString());
                         });
                         }

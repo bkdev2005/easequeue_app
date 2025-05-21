@@ -490,3 +490,9 @@ Future<String?> getToken() async {
   print("Firebase Token: $token");
   return token;
 }
+
+List<String> getAllQueueServiceUuids(List<dynamic> services) {
+  return services
+      .expand((service) => List<String>.from(service["queue_service_uuids"] ?? []))
+      .toList();
+}

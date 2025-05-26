@@ -254,7 +254,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             onPressed: () {
                               setState(() {
                                 searchBar = false;
-                                data.clear();
                                 page = 1;
                               });
                               callBusinessApi();
@@ -282,11 +281,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                         final day = jsonDecode(next7Days[index]);
                         return Material(
                             elevation: 2,
+                            color: Colors.white,
                             child: InkWell(
                                 onTap: () {
                                   setState(() {
                                     selectDay = next7Days[index];
-                                    data.clear();
                                     page = 1;
                                   });
                                   callBusinessApi();
@@ -347,7 +346,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                   height: 0,
                 ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 5),
+                    padding: EdgeInsets.only(top: 10, left: 5, bottom: 3),
                     child: Row(
                       children: List.generate(services.length, (index) {
                         final service = services[index];
@@ -373,7 +372,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                   getJsonField(
                                                       service, r'''$.uuid''')))
                                               ? Colors.transparent
-                                              : Colors.black26),
+                                              : Colors.black12),
                                       color: (selectServiceId.contains(
                                               getJsonField(
                                                   service, r'''$.uuid''')))
@@ -385,7 +384,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                     child: Text(
                                       getJsonField(service, r'''$.name'''),
                                       style: TextStyle(
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         color: (selectServiceId.contains(
                                                 getJsonField(
                                                     service, r'''$.uuid''')))

@@ -64,6 +64,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   }
 
   Future<void> connect(String url) async {
+
     String token = FFAppState().token;
     log('token: $token');
     log('queueId: ${queueList[0]['queue_id']}');

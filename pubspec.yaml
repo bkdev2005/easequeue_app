@@ -85,6 +85,7 @@ dependencies:
   sqflite: 2.2.6
   timeago: 3.2.2
   geocoding:
+  win32: 5.1.1
   geolocator:
   permission_handler: ^11.3.1
   url_launcher: 6.1.10

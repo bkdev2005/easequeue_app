@@ -610,19 +610,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                     onPressed: () async{
                       final services = [];
                       for (final x in serviceSelectQueue) {
-                      for (final s in widget.services) {
-                        log('service s: $s');
-                        log('service x: $x');
-                        if(x['service_id'] == s['service_id']){
-                        setState(() {
-                          services.add(s['queue_service_uuids']
-                              .toString());
-                        });
+                        for (final s in widget.services) {
+                          log('service s: $s');
+                          log('service x: $x');
+                          if(x['service_id'] == s['service_id']){
+                            setState(() {
+                              services.add(s['queue_service_uuids'].toString().replaceAll('[', '').replaceAll(']', '')
+                              );
+                            });
+                          }
                         }
                       }
-                      }
                       log('services: $services');
-                      log('servicesSelect: $serviceSelectQueue');
+                      log('servicesSelect: $selectedQueueId');
                       final apiCall = await sendData({
                         "user_id": widget.uuid,
                         "priority": false,

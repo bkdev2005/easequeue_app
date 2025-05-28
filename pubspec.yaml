@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.3.0-174.3.beta <4.0.0'
+  sdk: ^3.6.0
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -36,7 +36,6 @@ dependencies:
   equatable: 2.0.5
   shimmer: ^3.0.0
   csv: ^5.0.2
-  scan: ^1.6.0
   floating_bottom_navigation_bar: 1.5.2
   flutter_animate: 4.1.1+1
   flutter_cache_manager: 3.3.0
@@ -48,17 +47,14 @@ dependencies:
   google_fonts: 4.0.3
   intl: 0.18.1
   image_picker:
-  firebase_core: ^2.0.0
   firebase_auth: ^4.0.0
   json_path: 0.6.2
   mime_type: 1.0.0
   page_transition: 2.0.4
   jumping_dot: ^0.0.7
-  file_picker:
   flutter_file_dialog: ^3.0.2
   flutter_echarts: ^2.5.0
   fl_chart:
-  firebase_messaging: ^14.1.4
   any_animated_button: ^0.0.4
   path_provider: 2.0.14
   path_provider_android: 2.0.25
@@ -87,6 +83,8 @@ dependencies:
   geocoding:
   win32: 5.1.1
   geolocator:
+  firebase_core:
+  firebase_messaging:
   permission_handler: ^11.3.1
   url_launcher: 6.1.10
   google_maps_flutter:

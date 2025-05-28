@@ -1,4 +1,4 @@
-package com.easequeue.eqlite
+package com.easequeue.eq
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -2,6 +2,7 @@ plugins {
     id "com.android.application"
     id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
+    id "com.google.gms.google-services" // ✅ Add this line
 }
 
 def localProperties = new Properties()
@@ -23,7 +24,7 @@ if (flutterVersionName == null) {
 }
 
 android {
-    namespace "com.easequeue.eqlite"
+    namespace "com.easequeue.eq"
     compileSdk 34
 
     compileOptions {
@@ -41,7 +42,7 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId "com.easequeue.eqlite"
+        applicationId "com.easequeue.eq"
         // You can update the following values to match your application needs.
         // For more information, see: https://docs.flutter.dev/deployment/android#reviewing-the-gradle-build-configuration.
         minSdkVersion 21
@@ -64,10 +65,7 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    implementation "com.google.firebase:firebase-analytics:22.4.0"  // Add Firebase dependencies
-    implementation "com.google.firebase:firebase-messaging:24.1.1"  // Example Firebase SDK
+    // ✅ Add Firebase Messaging dependency
+    implementation 'com.google.firebase:firebase-messaging:23.0.0' // Use latest if available
 }
-
-apply plugin: 'com.google.gms.google-services'
 

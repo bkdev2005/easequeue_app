@@ -210,7 +210,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                   getJsonField(data, r'''$.user''');
                             });
 
-                            fetchData('user/me', context)?.then((value) {
+                            fetchData('user/me', context)?.then((value) async {
                               if(value != null){
                                 log('data: $value');
                                 if(value['data']!= null){
@@ -222,6 +222,9 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                 }
 
                                 if(checkNull(FFAppState().user['full_name']) == true){
+                                  final storeToken = await sendData({}, 'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}').then((response){
+                                    log('response: $response');
+                                  });
                                  Navigator.push(context,
                                      MaterialPageRoute(builder: (context)=> HomePageWidget()));
                                 }else{

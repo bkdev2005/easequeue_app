@@ -1,21 +1,21 @@
 {
   "project_info": {
-    "project_number": "797686656369",
-    "project_id": "eqlite-e12d8",
-    "storage_bucket": "eqlite-e12d8.firebasestorage.app"
+    "project_number": "131617910211",
+    "project_id": "eqlite-bcfea",
+    "storage_bucket": "eqlite-bcfea.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:797686656369:android:34d3009b390e530d8b9ad0",
+        "mobilesdk_app_id": "1:131617910211:android:61b2e70fa2b5782bdda176",
         "android_client_info": {
-          "package_name": "com.easequeue.eqlite"
+          "package_name": "com.easequeue.eq"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD-VBaipn1MD4aG2LIMS1Z_xDTWSywu3qw"
+          "current_key": "AIzaSyAHkReCTU4k6dG_zbjFtkXu3ORaSQJYmvc"
         }
       ],
       "services": {

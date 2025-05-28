@@ -19,17 +19,27 @@ import 'flutter_flow/nav/nav.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'function.dart';
 
+void getFcmToken() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Request permission (required on iOS)
+  NotificationSettings settings = await messaging.requestPermission();
+
+  if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+    String? token = await messaging.getToken();
+    print("FCM Token: $token");
+    FFAppState().fcmToken = token??'';
+  } else {
+    print("User declined or has not accepted permission");
+  }
+}
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp(); // Initialize Firebase
+  await Firebase.initializeApp(); // Initialize Firebase
   usePathUrlStrategy();
   await FlutterFlowTheme.initialize();
-  // FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
-  // getToken().then((token){
-  //   if(token != null){
-  //     FFAppState().firebaseToken = token;
-  //   }
-  // });
+  getFcmToken();
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
   SystemChrome.setSystemUIOverlayStyle(

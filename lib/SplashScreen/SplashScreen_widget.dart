@@ -1,4 +1,6 @@
 
+import 'dart:developer';
+
 import 'package:eqlite/Dashboard/dashboard_widget.dart';
 import 'package:eqlite/Profile/Profile_widget.dart';
 import 'package:eqlite/app_state.dart';
@@ -22,14 +24,18 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   void initState() {
-    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) async {
       if(FFAppState().token == ''){
        Future.delayed(const Duration(seconds: 2), () {
         Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginWidget()));
       });
       } else if(FFAppState().token != '' && checkNull(FFAppState().user['full_name']) == false){
+
         navigateTo(context, ProfileWidget(backButton: false));
       }else{
+        final storeToken = await sendData({}, 'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}').then((response){
+          log('response: $response');
+        });
         navigateTo(context, HomePageWidget());
       }
     });

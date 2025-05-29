@@ -548,221 +548,218 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                 child: Stack(
                                   children: [
-                                    if(appointments.isNotEmpty)
-                                    StreamBuilder(
-                                      stream: _messageStreamController?.stream,
-                                      builder: (context, snapshot) {
-                                        final snap = snapshot.data;
-                                        dynamic data;
-                                        if (snap != null) {
-                                          setState(() {
-                                            data = getJsonField(
-                                                jsonDecode(snap),
-                                                r'''$.data''');
-                                          });
-                                        }
-                                        log('data stream: $data');
+                                    if (appointments.isNotEmpty)
+                                      StreamBuilder(
+                                        stream:
+                                            _messageStreamController?.stream,
+                                        builder: (context, snapshot) {
+                                          final snap = snapshot.data;
+                                          log('data stream: ${snapshot.data}');
+                                          dynamic data;
+                                          if (snap != null) {
+                                            data = getJsonField(jsonDecode(snap), r'''$.data''');
+                                          }
+                                          
 
-                                        return Column(
-                                          children: [
-                                            SizedBox(
-                                              height: 200,
-                                              child: PageView.builder(
-                                                controller: _pageController,
-                                                itemCount: appointments.length,
-                                                onPageChanged: (index) {
-                                                  setState(() {
-                                                    _currentPage = index;
-                                                  });
-                                                },
-                                                itemBuilder: (context, index) {
-                                                  final appointmentDetail =
-                                                      appointments[index];
-                                                  final queueId =
-                                                      appointmentDetail[
-                                                          'queue_id'];
-                                                  final message =
-                                                      messageMap[queueId] ?? {};
-                                                  return Padding(
-                                                      padding:
-                                                          EdgeInsets.all(15),
-                                                      child: Material(
-                                                          clipBehavior: Clip
-                                                              .antiAliasWithSaveLayer,
-                                                          color: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .primaryBackground,
-                                                          elevation: 2,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(16),
-                                                          child:
-                                                              GestureDetector(
-                                                            onTap: () {
-                                                              Navigator.push(
-                                                                context,
-                                                                MaterialPageRoute(
-                                                                  builder:
-                                                                      (context) =>
-                                                                          DetailAppointmentsWidget(),
+                                          return Column(
+                                            children: [
+                                              SizedBox(
+                                                height: 200,
+                                                child: PageView.builder(
+                                                  controller: _pageController,
+                                                  itemCount:
+                                                      appointments.length,
+                                                  onPageChanged: (index) {
+                                                    setState(() {
+                                                      _currentPage = index;
+                                                    });
+                                                  },
+                                                  itemBuilder:
+                                                      (context, index) {
+                                                    final appointmentDetail =
+                                                        appointments[index];
+                                                    final queueId =
+                                                        appointmentDetail[
+                                                            'queue_id'];
+                                                    final message =
+                                                        messageMap[queueId] ??
+                                                            {};
+                                                    return Padding(
+                                                        padding:
+                                                            EdgeInsets.all(15),
+                                                        child: Material(
+                                                            clipBehavior: Clip
+                                                                .antiAliasWithSaveLayer,
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryBackground,
+                                                            elevation: 2,
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        16),
+                                                            child:
+                                                                GestureDetector(
+                                                              onTap: () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            DetailAppointmentsWidget(),
+                                                                  ),
+                                                                ).then((value) {
+                                                                  callAppointments();
+                                                                });
+                                                              },
+                                                              child: Container(
+                                                                margin: const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        10),
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              16),
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
                                                                 ),
-                                                              ).then((value) {
-                                                                callAppointments();
-                                                              });
-                                                            },
-                                                            child: Container(
-                                                              margin:
-                                                                  const EdgeInsets
-                                                                      .symmetric(
-                                                                      horizontal:
-                                                                          10),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            16),
-                                                                color: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .primaryBackground,
-                                                              ),
-                                                              child: Padding(
-                                                                padding:
-                                                                    const EdgeInsetsDirectional
-                                                                        .fromSTEB(
-                                                                        10,
-                                                                        20,
-                                                                        10,
-                                                                        15),
-                                                                child: Column(
-                                                                  mainAxisAlignment:
-                                                                      MainAxisAlignment
-                                                                          .spaceBetween,
-                                                                  children: [
-                                                                    Expanded(
-                                                                      child:
-                                                                          Row(
-                                                                        crossAxisAlignment:
-                                                                            CrossAxisAlignment.start,
-                                                                        children: [
-                                                                          Padding(
-                                                                              padding: EdgeInsets.only(top: 3),
-                                                                              child: Container(
-                                                                                  width: 45,
-                                                                                  height: 45,
-                                                                                  decoration: BoxDecoration(
-                                                                                      border: Border.all(
-                                                                                        color: Colors.black26,
-                                                                                      ),
-                                                                                      borderRadius: BorderRadius.circular(5)),
-                                                                                  child: (appointmentDetail['profile_picture'] != null)
-                                                                                      ? Image.network(
-                                                                                          'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
-                                                                                          fit: BoxFit.contain,
-                                                                                        )
-                                                                                      : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
-                                                                          Expanded(
-                                                                            child:
-                                                                                Padding(
-                                                                              padding: const EdgeInsetsDirectional.only(start: 10),
-                                                                              child: Column(
-                                                                                crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                children: [
-                                                                                  Text(
-                                                                                    appointmentDetail['business_name'] ?? 'N/A',
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                              fontFamily: 'Inter',
-                                                                                              fontSize: 16,
-                                                                                              fontWeight: FontWeight.w500,
-                                                                                            ) ??
-                                                                                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-                                                                                  ),
-                                                                                  Text(
-                                                                                    '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
-                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                              fontFamily: 'Inter',
-                                                                                              fontSize: 14,
-                                                                                            ) ??
-                                                                                        TextStyle(fontSize: 14),
-                                                                                  ),
-                                                                                ],
+                                                                child: Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          10,
+                                                                          20,
+                                                                          10,
+                                                                          15),
+                                                                  child: Column(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .spaceBetween,
+                                                                    children: [
+                                                                      Expanded(
+                                                                        child:
+                                                                            Row(
+                                                                          crossAxisAlignment:
+                                                                              CrossAxisAlignment.start,
+                                                                          children: [
+                                                                            Padding(
+                                                                                padding: EdgeInsets.only(top: 3),
+                                                                                child: Container(
+                                                                                    width: 45,
+                                                                                    height: 45,
+                                                                                    decoration: BoxDecoration(
+                                                                                        border: Border.all(
+                                                                                          color: Colors.black26,
+                                                                                        ),
+                                                                                        borderRadius: BorderRadius.circular(5)),
+                                                                                    child: (appointmentDetail['profile_picture'] != null)
+                                                                                        ? Image.network(
+                                                                                            'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
+                                                                                            fit: BoxFit.contain,
+                                                                                          )
+                                                                                        : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
+                                                                            Expanded(
+                                                                              child: Padding(
+                                                                                padding: const EdgeInsetsDirectional.only(start: 10),
+                                                                                child: Column(
+                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                  children: [
+                                                                                    Text(
+                                                                                      appointmentDetail['business_name'] ?? 'N/A',
+                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                fontFamily: 'Inter',
+                                                                                                fontSize: 16,
+                                                                                                fontWeight: FontWeight.w500,
+                                                                                              ) ??
+                                                                                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                                                    ),
+                                                                                    Text(
+                                                                                      '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                fontFamily: 'Inter',
+                                                                                                fontSize: 14,
+                                                                                              ) ??
+                                                                                          TextStyle(fontSize: 14),
+                                                                                    ),
+                                                                                  ],
+                                                                                ),
                                                                               ),
                                                                             ),
-                                                                          ),
-                                                                        ],
+                                                                          ],
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                    const Divider(
-                                                                        thickness:
-                                                                            1,
-                                                                        color: Color(
-                                                                            0xB2BABABA)),
-                                                                    Padding(
-                                                                      padding: const EdgeInsets
-                                                                          .symmetric(
-                                                                          horizontal:
-                                                                              15),
-                                                                      child:
-                                                                          Row(
-                                                                        mainAxisAlignment:
-                                                                            MainAxisAlignment.spaceEvenly,
-                                                                        children: [
-                                                                          _buildInfoColumn(
-                                                                              'Your token',
-                                                                              '${message['current_token'] ?? '0'}'),
-                                                                          _buildDivider(),
-                                                                          _buildInfoColumn(
-                                                                              'Waiting count',
-                                                                              '${message['waiting_count'] ?? ''}'),
-                                                                          _buildDivider(),
-                                                                          _buildInfoColumn(
-                                                                              'Waiting time',
-                                                                              '${message['estimated_appointment_time'].toString()}'),
-                                                                        ],
+                                                                      const Divider(
+                                                                          thickness:
+                                                                              1,
+                                                                          color:
+                                                                              Color(0xB2BABABA)),
+                                                                      Padding(
+                                                                        padding: const EdgeInsets
+                                                                            .symmetric(
+                                                                            horizontal:
+                                                                                15),
+                                                                        child:
+                                                                            Row(
+                                                                          mainAxisAlignment:
+                                                                              MainAxisAlignment.spaceEvenly,
+                                                                          children: [
+                                                                            _buildInfoColumn('Your token',
+                                                                                '${message['current_token'] ?? '0'}'),
+                                                                            _buildDivider(),
+                                                                            _buildInfoColumn('Waiting count',
+                                                                                '${message['waiting_count'] ?? ''}'),
+                                                                            _buildDivider(),
+                                                                            _buildInfoColumn('Waiting time',
+                                                                                '${message['estimated_appointment_time'].toString()}'),
+                                                                          ],
+                                                                        ),
                                                                       ),
-                                                                    ),
-                                                                  ],
+                                                                    ],
+                                                                  ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          )));
-                                                },
+                                                            )));
+                                                  },
+                                                ),
                                               ),
-                                            ),
-                                            // Dot indicator
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(top: 8),
-                                              child: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: List.generate(
-                                                    appointments.length,
-                                                    (index) {
-                                                  return Container(
-                                                    width: 8,
-                                                    height: 8,
-                                                    margin: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 4),
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      color: _currentPage ==
-                                                              index
-                                                          ? FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primary
-                                                          : Colors
-                                                              .grey.shade300,
-                                                    ),
-                                                  );
-                                                }),
-                                              ),
-                                            )
-                                          ],
-                                        );
-                                      },
-                                    )
+                                              // Dot indicator
+                                              Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 8),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                  children: List.generate(
+                                                      appointments.length,
+                                                      (index) {
+                                                    return Container(
+                                                      width: 8,
+                                                      height: 8,
+                                                      margin: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 4),
+                                                      decoration: BoxDecoration(
+                                                        shape: BoxShape.circle,
+                                                        color: _currentPage ==
+                                                                index
+                                                            ? FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary
+                                                            : Colors
+                                                                .grey.shade300,
+                                                      ),
+                                                    );
+                                                  }),
+                                                ),
+                                              )
+                                            ],
+                                          );
+                                        },
+                                      )
                                   ],
                                 ),
                               ),

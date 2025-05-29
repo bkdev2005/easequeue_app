@@ -39,7 +39,7 @@ class FFAppState extends ChangeNotifier {
       _token = prefs.getString('ff_token') ?? _token;
     });
     _safeInit(() {
-      _token = prefs.getString('ff_fcmToken') ?? _token;
+      _fcmToken = prefs.getString('ff_fcmToken') ?? _fcmToken;
     });
     _safeInit(() {
       _firebaseToken = prefs.getString('ff_firebaseToken') ?? _firebaseToken;

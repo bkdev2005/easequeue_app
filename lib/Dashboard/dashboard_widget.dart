@@ -80,6 +80,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
         }));
 
+    log('token: ${FFAppState().token}');
+
     callAppointments();
   }
 
@@ -559,6 +561,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 r'''$.data''');
                                           });
                                         }
+                                        log('data stream: $data');
 
                                         return Column(
                                           children: [

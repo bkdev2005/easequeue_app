@@ -132,7 +132,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                                 borderRadius: BorderRadius.circular(50),
                                 child: Image.network(
                                     (FFAppState().user != null)?
-                                  'http://15.207.20.38/shared/${FFAppState().user['profile_picture']}': '',
+                                  'http://65.2.83.191/shared/${FFAppState().user['profile_picture']}': '',
                                   errorBuilder: (context, error, stackTrace) {
                                     return const Icon(Icons.person_rounded, size: 40, color: Colors.white,); // Show fallback image
                                   },

@@ -472,7 +472,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                   'profile_picture'] !=
                                                               null)
                                                           ? Image.network(
-                                                              'http://15.207.20.38/shared/${businessListItem['profile_picture']}',
+                                                              'http://65.2.83.191/shared/${businessListItem['profile_picture']}',
                                                               fit: BoxFit
                                                                   .contain,
                                                             )

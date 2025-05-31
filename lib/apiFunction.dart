@@ -19,7 +19,7 @@ import 'flutter_flow/flutter_flow_util.dart';
 // API url
 
 const String apiUrl =
-    'http://15.207.20.38/api/v1';
+    'http://65.2.83.191/api/v1';
 
 // Get API
 
@@ -199,7 +199,7 @@ Future<dynamic> profileApi(XFile image, String endpoint) async {
   try {
     Dio dio = Dio();
     final response = await dio.post(
-      'http://15.207.20.38/api/v1/$endpoint',
+      'http://65.2.83.191/api/v1/$endpoint',
       options: Options(
           headers: {
             "Content-Type": "multipart/form-data", // Important for file upload

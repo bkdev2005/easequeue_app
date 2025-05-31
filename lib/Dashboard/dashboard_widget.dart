@@ -132,7 +132,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     log('Calling Queue: $queueId websocket');
     try {
       final socket = await WebSocket.connect(
-        'ws://15.207.20.38/api/v1/ws/$queueId/${todayDate()}',
+        'ws://65.2.83.191/api/v1/ws/$queueId/${todayDate()}',
         headers: {'Authorization': 'Bearer ${FFAppState().token}'},
       );
 
@@ -249,7 +249,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             child: Image.network(
-                                              'http://15.207.20.38/shared/${FFAppState().user['profile_picture']}',
+                                              'http://65.2.83.191/shared/${FFAppState().user['profile_picture']}',
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Icon(
@@ -658,7 +658,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                         borderRadius: BorderRadius.circular(5)),
                                                                                     child: (appointmentDetail['profile_picture'] != null)
                                                                                         ? Image.network(
-                                                                                            'http://15.207.20.38/shared/${appointmentDetail['profile_picture']}',
+                                                                                            'http://65.2.83.191/shared/${appointmentDetail['profile_picture']}',
                                                                                             fit: BoxFit.contain,
                                                                                           )
                                                                                         : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),

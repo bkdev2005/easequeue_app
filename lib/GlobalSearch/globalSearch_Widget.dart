@@ -245,7 +245,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                             ClipRRect(
                               borderRadius: BorderRadius.circular(8),
                               child: Image.network(
-                                'http://15.207.20.38/shared/${businessItem['profile_picture']}',
+                                'http://65.2.83.191/shared/${businessItem['profile_picture']}',
                                 width: 60,
                                 height: 60,
                                 fit: BoxFit.cover,

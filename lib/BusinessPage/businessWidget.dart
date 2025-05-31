@@ -233,7 +233,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                     letterSpacing: 0.0,
                                   ),
                           enabledBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x00000000),
                               width: 1,
                             ),

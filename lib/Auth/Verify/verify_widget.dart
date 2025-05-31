@@ -225,8 +225,8 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                   final storeToken = await sendData({}, 'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}').then((response){
                                     log('response: $response');
                                   });
-                                 Navigator.push(context,
-                                     MaterialPageRoute(builder: (context)=> HomePageWidget()));
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context)=> HomePageWidget()));
                                 }else{
                                   navigateTo(context, ProfileWidget(backButton: false));
                                 }

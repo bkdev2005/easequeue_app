@@ -20,8 +20,10 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class AddServicePageWidget extends StatefulWidget {
-  const AddServicePageWidget({super.key, required this.businessDetail, this.date});
+  const AddServicePageWidget(
+      {super.key, this.businessDetail, this.date, this.businessId});
   final dynamic businessDetail;
+  final String? businessId;
   final dynamic date;
   @override
   State<AddServicePageWidget> createState() => _AddServicePageWidgetState();
@@ -31,25 +33,72 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   late AddServicePageModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+  dynamic businessDetail;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AddServicePageModel());
-    isLoading = true;
+    
     log('selectData: ${widget.businessDetail}');
-    fetchData('business/${widget.businessDetail['uuid']}/services?page=1&page_size=20', context)
-        ?.then((value) {
-      setState(() {
-        serviceList =
-            getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
-      });
-      setState(() {
-        isLoading = false;
-      });
-      log('Service: $value');
-    });
 
+    if (widget.businessDetail == null) {
+      setState(() {
+        isLoading = true;
+      });
+      fetchData('business/${widget.businessId}', context)?.then((value) {
+        if (value != null) {
+          log('business: ${value}');
+          setState(() {
+            businessDetail = value['data'];
+          });
+          fetchData(
+                  'business/${businessDetail['uuid']}/services?page=1&page_size=20',
+                  context)
+              ?.then((value) {
+            setState(() {
+              serviceList =
+                  getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
+            });
+            setState(() {
+              isLoading = false;
+            });
+            log('Service: $value');
+          });
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          setState(() {
+            isLoading = false;
+          });
+          Fluttertoast.showToast(msg: 'Something went wrong');
+        }
+        log('Service: $value');
+      });
+    } else {
+      setState(() {
+        businessDetail = widget.businessDetail;
+      });
+    }
+    if (widget.businessDetail != null) {
+      setState(() {
+        isLoading = true;
+      });
+      fetchData(
+              'business/${businessDetail['uuid']}/services?page=1&page_size=20',
+              context)
+          ?.then((value) {
+        setState(() {
+          serviceList =
+              getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
+        });
+        setState(() {
+          isLoading = false;
+        });
+        log('Service: $value');
+      });
+    }
   }
 
   List<dynamic> serviceList = [];
@@ -58,15 +107,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   bool isLoading = false;
   String appointeeUUID = '';
 
-
   @override
   void dispose() {
     _model.dispose();
     super.dispose();
   }
-
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -98,11 +143,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               padding: MediaQuery.viewInsetsOf(context),
                               child: AddAnotherCustomerWidget());
                         }).then((value) {
-                          if(value != null){
-                            setState(() {
-                              appointeeUUID = value;
-                            });
-                          }
+                      if (value != null) {
+                        setState(() {
+                          appointeeUUID = value;
+                        });
+                      }
                     });
                   },
                   text: 'Add Other',
@@ -123,7 +168,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     borderRadius: BorderRadius.circular(30),
                   ),
                 ),
-                const SizedBox(width: 15,)
+                const SizedBox(
+                  width: 15,
+                )
                 /*FlutterFlowIconButton(
                   borderRadius: 8,
                   buttonSize: 40,
@@ -145,7 +192,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         ),
         body: SafeArea(
           top: true,
-          child: Column(
+          child: Stack( children: [
+            if(isLoading)
+              Center(child: loading(context),),
+            if(!isLoading)
+            Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Expanded(
@@ -153,13 +204,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                   mainAxisSize: MainAxisSize.max,
                   children: [
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
                       child: Material(
                         color: Colors.transparent,
                         elevation: 2,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12
-                          ),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Container(
                           decoration: BoxDecoration(
@@ -195,9 +245,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                             alignment:
                                                 AlignmentDirectional(0, 0),
                                             child: Text(
-                                              getInitials(widget
-                                                      .businessDetail['name'] ??
-                                                  ''),
+                                              getInitials(
+                                                  businessDetail['name'] ?? ''),
                                               textAlign: TextAlign.center,
                                               style: FlutterFlowTheme.of(
                                                       context)
@@ -224,8 +273,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                 CrossAxisAlignment.start,
                                             children: [
                                               Text(
-                                                widget.businessDetail['name'] ??
-                                                    '',
+                                                businessDetail['name'] ?? '',
                                                 maxLines: 1,
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -246,11 +294,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                       MainAxisSize.max,
                                                   children: [
                                                     Text(
-                                                      (widget.businessDetail[
-                                                      'address']!= null)?
-                                                      widget.businessDetail[
-                                                              'address']['building'] :
-                                                          'N/A',
+                                                      (businessDetail[
+                                                                  'address'] !=
+                                                              null)
+                                                          ? businessDetail[
+                                                                  'address']
+                                                              ['building']
+                                                          : 'N/A',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -284,7 +334,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               .fromSTEB(
                                                                   2, 0, 0, 0),
                                                       child: Text(
-                                                        '${widget.businessDetail['distance_time'] ?? ''} - ',
+                                                        '${businessDetail['distance_time'] ?? ''} - ',
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -298,7 +348,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                       ),
                                                     ),
                                                     Text(
-                                                      widget.businessDetail[
+                                                      businessDetail[
                                                               'distance'] ??
                                                           '',
                                                       style: FlutterFlowTheme
@@ -329,15 +379,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                       Expanded(
                                         child: FFButtonWidget(
                                           onPressed: () {
-                                            dialNumber(widget.businessDetail[
-                                                'phone_number']);
+                                            dialNumber(
+                                                businessDetail['phone_number']);
                                           },
                                           text: 'Call',
                                           options: FFButtonOptions(
                                             height: 40,
-                                            padding:
-                                                const EdgeInsetsDirectional.fromSTEB(
-                                                    16, 0, 16, 0),
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16, 0, 16, 0),
                                             iconPadding:
                                                 EdgeInsetsDirectional.fromSTEB(
                                                     0, 0, 0, 0),
@@ -354,9 +403,10 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                   fontWeight: FontWeight.w500,
                                                 ),
                                             elevation: 0,
-                                            borderRadius: const BorderRadius.only(
-                                                bottomLeft:
-                                                    Radius.circular(12)),
+                                            borderRadius:
+                                                const BorderRadius.only(
+                                                    bottomLeft:
+                                                        Radius.circular(12)),
                                           ),
                                         ),
                                       ),
@@ -371,7 +421,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         child: FFButtonWidget(
                                           onPressed: () {
                                             sendSMS(
-                                                '+91${widget.businessDetail['phone_number']}');
+                                                '+91${businessDetail['phone_number']}');
                                           },
                                           text: 'Message',
                                           options: FFButtonOptions(
@@ -418,8 +468,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     ),
                                   ),
                                   child: Padding(
-                                    padding: const EdgeInsetsDirectional.fromSTEB(
-                                        8, 3, 5, 5),
+                                    padding:
+                                        const EdgeInsetsDirectional.fromSTEB(
+                                            8, 3, 5, 5),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
@@ -485,12 +536,16 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             final services =
                                 serviceList.toList(growable: true) ?? [];
 
-                            if(isLoading){
-                              return Center(child: loading(context),);
+                            if (isLoading) {
+                              return Center(
+                                child: loading(context),
+                              );
                             }
 
-                            if(!isLoading && serviceList.isEmpty){
-                              return Center( child: emptyList(),);
+                            if (!isLoading && serviceList.isEmpty) {
+                              return Center(
+                                child: emptyList(),
+                              );
                             }
 
                             return GridView.builder(
@@ -515,10 +570,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                             .contains(serviceListIndex)) {
                                           selectedServiceIndex
                                               .remove(serviceListIndex);
-                                          selectedServiceData.remove(serviceListItem);
+                                          selectedServiceData
+                                              .remove(serviceListItem);
                                         } else {
-                                          selectedServiceIndex.add(serviceListIndex);
-                                          selectedServiceData.add(serviceListItem);
+                                          selectedServiceIndex
+                                              .add(serviceListIndex);
+                                          selectedServiceData
+                                              .add(serviceListItem);
                                         }
                                       });
                                     },
@@ -576,23 +634,24 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                         ),
                                               ),
                                             ),
-                                            if(serviceListItem
-                                            ['max_price'] != null) Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 0, 0, 0),
-                                              child: Text(
-                                                '₹ ${serviceListItem['max_price']}',
-                                                textAlign: TextAlign.center,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontSize: 12,
-                                                          fontFamily: 'Inter',
-                                                          letterSpacing: 0.0,
-                                                        ),
+                                            if (serviceListItem['max_price'] !=
+                                                null)
+                                              Padding(
+                                                padding: EdgeInsetsDirectional
+                                                    .fromSTEB(0, 0, 0, 0),
+                                                child: Text(
+                                                  '₹ ${serviceListItem['max_price']}',
+                                                  textAlign: TextAlign.center,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
+                                                      .bodyMedium
+                                                      .override(
+                                                        fontSize: 12,
+                                                        fontFamily: 'Inter',
+                                                        letterSpacing: 0.0,
+                                                      ),
+                                                ),
                                               ),
-                                            ),
                                           ],
                                         ),
                                       ),
@@ -617,27 +676,34 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                         date = DateFormat('yyyy-MM-dd').format(now);
                       } else {
                         final selectDateJson = jsonDecode(widget.date);
-                        date = '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
+                        date =
+                            '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
                       }
                       log('date select: $date');
-                      if(selectedServiceData.isNotEmpty){
+                      if (selectedServiceData.isNotEmpty) {
                         log('services: $selectedServiceData');
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => FixAppointmentWidget(services: selectedServiceData, date: date,
-                              uuid: (appointeeUUID != '')? appointeeUUID : FFAppState().userId,
-                              )));
-                    }else{
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => FixAppointmentWidget(
+                                      services: selectedServiceData,
+                                      date: date,
+                                      uuid: (appointeeUUID != '')
+                                          ? appointeeUUID
+                                          : FFAppState().userId,
+                                    )));
+                      } else {
                         Fluttertoast.showToast(msg: 'Select service');
                       }
-                      },
+                    },
                     text: 'Next',
                     options: buttonStyle(context)),
               ),
             ],
           ),
-        ),
+
+
+        ])),
       ),
     );
   }

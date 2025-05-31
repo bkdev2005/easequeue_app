@@ -58,7 +58,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                         color: FlutterFlowTheme.of(context).secondaryBackground,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: Column(
+                      child: SingleChildScrollView( child: Column(
                           mainAxisSize: MainAxisSize.max,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -448,7 +448,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                             ) ],
                         ),
                       ),
-                    )));
+                    ))));
   }
 
   String serviceName(List<dynamic> services) {

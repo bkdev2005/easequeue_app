@@ -4,8 +4,8 @@ import 'package:eqlite/function.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart'
-    as mlkit;
+// import 'package:google_mlkit_barcode_scanning/google_mlkit_barcode_scanning.dart'
+//     as mlkit;
 import 'package:image_picker/image_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'package:go_router/go_router.dart';
@@ -190,23 +190,23 @@ class _ScannerQrState extends State<ScannerQr> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
 
-    final mlkit.InputImage inputImage =
-        mlkit.InputImage.fromFilePath(image.path);
-    final barcodeScanner = mlkit.BarcodeScanner();
-
-    try {
-      final List<mlkit.Barcode> barcodes =
-          await barcodeScanner.processImage(inputImage);
-      if (barcodes.isNotEmpty) {
-        final barcode = barcodes.first;
-        _handleScannedCode(barcode.rawValue);
-      } else {
-        Fluttertoast.showToast(msg: 'No qr code found in image');
-      }
-    } catch (e) {
-      log('Error scanning image: $e');
-    } finally {
-      barcodeScanner.close();
-    }
+    // final mlkit.InputImage inputImage =
+    //     mlkit.InputImage.fromFilePath(image.path);
+    // final barcodeScanner = mlkit.BarcodeScanner();
+    //
+    // try {
+    //   final List<mlkit.Barcode> barcodes =
+    //       await barcodeScanner.processImage(inputImage);
+    //   if (barcodes.isNotEmpty) {
+    //     final barcode = barcodes.first;
+    //     _handleScannedCode(barcode.rawValue);
+    //   } else {
+    //     Fluttertoast.showToast(msg: 'No qr code found in image');
+    //   }
+    // } catch (e) {
+    //   log('Error scanning image: $e');
+    // } finally {
+    //   barcodeScanner.close();
+    // }
   }
 }

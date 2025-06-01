@@ -48,8 +48,8 @@ dependencies:
   intl: 0.18.1
   image_picker:
   mobile_scanner:
-  google_mlkit_barcode_scanning: ^0.10.0
-  google_mlkit_commons: any
+#  google_mlkit_barcode_scanning:
+  zxing2:
   firebase_auth: ^4.0.0
   json_path: 0.6.2
   mime_type: 1.0.0

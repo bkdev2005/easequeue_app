@@ -88,7 +88,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void callAppointments() {
     log('Calling Appointments');
     fetchData(
-            'customer_appointments/${FFAppState().userId}?start_date=${todayDate()}&status=1',
+            'customer_appointments/${FFAppState().userId}?start_date=${'${todayDate()} 00:01'}&end_date=${'${todayDate()} 23:59'}&status=1',
             context)
         ?.then((value) async {
       if (value != null) {
@@ -100,7 +100,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
             appointments = data;
             isMainLoading = false;
           });
-
           log('Appointments Customer: $appointments');
           log('length: ${appointments.length}');
           for (final appointment in appointments) {
@@ -109,7 +108,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
               connect(queueId); // Don't await; connect all simultaneously
             }
           }
-
           setState(() {
             isMainLoading = false;
           });

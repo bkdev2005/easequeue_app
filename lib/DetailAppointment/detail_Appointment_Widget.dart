@@ -33,7 +33,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
       isMainLoading = true;
     });
     log('user ID: ${FFAppState().userId}');
-    fetchData('customer_appointments/${FFAppState().userId}?start_date=${todayDate()}&status=1', context)?.then((value) {
+    fetchData('customer_appointments/${FFAppState().userId}?start_date=${'${todayDate()}T00:00:00'}&end_date=${'${todayDate()}T23:59:00'}&status=1', context)?.then((value) {
       if(value != null){
         if (value['data'] != null) {
           log('response: ${value['data']}');

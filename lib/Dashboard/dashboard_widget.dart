@@ -7,6 +7,7 @@ import 'package:eqlite/DetailAppointment/detail_Appointment_Widget.dart';
 import 'package:eqlite/GlobalSearch/globalSearch_Widget.dart';
 import 'package:eqlite/Profile/Profile_widget.dart';
 import 'package:eqlite/ScannerQr/Scanner_widget.dart';
+import 'package:eqlite/SelectCity/select_city_widget.dart';
 import 'package:eqlite/Setting/Setting.dart';
 import 'package:eqlite/function.dart';
 import 'package:flutter/scheduler.dart';
@@ -269,14 +270,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             12, 0, 0, 0),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            navigateTo(
-                                                context,
-                                                ProfileWidget(
-                                                    backButton: true));
-                                          },
-                                          child: Column(
+                                        child:  Column(
                                             mainAxisSize: MainAxisSize.max,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.start,
@@ -297,28 +291,39 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               FontWeight.w500,
                                                         ),
                                               ),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        navigateTo(
+                                            context,
+                                           const SelectCityWidget());
+                                      },
+                                      child: Row( children: [
                                               Padding(
                                                 padding: EdgeInsetsDirectional
-                                                    .fromSTEB(0, 2, 0, 0),
+                                                    .fromSTEB(0, 2, 4, 0),
                                                 child: Text(
-                                                  '+91-${FFAppState().user['phone_number'] ?? '8230xxxxx'}',
+                                                  'Ahmedabad',
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium
                                                       .override(
                                                         fontFamily: 'Inter',
                                                         color: Colors.white,
-                                                        fontSize: 14,
+                                                        fontSize: 12,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
-                                                            FontWeight.normal,
+                                                            FontWeight.w500,
                                                       ),
                                                 ),
-                                              ),
+                                              ), 
+                                              const Icon(Icons.keyboard_arrow_down_rounded,
+                                                color: Colors.white, size: 18,)
+                                              ])),
                                             ],
                                           ),
                                         )),
-                                  ),
+
                                   FlutterFlowIconButton(
                                     borderRadius: 8,
                                     buttonSize: 40,

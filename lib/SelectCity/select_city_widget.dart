@@ -1,3 +1,7 @@
+import 'dart:developer';
+
+import 'package:eqlite/apiFunction.dart';
+import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -25,16 +29,35 @@ class SelectCityWidget extends StatefulWidget {
 
 class _SelectCityWidgetState extends State<SelectCityWidget> {
   late SelectCityModel _model;
-
+  List<dynamic> citiesList = [];
+  bool isLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => SelectCityModel());
-
+    getCities();
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
+  }
+  
+  void getCities() async{
+    setState((){
+      isLoading = true;
+    });
+    await fetchData('business-cities', context)?.then((value){
+      if(value != null){
+        setState(() {
+          citiesList  = getJsonField(value, r'''$.data[:]''', true);
+          isLoading = false;
+        });
+      }else{
+        setState(() {
+          isLoading = false;
+        });
+      }
+    });
   }
 
   @override
@@ -57,7 +80,7 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
         appBar: appBarWidget(context, 'Select City'),
         body: SafeArea(
           top: true,
-          child: Column(
+          child: Stack( children:[ Column(
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
@@ -174,7 +197,7 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                 thickness: 0.5,
                 color: Color(0xFF626262),
               ),
-              Padding(
+              /*Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -194,8 +217,8 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                     ),
                   ],
                 ),
-              ),
-              Flexible(
+              ),*/
+              /*Flexible(
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                   child: Container(
@@ -285,8 +308,8 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
               Divider(
                 thickness: 0.5,
                 color: Color(0xFF626262),
-              ),
-              Padding(
+              ),*/
+             /* Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
                 child: Row(
                   mainAxisSize: MainAxisSize.max,
@@ -306,26 +329,28 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                     ),
                   ],
                 ),
-              ),
+              ),*/
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                  padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                   child: Builder(
                     builder: (context) {
-                      final other = List.generate(
-                          random_data.randomInteger(10, 20),
-                              (index) => random_data.randomInteger(10, 20))
-                          .toList();
+                      final other = citiesList??[];
 
                       return ListView.builder(
                         padding: EdgeInsets.zero,
                         primary: false,
-                        physics: NeverScrollableScrollPhysics(),
                         scrollDirection: Axis.vertical,
                         itemCount: other.length,
                         itemBuilder: (context, otherIndex) {
                           final otherItem = other[otherIndex];
-                          return Padding(
+                          return InkWell( onTap: (){
+                            setState(() {
+                              FFAppState().city = otherItem['name'];
+                            });
+                            context.pop();
+                          },
+                              child: Padding(
                             padding:
                             EdgeInsetsDirectional.fromSTEB(20, 0, 0, 0),
                             child: Column(
@@ -333,10 +358,11 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Padding(
-                                  padding: EdgeInsetsDirectional.fromSTEB(
-                                      0, 8, 0, 4),
-                                  child: Text(
-                                    'Aby Road',
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0, 8, 20, 4),
+                                  child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                    children: [  Text(
+                                      otherItem['name']??'',
                                     style: FlutterFlowTheme.of(context)
                                         .bodyMedium
                                         .override(
@@ -352,8 +378,9 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                                           .bodyMedium
                                           .fontStyle,
                                     ),
-                                  ),
-                                ),
+                                  ), (FFAppState().city == otherItem['name'])? Icon(Icons.check_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,) : Container() ],
+                                )),
                                 Divider(
                                   thickness: 0.5,
                                   color: FlutterFlowTheme.of(context)
@@ -361,7 +388,7 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                                 ),
                               ],
                             ),
-                          );
+                          ));
                         },
                       );
                     },
@@ -370,8 +397,10 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
               ),
             ],
           ),
-        ),
+            if(isLoading)
+              Center(child: loading(context),)
+        ]),
       ),
-    );
+    ));
   }
 }

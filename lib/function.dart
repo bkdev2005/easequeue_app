@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/rendering.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -20,6 +21,9 @@ import 'package:url_launcher/url_launcher.dart';
 import 'flutter_flow/flutter_flow_icon_button.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
+// import 'package:image_gallery_saver/image_gallery_saver.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'dart:ui' as ui;
 
 Widget backIcon(BuildContext context) {
   return FlutterFlowIconButton(
@@ -496,3 +500,37 @@ List<String> getAllQueueServiceUuids(List<dynamic> services) {
       .expand((service) => List<String>.from(service["queue_service_uuids"] ?? []))
       .toList();
 }
+
+// Future<void> saveImageToGallery(GlobalKey globalKey) async {
+//   try {
+//     // Request permission
+//     await _requestPermissions();
+//
+//     RenderRepaintBoundary boundary =
+//     globalKey.currentContext!.findRenderObject() as RenderRepaintBoundary;
+//     final ui.Image image = await boundary.toImage(pixelRatio: 3.0);
+//     final ByteData? byteData =
+//     await image.toByteData(format: ui.ImageByteFormat.png);
+//
+//     if (byteData != null) {
+//       final Uint8List pngBytes = byteData.buffer.asUint8List();
+//
+//       final result = await ImageGallerySaver.saveImage(
+//         pngBytes,
+//         quality: 100,
+//         name: "easequeue_screenshot", // or any name
+//       );
+//
+//       debugPrint("Image saved to gallery: $result");
+//     }
+//   } catch (e) {
+//     debugPrint("Error saving to gallery: $e");
+//   }
+// }
+//
+// Future<void> _requestPermissions() async {
+//   if (await Permission.storage.request().isDenied ||
+//       await Permission.photos.request().isDenied) {
+//     throw Exception('Storage permission denied');
+//   }
+// }

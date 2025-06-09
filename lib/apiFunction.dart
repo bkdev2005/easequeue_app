@@ -1,4 +1,3 @@
-
 import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'dart:developer';
@@ -13,18 +12,15 @@ import 'flutter_flow/flutter_flow_icon_button.dart';
 import 'flutter_flow/flutter_flow_theme.dart';
 import 'flutter_flow/flutter_flow_util.dart';
 
-
 //------------------------- API -------------------------\\
 
 // API url
 
-const String apiUrl =
-    'http://65.2.83.191/api/v1';
+const String apiUrl = 'http://65.2.83.191/api/v1';
 
 // Get API
 
-Future<dynamic>?
-fetchData(String endpoint, BuildContext context) async {
+Future<dynamic>? fetchData(String endpoint, BuildContext context) async {
   log('endpoint: $endpoint');
   final url = Uri.parse('$apiUrl/$endpoint'); // API URL
   try {
@@ -44,10 +40,13 @@ fetchData(String endpoint, BuildContext context) async {
       return responseBody;
     } else {
       log('Failed to load data: ${response.statusCode}');
-      if(getJsonField(jsonDecode(response.body), r'''$.message''') == 'Invalid or expired token.'){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=> const LoginWidget()));
+      if (getJsonField(jsonDecode(response.body), r'''$.message''') ==
+          'Invalid or expired token.') {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginWidget()));
       }
-      Fluttertoast.showToast(msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
+      Fluttertoast.showToast(
+          msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
       return null;
     }
   } catch (e) {
@@ -64,7 +63,7 @@ Future<dynamic> navigateTo(BuildContext context, Widget destination) async {
     MaterialPageRoute(builder: (context) => destination),
   ).then((value) {
     log('main value: $value');
-    if(value != null){
+    if (value != null) {
       return value;
     }
   });
@@ -76,10 +75,7 @@ Future<dynamic> preAuthApi(Object body, String endpoint) async {
   final url = Uri.parse('$apiUrl/$endpoint');
   try {
     final response = await http.post(url,
-        headers: {
-        "Content-Type": "application/json"
-        },
-        body: json.encode(body));
+        headers: {"Content-Type": "application/json"}, body: json.encode(body));
     if (response.statusCode == 201 || response.statusCode == 200) {
       final dynamic data = jsonDecode(response.body);
       log('Data sent successfully: ${response.body}');
@@ -87,7 +83,8 @@ Future<dynamic> preAuthApi(Object body, String endpoint) async {
     } else {
       log('Failed to send data: ${response.body}');
       log('Failed to send data: ${response.statusCode}');
-      Fluttertoast.showToast(msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
+      Fluttertoast.showToast(
+          msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
       return null;
     }
   } catch (e) {
@@ -113,12 +110,13 @@ Future<dynamic> putData(Object body, String endpoint) async {
     if (response.statusCode == 201 || response.statusCode == 200) {
       log('Data sent successfully: ${response.body}');
       final dynamic data =
-      getJsonField(jsonDecode(response.body), r'''$.data''');
+          getJsonField(jsonDecode(response.body), r'''$.data''');
       return data;
     } else {
       log('Failed to send data: ${response.statusCode}');
       log('Failed to send data: ${response.body}');
-      Fluttertoast.showToast(msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
+      Fluttertoast.showToast(
+          msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
       return null;
     }
   } catch (e) {
@@ -147,7 +145,8 @@ Future<bool> deleteData(Object body, String endpoint) async {
     } else {
       log('Failed to send data: ${response.statusCode}');
       log('Failed to send data: ${response.body}');
-      Fluttertoast.showToast(msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
+      Fluttertoast.showToast(
+          msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
       return false;
     }
   } catch (e) {
@@ -155,7 +154,6 @@ Future<bool> deleteData(Object body, String endpoint) async {
     return false;
   }
 }
-
 
 // Post API
 
@@ -180,7 +178,8 @@ Future<dynamic> sendData(Object body, String endpoint) async {
     } else {
       log('Failed to send data: ${response.statusCode}');
       log('Failed to send data: ${response.body}');
-      Fluttertoast.showToast(msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
+      Fluttertoast.showToast(
+          msg: getJsonField(jsonDecode(response.body), r'''$.message'''));
       return null;
     }
   } catch (e) {
@@ -200,23 +199,22 @@ Future<dynamic> profileApi(XFile image, String endpoint) async {
     Dio dio = Dio();
     final response = await dio.post(
       'http://65.2.83.191/api/v1/$endpoint',
-      options: Options(
-          headers: {
-            "Content-Type": "multipart/form-data", // Important for file upload
-            "accept": "application/json",
-            "Authorization": "Bearer ${FFAppState().token}"
-          }
-      ),
+      options: Options(headers: {
+        "Content-Type": "multipart/form-data", // Important for file upload
+        "accept": "application/json",
+        "Authorization": "Bearer ${FFAppState().token}"
+      }),
       data: formData,
     );
 
     if (response.statusCode == 200 || response.statusCode == 201) {
-      final dynamic data = getJsonField(response.data, r'''$.data''');  // FIXED
+      final dynamic data = getJsonField(response.data, r'''$.data'''); // FIXED
       return data;
     } else {
       log('Failed to send data: ${response.statusCode}');
       log('Failed to send data: ${response.data}');
-      Fluttertoast.showToast(msg: getJsonField(response.data, r'''$.message''')); // FIXED
+      Fluttertoast.showToast(
+          msg: getJsonField(response.data, r'''$.message''')); // FIXED
       return null;
     }
   } catch (e) {
@@ -226,20 +224,20 @@ Future<dynamic> profileApi(XFile image, String endpoint) async {
 }
 
 // Api response from pagination
-Future<dynamic>? fetch(int limit, int page, String endpoint, String category_id, String filter_date) async{
+Future<dynamic>? fetch(int limit, int page, String endpoint, String category_id,
+    String filter_date) async {
   final url = Uri.parse("$apiUrl/$endpoint?page=$page&page_size=$limit");
-  final response = await http.get(url,
-    headers: {
-    'Authorization': 'Bearer ${FFAppState().token}'
-    },
+  final response = await http.get(
+    url,
+    headers: {'Authorization': 'Bearer ${FFAppState().token}'},
   );
   log('response: ${response.body}');
-  if(response.statusCode == 200){
+  if (response.statusCode == 200) {
     final responseJson = jsonDecode(response.body);
     // final responseList = getJsonField(responseJson, r'''$.data[:]''', true)?.toList()??[];
     // print('item: ${responseList}');
     return responseJson;
-  }else{
+  } else {
     return null;
   }
 }

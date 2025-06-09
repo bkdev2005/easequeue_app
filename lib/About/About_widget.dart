@@ -27,7 +27,6 @@ class _AboutWidgetState extends State<AboutWidget> {
 
   @override
   void dispose() {
-
     super.dispose();
   }
 
@@ -49,7 +48,7 @@ class _AboutWidgetState extends State<AboutWidget> {
             borderRadius: 30,
             borderWidth: 1,
             buttonSize: 60,
-            icon: Icon(
+            icon: const Icon(
               Icons.keyboard_backspace_rounded,
               color: Colors.white,
               size: 30,

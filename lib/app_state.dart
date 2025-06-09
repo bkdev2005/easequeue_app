@@ -104,6 +104,13 @@ class FFAppState extends ChangeNotifier {
     prefs.setString('ff_fcmToken', _value);
   }
 
+  String _city = 'Ahmedabad';
+  String get city => _city;
+  set city(String _value) {
+    _city = _value;
+    prefs.setString('ff_city', _value);
+  }
+
   String _firebaseToken = '';
   String get firebaseToken => _firebaseToken;
   set firebaseToken(String _value) {

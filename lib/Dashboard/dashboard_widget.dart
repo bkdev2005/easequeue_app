@@ -76,7 +76,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
 
-    fetchData('categories/all', context)?.then((value) => setState(() {
+    fetchData('categories/all', context)?.then((value) =>   setState(() {
           categoriesList =
               getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
         }));
@@ -296,14 +296,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       onTap: () {
                                         navigateTo(
                                             context,
-                                           const SelectCityWidget());
+                                           const SelectCityWidget()).then((onValue)=> setState(() {
+                                           }));
+
                                       },
                                       child: Row( children: [
                                               Padding(
                                                 padding: EdgeInsetsDirectional
                                                     .fromSTEB(0, 2, 4, 0),
                                                 child: Text(
-                                                  'Ahmedabad',
+                                                 FFAppState().city,
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium

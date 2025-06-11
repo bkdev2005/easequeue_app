@@ -46,7 +46,7 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
     setState((){
       isLoading = true;
     });
-    await fetchData('business-cities', context)?.then((value){
+    await fetchData('business_cities', context)?.then((value){
       if(value != null){
         setState(() {
           citiesList  = getJsonField(value, r'''$.data[:]''', true);

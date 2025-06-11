@@ -1,4 +1,7 @@
+import 'package:eqlite/apiFunction.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
+import 'package:eqlite/function.dart';
+import 'package:flutter_html/flutter_html.dart';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -17,7 +20,6 @@ class AboutWidget extends StatefulWidget {
 }
 
 class _AboutWidgetState extends State<AboutWidget> {
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -40,54 +42,34 @@ class _AboutWidgetState extends State<AboutWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          automaticallyImplyLeading: false,
-          leading: FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 60,
-            icon: const Icon(
-              Icons.keyboard_backspace_rounded,
-              color: Colors.white,
-              size: 30,
-            ),
-            onPressed: () async {
-              context.pop();
-            },
-          ),
-          title: Text(
-            'About Us',
-            style: FlutterFlowTheme.of(context).headlineMedium.override(
-              fontFamily: 'Inter Tight',
-              color: Colors.white,
-              fontSize: 22,
-              letterSpacing: 0.0,
-            ),
-          ),
-          actions: [],
-          centerTitle: false,
-          elevation: 2,
-        ),
+        appBar: appBarWidget(context, 'About Us'),
         body: SafeArea(
           top: true,
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 15, 0, 0),
-                child: Text(
-                  'About us',
-                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                    fontFamily: 'Inter',
-                    fontSize: 18,
-                    letterSpacing: 0.0,
-                  ),
-                ),
-              ),
-            ],
+          child: FutureBuilder(
+            future: fetchData('static_content/about_us', context),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return loading(context);
+              }
+
+              if (snapshot.hasError) {
+                return Center(child: Text("Error: ${snapshot.error}"));
+              }
+
+              final jsonData = snapshot.data;
+              final data = getJsonField(jsonData, r'''$.data.content''');
+
+              if (data == null) {
+                return Center(child: emptyList());
+              }
+
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(16.0),
+                child: Html(data: data.toString()),
+              );
+            },
           ),
+
         ),
       ),
     );

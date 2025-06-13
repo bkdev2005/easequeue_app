@@ -19,8 +19,9 @@ import 'businessModel.dart';
 
 class BusinessPageWidget extends StatefulWidget {
   const BusinessPageWidget(
-      {super.key, required this.categoryId, this.latitude, this.longitude});
+      {super.key, required this.categoryId, this.latitude, this.longitude, required this.categoryName});
   final String categoryId;
+  final String categoryName;
   final String? latitude;
   final String? longitude;
   @override
@@ -251,7 +252,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                         Icons.search_rounded,
                       ),
                     )))
-                : null,
+                : Text(widget.categoryName, style: const TextStyle(
+              fontFamily: 'Inter',
+              color: Colors.white,
+              fontWeight: FontWeight.w400
+            ),),
             centerTitle: false,
             elevation: 2,
           ),

@@ -829,6 +829,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       categoryId:
                                                           categoryListItem[
                                                               'uuid'],
+                                                      categoryName: categoryListItem[
+                                                      'name'],
                                                       latitude: latitude,
                                                       longitude: longitude,
                                                     ),

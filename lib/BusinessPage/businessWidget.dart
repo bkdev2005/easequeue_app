@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import '../function.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -419,6 +420,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
                             return GestureDetector(
                                 onTap: () {
+                                  if(businessListItem['temporary_closed']){
+                                    Fluttertoast.showToast(msg: 'Currently Closed');
+                                  }else{
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
@@ -429,10 +433,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                           ),
                                     ),
                                   );
+                                  }
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 12),
-                                  child: Material(
+                                  child:  Material(
                                     elevation: 2,
                                     borderRadius: BorderRadius.circular(12),
                                     color: Colors.white,
@@ -480,6 +485,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                                   children: [
+
                                                     Text(
                                                       businessListItem['name'] ??
                                                           'N/A',
@@ -513,6 +519,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                     const SizedBox(height: 4),
                                                     Row(
                                                       children: [
+                                                        Row(
+                                                          children: [
                                                         const Icon(
                                                             Icons.timer_sharp,
                                                             size: 16),
@@ -528,8 +536,25 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                             letterSpacing: 0.0,
                                                           ),
                                                         ),
-                                                      ],
-                                                    ),
+                                                      ]),
+                                                        if(businessListItem['temporary_closed'])
+                                                        SizedBox(width: 10,),
+                                                        if(businessListItem['temporary_closed'])
+                                                          Text(
+                                                              'Closed',
+                                                              style: FlutterFlowTheme
+                                                                  .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                fontSize: 14,
+                                                                fontWeight: FontWeight.w600,
+                                                                color: Colors.redAccent,
+                                                                fontFamily: 'Inter',
+                                                                letterSpacing: 0.0,
+                                                              )),
+
+                                                    ])
+
                                                   ],
                                                 ),
                                               )),

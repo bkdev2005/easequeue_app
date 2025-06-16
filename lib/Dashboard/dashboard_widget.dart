@@ -76,7 +76,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
 
-    fetchData('categories/all', context)?.then((value) =>   setState(() {
+    fetchData('categories/with-business', context)?.then((value) =>   setState(() {
           categoriesList =
               getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
         }));

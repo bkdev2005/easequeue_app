@@ -39,7 +39,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AddServicePageModel());
-    
+
     log('selectData: ${widget.businessDetail}');
 
     if (widget.businessDetail == null) {
@@ -93,6 +93,17 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
           serviceList =
               getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
         });
+        if(selectedServiceIndex.isEmpty){
+        for(final service in serviceList){
+          if(!service['is_disabled']){
+            setState(() {
+              selectedServiceIndex.add(service['service_id']);
+              selectedServiceData.add(service);
+            });
+            break;
+          }
+        }
+        }
         setState(() {
           isLoading = false;
         });
@@ -102,7 +113,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   }
 
   List<dynamic> serviceList = [];
-  List<int> selectedServiceIndex = [];
+  List<dynamic> selectedServiceIndex = [];
   List<dynamic> selectedServiceData = [];
   bool isLoading = false;
   String appointeeUUID = '';
@@ -191,153 +202,184 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
           elevation: 2,
         ),
         body: SafeArea(
-          top: true,
-          child: Stack( children: [
-            if(isLoading)
-              Center(child: loading(context),),
-            if(!isLoading)
-            Column(
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Expanded(
-                child: Column(
+            top: true,
+            child: Stack(children: [
+              if (isLoading)
+                Center(
+                  child: loading(context),
+                ),
+              if (!isLoading)
+                Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Padding(
-                      padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
-                      child: Material(
-                        color: Colors.transparent,
-                        elevation: 2,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color:
-                                FlutterFlowTheme.of(context).primaryBackground,
-                            borderRadius: const BorderRadius.only(
-                              bottomLeft: Radius.circular(12),
-                              bottomRight: Radius.circular(12),
-                              topLeft: Radius.circular(12),
-                              topRight: Radius.circular(0),
-                            ),
-                          ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        12, 12, 12, 12),
-                                    child: Row(
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 20, 20, 0),
+                            child: Material(
+                              color: Colors.transparent,
+                              elevation: 2,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: FlutterFlowTheme.of(context)
+                                      .primaryBackground,
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(0),
+                                  ),
+                                ),
+                                child: Stack(
+                                  children: [
+                                    Column(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Container(
-                                          width: 70,
-                                          height: 70,
-                                          decoration: BoxDecoration(
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                            shape: BoxShape.circle,
-                                          ),
-                                          child: Align(
-                                            alignment:
-                                                AlignmentDirectional(0, 0),
-                                            child: Text(
-                                              getInitials(
-                                                  businessDetail['name'] ?? ''),
-                                              textAlign: TextAlign.center,
-                                              style: FlutterFlowTheme.of(
-                                                      context)
-                                                  .bodyMedium
-                                                  .override(
-                                                    fontFamily: 'Inter',
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .tertiary,
-                                                    fontSize: 26,
-                                                    letterSpacing: 1,
-                                                    fontWeight: FontWeight.w600,
-                                                  ),
-                                            ),
-                                          ),
-                                        ),
                                         Padding(
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
-                                                  10, 0, 0, 0),
-                                          child: Column(
+                                                  12, 12, 12, 12),
+                                          child: Row(
                                             mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
                                             children: [
-                                              Text(
-                                                businessDetail['name'] ?? '',
-                                                maxLines: 1,
-                                                style:
-                                                    FlutterFlowTheme.of(context)
+                                              Container(
+                                                width: 70,
+                                                height: 70,
+                                                decoration: BoxDecoration(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Align(
+                                                  alignment:
+                                                      AlignmentDirectional(
+                                                          0, 0),
+                                                  child: Text(
+                                                    getInitials(businessDetail[
+                                                            'name'] ??
+                                                        ''),
+                                                    textAlign: TextAlign.center,
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.0,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .tertiary,
+                                                          fontSize: 26,
+                                                          letterSpacing: 1,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.w600,
                                                         ),
+                                                  ),
+                                                ),
                                               ),
                                               Padding(
                                                 padding: EdgeInsetsDirectional
-                                                    .fromSTEB(0, 2, 0, 0),
-                                                child: Row(
+                                                    .fromSTEB(10, 0, 0, 0),
+                                                child: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.max,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
                                                   children: [
                                                     Text(
-                                                      (businessDetail[
-                                                                  'address'] !=
-                                                              null)
-                                                          ? businessDetail[
-                                                                  'address']
-                                                              ['building']
-                                                          : 'N/A',
+                                                      businessDetail['name'] ??
+                                                          '',
+                                                      maxLines: 1,
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
                                                           .override(
                                                             fontFamily: 'Inter',
-                                                            fontSize: 14,
+                                                            fontSize: 18,
                                                             letterSpacing: 0.0,
+                                                            fontWeight:
+                                                                FontWeight.w500,
                                                           ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(0, 6, 0, 0),
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                    Icon(
-                                                      Icons.timer_sharp,
-                                                      color:
-                                                          FlutterFlowTheme.of(
-                                                                  context)
-                                                              .primaryText,
-                                                      size: 18,
                                                     ),
                                                     Padding(
                                                       padding:
                                                           EdgeInsetsDirectional
                                                               .fromSTEB(
-                                                                  2, 0, 0, 0),
-                                                      child: Text(
-                                                        '${businessDetail['distance_time'] ?? ''} - ',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
+                                                                  0, 2, 0, 0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          Text(
+                                                            (businessDetail[
+                                                                        'address'] !=
+                                                                    null)
+                                                                ? businessDetail[
+                                                                        'address']
+                                                                    ['building']
+                                                                : 'N/A',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontSize: 14,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0, 6, 0, 0),
+                                                      child: Row(
+                                                        mainAxisSize:
+                                                            MainAxisSize.max,
+                                                        children: [
+                                                          Icon(
+                                                            Icons.timer_sharp,
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryText,
+                                                            size: 18,
+                                                          ),
+                                                          Padding(
+                                                            padding:
+                                                                EdgeInsetsDirectional
+                                                                    .fromSTEB(
+                                                                        2,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                            child: Text(
+                                                              '${businessDetail['distance_time'] ?? ''} - ',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Inter',
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                  ),
+                                                            ),
+                                                          ),
+                                                          Text(
+                                                            businessDetail[
+                                                                    'distance'] ??
+                                                                '',
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
                                                                 .bodyMedium
                                                                 .override(
                                                                   fontFamily:
@@ -345,19 +387,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
-                                                      ),
-                                                    ),
-                                                    Text(
-                                                      businessDetail[
-                                                              'distance'] ??
-                                                          '',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily: 'Inter',
-                                                            letterSpacing: 0.0,
                                                           ),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ],
                                                 ),
@@ -365,345 +397,375 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                             ],
                                           ),
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                  const Divider(
-                                    height: 0,
-                                    thickness: 1,
-                                    color: Color(0xFFC7C7C7),
-                                  ),
-                                  Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: FFButtonWidget(
-                                          onPressed: () {
-                                            dialNumber(
-                                                businessDetail['phone_number']);
-                                          },
-                                          text: 'Call',
-                                          options: FFButtonOptions(
-                                            height: 40,
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(16, 0, 16, 0),
-                                            iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 0, 0),
-                                            color: Colors.white,
-                                            textStyle: FlutterFlowTheme.of(
-                                                    context)
-                                                .titleSmall
-                                                .override(
-                                                  fontFamily: 'Inter Tight',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
-                                                  letterSpacing: 0.5,
-                                                  fontWeight: FontWeight.w500,
-                                                ),
-                                            elevation: 0,
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                                    bottomLeft:
-                                                        Radius.circular(12)),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(
-                                        height: 40,
-                                        child: VerticalDivider(
+                                        const Divider(
+                                          height: 0,
                                           thickness: 1,
                                           color: Color(0xFFC7C7C7),
                                         ),
-                                      ),
-                                      Expanded(
-                                        child: FFButtonWidget(
-                                          onPressed: () {
-                                            sendSMS(
-                                                '+91${businessDetail['phone_number']}');
-                                          },
-                                          text: 'Message',
-                                          options: FFButtonOptions(
-                                            height: 40,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    16, 0, 16, 0),
-                                            iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0, 0, 0, 0),
-                                            color: Colors.white,
-                                            textStyle: FlutterFlowTheme.of(
-                                                    context)
-                                                .titleSmall
-                                                .override(
-                                                  fontFamily: 'Inter Tight',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryText,
-                                                  letterSpacing: 0.5,
-                                                  fontWeight: FontWeight.w500,
+                                        Row(
+                                          mainAxisSize: MainAxisSize.max,
+                                          children: [
+                                            Expanded(
+                                              child: FFButtonWidget(
+                                                onPressed: () {
+                                                  dialNumber(businessDetail[
+                                                      'phone_number']);
+                                                },
+                                                text: 'Call',
+                                                options: FFButtonOptions(
+                                                  height: 40,
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          16, 0, 16, 0),
+                                                  iconPadding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(0, 0, 0, 0),
+                                                  color: Colors.white,
+                                                  textStyle: FlutterFlowTheme
+                                                          .of(context)
+                                                      .titleSmall
+                                                      .override(
+                                                        fontFamily:
+                                                            'Inter Tight',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        letterSpacing: 0.5,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                  elevation: 0,
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  12)),
                                                 ),
-                                            elevation: 0,
-                                            borderRadius: BorderRadius.only(
-                                                bottomRight:
-                                                    Radius.circular(12)),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ],
-                              ),
-                              Align(
-                                alignment: AlignmentDirectional(1, -1),
-                                child: Container(
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFF279D33),
-                                    borderRadius: BorderRadius.only(
-                                      bottomLeft: Radius.circular(10),
-                                      bottomRight: Radius.circular(0),
-                                      topLeft: Radius.circular(0),
-                                      topRight: Radius.circular(8),
-                                    ),
-                                  ),
-                                  child: Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            8, 3, 5, 5),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          '4.0',
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Inter',
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryBackground,
-                                                fontSize: 14,
-                                                letterSpacing: 0.0,
-                                                fontWeight: FontWeight.w500,
                                               ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsetsDirectional.fromSTEB(
-                                                  2, 0, 0, 0),
-                                          child: Icon(
-                                            Icons.star_sharp,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primaryBackground,
-                                            size: 18,
-                                          ),
+                                            ),
+                                            const SizedBox(
+                                              height: 40,
+                                              child: VerticalDivider(
+                                                thickness: 1,
+                                                color: Color(0xFFC7C7C7),
+                                              ),
+                                            ),
+                                            Expanded(
+                                              child: FFButtonWidget(
+                                                onPressed: () {
+                                                  sendSMS(
+                                                      '+91${businessDetail['phone_number']}');
+                                                },
+                                                text: 'Message',
+                                                options: FFButtonOptions(
+                                                  height: 40,
+                                                  padding: EdgeInsetsDirectional
+                                                      .fromSTEB(16, 0, 16, 0),
+                                                  iconPadding:
+                                                      EdgeInsetsDirectional
+                                                          .fromSTEB(0, 0, 0, 0),
+                                                  color: Colors.white,
+                                                  textStyle: FlutterFlowTheme
+                                                          .of(context)
+                                                      .titleSmall
+                                                      .override(
+                                                        fontFamily:
+                                                            'Inter Tight',
+                                                        color:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .primaryText,
+                                                        letterSpacing: 0.5,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
+                                                  elevation: 0,
+                                                  borderRadius:
+                                                      BorderRadius.only(
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  12)),
+                                                ),
+                                              ),
+                                            ),
+                                          ],
                                         ),
                                       ],
                                     ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Text(
-                            'Select service',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                                  fontFamily: 'Inter',
-                                  fontSize: 18,
-                                  letterSpacing: 0.0,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
-                        child: Builder(
-                          builder: (context) {
-                            final services =
-                                serviceList.toList(growable: true) ?? [];
-
-                            if (isLoading) {
-                              return Center(
-                                child: loading(context),
-                              );
-                            }
-
-                            if (!isLoading && serviceList.isEmpty) {
-                              return Center(
-                                child: emptyList(),
-                              );
-                            }
-
-                            return GridView.builder(
-                              padding: EdgeInsets.only(top: 10, bottom: 10),
-                              gridDelegate:
-                                  const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 3,
-                                crossAxisSpacing: 10,
-                                mainAxisSpacing: 10,
-                                childAspectRatio: 1,
-                              ),
-                              scrollDirection: Axis.vertical,
-                              itemCount: services.length,
-                              itemBuilder: (context, serviceListIndex) {
-                                final serviceListItem =
-                                    services[serviceListIndex];
-                                log('service: $serviceListItem');
-                                return GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        if (selectedServiceIndex
-                                            .contains(serviceListIndex)) {
-                                          selectedServiceIndex
-                                              .remove(serviceListIndex);
-                                          selectedServiceData
-                                              .remove(serviceListItem);
-                                        } else {
-                                          selectedServiceIndex
-                                              .add(serviceListIndex);
-                                          selectedServiceData
-                                              .add(serviceListItem);
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryBackground,
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: Border.all(
-                                            width: selectedServiceIndex
-                                                    .contains(serviceListIndex)
-                                                ? 2
-                                                : 1,
-                                            color: (selectedServiceIndex
-                                                    .contains(serviceListIndex))
-                                                ? FlutterFlowTheme.of(context)
-                                                    .primary
-                                                : FlutterFlowTheme.of(context)
-                                                    .accent3),
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.all(14),
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          children: [
-                                            Container(
-                                              width: 35,
-                                              height: 35,
-                                              clipBehavior: Clip.antiAlias,
-                                              decoration: BoxDecoration(
-                                                shape: BoxShape.circle,
-                                              ),
-                                              child: Image.asset(
-                                                'assets/images/man-hair.png',
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                            Padding(
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0, 9, 0, 0),
-                                              child: Text(
-                                                serviceListItem['service_name'],
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                                textAlign: TextAlign.center,
+                                    Align(
+                                      alignment: AlignmentDirectional(1, -1),
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Color(0xFF279D33),
+                                          borderRadius: BorderRadius.only(
+                                            bottomLeft: Radius.circular(10),
+                                            bottomRight: Radius.circular(0),
+                                            topLeft: Radius.circular(0),
+                                            topRight: Radius.circular(8),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(8, 3, 5, 5),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              Text(
+                                                '4.0',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
-                                                          fontSize: 16,
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .secondaryBackground,
+                                                          fontSize: 14,
                                                           letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w500,
                                                         ),
                                               ),
-                                            ),
-                                            if (serviceListItem['max_price'] !=
-                                                null)
                                               Padding(
                                                 padding: EdgeInsetsDirectional
-                                                    .fromSTEB(0, 0, 0, 0),
-                                                child: Text(
-                                                  '₹ ${serviceListItem['max_price']}',
-                                                  textAlign: TextAlign.center,
-                                                  style: FlutterFlowTheme.of(
+                                                    .fromSTEB(2, 0, 0, 0),
+                                                child: Icon(
+                                                  Icons.star_sharp,
+                                                  color: FlutterFlowTheme.of(
                                                           context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontSize: 12,
-                                                        fontFamily: 'Inter',
-                                                        letterSpacing: 0.0,
-                                                      ),
+                                                      .primaryBackground,
+                                                  size: 18,
                                                 ),
                                               ),
-                                          ],
+                                            ],
+                                          ),
                                         ),
                                       ),
-                                    ));
-                              },
-                            );
-                          },
-                        ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          Padding(
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  'Select service',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        fontSize: 18,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Expanded(
+                            child: Padding(
+                              padding:
+                                  EdgeInsetsDirectional.fromSTEB(20, 5, 20, 0),
+                              child: Builder(
+                                builder: (context) {
+                                  final services =
+                                      serviceList.toList(growable: true) ?? [];
+
+                                  if (isLoading) {
+                                    return Center(
+                                      child: loading(context),
+                                    );
+                                  }
+
+                                  if (!isLoading && serviceList.isEmpty) {
+                                    return Center(
+                                      child: emptyList(),
+                                    );
+                                  }
+
+                                  return GridView.builder(
+                                    padding:
+                                        EdgeInsets.only(top: 10, bottom: 10),
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 3,
+                                      crossAxisSpacing: 10,
+                                      mainAxisSpacing: 10,
+                                      childAspectRatio: 1,
+                                    ),
+                                    scrollDirection: Axis.vertical,
+                                    itemCount: services.length,
+                                    itemBuilder: (context, serviceListIndex) {
+                                      final serviceListItem =
+                                          services[serviceListIndex];
+                                      log('service: $serviceListItem');
+                                      final serviceId = serviceListItem['service_id'];
+                                      bool isDisable = serviceListItem['is_disabled'];
+                                      return Opacity(opacity: (isDisable)? 0.5 : 1, child: GestureDetector(
+                                          onTap: () {
+                                            if(!isDisable){
+                                            setState(() {
+                                              if (selectedServiceIndex.contains(serviceId)) {
+                                                selectedServiceIndex.remove(serviceId);
+                                                selectedServiceData.removeWhere((item) => item['service_id'] == serviceId);
+                                              } else {
+                                                selectedServiceIndex.add(serviceId);
+                                                selectedServiceData.add(serviceListItem);
+                                              }
+                                            });
+                                            }
+                                          },
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .primaryBackground,
+                                              borderRadius:
+                                                  BorderRadius.circular(10),
+                                              border: Border.all(
+                                                  width: selectedServiceIndex
+                                                          .contains(
+                                                      serviceId)
+                                                      ? 2
+                                                      : 1,
+                                                  color:
+                                                      (selectedServiceIndex
+                                                              .contains(
+                                                          serviceId))
+                                                          ? FlutterFlowTheme.of(
+                                                                  context)
+                                                              .primary
+                                                          : FlutterFlowTheme.of(
+                                                                  context)
+                                                              .accent3),
+                                            ),
+                                            child: Padding(
+                                              padding: EdgeInsets.all(14),
+                                              child: Column(
+                                                mainAxisSize: MainAxisSize.max,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceAround,
+                                                children: [
+                                                  Container(
+                                                    width: 35,
+                                                    height: 35,
+                                                    clipBehavior:
+                                                        Clip.antiAlias,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                    ),
+                                                    child: Image.asset(
+                                                      'assets/images/man-hair.png',
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                0, 9, 0, 0),
+                                                    child: Text(
+                                                      serviceListItem[
+                                                          'service_name'],
+                                                      maxLines: 1,
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      textAlign:
+                                                          TextAlign.center,
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 16,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  if (serviceListItem[
+                                                          'max_price'] !=
+                                                      null)
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                                  0, 0, 0, 0),
+                                                      child: Text(
+                                                        '₹ ${serviceListItem['max_price']}',
+                                                        textAlign:
+                                                            TextAlign.center,
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                ],
+                                              ),
+                                            ),
+                                          )));
+                                    },
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                      child: FFButtonWidget(
+                          onPressed: () {
+                            String date;
+                            if (widget.date == null) {
+                              // Fallback to today's date
+                              final now = DateTime.now();
+                              date = DateFormat('yyyy-MM-dd').format(now);
+                            } else {
+                              final selectDateJson = jsonDecode(widget.date);
+                              date =
+                                  '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
+                            }
+                            log('date select: $date');
+                            if (selectedServiceData.isNotEmpty) {
+                              log('services: $selectedServiceData');
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FixAppointmentWidget(
+                                            services: selectedServiceData,
+                                            date: date,
+                                            uuid: (appointeeUUID != '')
+                                                ? appointeeUUID
+                                                : FFAppState().userId,
+                                          )));
+                            } else {
+                              Fluttertoast.showToast(msg: 'Select service');
+                            }
+                          },
+                          text: 'Next',
+                          options: buttonStyle(context)),
                     ),
                   ],
                 ),
-              ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
-                child: FFButtonWidget(
-                    onPressed: () {
-                      String date;
-                      if (widget.date == null) {
-                        // Fallback to today's date
-                        final now = DateTime.now();
-                        date = DateFormat('yyyy-MM-dd').format(now);
-                      } else {
-                        final selectDateJson = jsonDecode(widget.date);
-                        date =
-                            '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
-                      }
-                      log('date select: $date');
-                      if (selectedServiceData.isNotEmpty) {
-                        log('services: $selectedServiceData');
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => FixAppointmentWidget(
-                                      services: selectedServiceData,
-                                      date: date,
-                                      uuid: (appointeeUUID != '')
-                                          ? appointeeUUID
-                                          : FFAppState().userId,
-                                    )));
-                      } else {
-                        Fluttertoast.showToast(msg: 'Select service');
-                      }
-                    },
-                    text: 'Next',
-                    options: buttonStyle(context)),
-              ),
-            ],
-          ),
-
-
-        ])),
+            ])),
       ),
     );
   }

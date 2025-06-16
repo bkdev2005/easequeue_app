@@ -417,8 +417,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             businessList[businessListIndex];
                             final isFavourite = favBusinessList
                                 .contains(businessListItem['uuid']);
+                            bool temporaryClosed = (businessListItem['temporary_closed']);
 
-                            return GestureDetector(
+                            return  GestureDetector(
                                 onTap: () {
                                   if(businessListItem['temporary_closed']){
                                     Fluttertoast.showToast(msg: 'Currently Closed');
@@ -455,7 +456,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                         children: [
                                           Padding(
                                               padding: EdgeInsets.only(top: 5),
-                                              child: Container(
+                                              child: Opacity(opacity: (temporaryClosed)? 0.5 : 1, child: Container(
                                                   width: 35,
                                                   height: 35,
                                                   decoration: BoxDecoration(
@@ -476,7 +477,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                       padding:
                                                       EdgeInsets.all(8),
                                                       child: Image.asset(
-                                                          'assets/images/images.png')))),
+                                                          'assets/images/images.png'))))),
                                           // Business Info
                                           Expanded(
                                               child: Padding(
@@ -485,7 +486,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                   crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                                   children: [
-
+                                                    Opacity(opacity: (temporaryClosed)? 0.5 : 1, child:
                                                     Text(
                                                       businessListItem['name'] ??
                                                           'N/A',
@@ -499,10 +500,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                         fontWeight:
                                                         FontWeight.w500,
                                                       ),
-                                                    ),
+                                                    )),
                                                     if (businessListItem[
                                                     'address'] !=
                                                         null)
+                                      Opacity(opacity: (temporaryClosed)? 0.5 : 1, child:
                                                       Text(
                                                         businessListItem['address']
                                                         ['building'] ??
@@ -515,10 +517,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                           fontFamily: 'Inter',
                                                           letterSpacing: 0.0,
                                                         ),
-                                                      ),
+                                                      )),
                                                     const SizedBox(height: 4),
                                                     Row(
                                                       children: [
+                                                        Opacity(opacity: (temporaryClosed)? 0.5 : 1, child:
                                                         Row(
                                                           children: [
                                                         const Icon(
@@ -536,9 +539,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                             letterSpacing: 0.0,
                                                           ),
                                                         ),
-                                                      ]),
+                                                      ])),
                                                         if(businessListItem['temporary_closed'])
-                                                        SizedBox(width: 10,),
+                                                        const SizedBox(width: 10,),
                                                         if(businessListItem['temporary_closed'])
                                                           Text(
                                                               'Closed',

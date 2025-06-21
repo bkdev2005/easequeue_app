@@ -588,7 +588,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w500
                                                   ),),
-                                                  if(appointments.length > 2)
+                                                  if(appointments.length > 1)
                                                   GestureDetector(
                                                       onTap: (){
                                                         Navigator.push(

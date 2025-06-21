@@ -534,3 +534,14 @@ List<String> getAllQueueServiceUuids(List<dynamic> services) {
 //     throw Exception('Storage permission denied');
 //   }
 // }
+
+
+Future<void> openGoogleMapSearch(String query) async {
+  final Uri url = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}");
+
+  if (await canLaunchUrl(url)) {
+    await launchUrl(url, mode: LaunchMode.externalApplication);
+  } else {
+    throw 'Could not launch $url';
+  }
+}

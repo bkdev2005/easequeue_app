@@ -610,7 +610,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 ],
                                               )),
                                               SizedBox(
-                                                height: 200,
+                                                height: 205,
                                                 child: PageView.builder(
                                                   controller: _pageController,
                                                   itemCount:
@@ -722,18 +722,30 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                               ) ??
                                                                                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                                                                     ),
-                                                                                    Text(
+                                                                                    Row( children: [
+                                                                                    Expanded(child: Text(
                                                                                       '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium?.override(
                                                                                                 fontFamily: 'Inter',
                                                                                                 fontSize: 14,
                                                                                               ) ??
                                                                                           TextStyle(fontSize: 14),
-                                                                                    ),
+                                                                                      maxLines: 2,
+                                                                                      overflow: TextOverflow.ellipsis,
+                                                                                    )),
+                                                                                      IconButton(onPressed: (){
+                                                                                        openGoogleMapSearch('${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}');
+                                                                                      },
+                                                                                          icon: Icon(Icons.pin_drop,
+                                                                                            size: 20,
+                                                                                            color: Colors.redAccent,
+                                                                                          ))
+                                                                                    ]),
                                                                                   ],
                                                                                 ),
                                                                               ),
                                                                             ),
+
                                                                           ],
                                                                         ),
                                                                       ),

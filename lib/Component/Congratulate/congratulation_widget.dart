@@ -86,7 +86,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                             borderRadius:
                                                 BorderRadius.circular(8),
                                             child: Image.asset(
-                                              'assets/images/stamp.png',
+                                              'assets/images/congrat.png',
                                               width: 200,
                                               fit: BoxFit.cover,
                                             ),

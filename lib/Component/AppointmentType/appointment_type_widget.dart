@@ -1,5 +1,6 @@
 import 'dart:developer';
 
+import 'package:eqlite/Component/Congratulate/confirm_ui_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 
 import '../../apiFunction.dart';
@@ -232,7 +233,7 @@ class _AppointmentTypeWidgetState extends State<AppointmentTypeWidget> {
                     .then((value) {
                   log('response: $value');
                   if (value != null) {
-                    return Navigator.push(context, MaterialPageRoute(builder: (context)=> CongratulationWidget(
+                    return Navigator.push(context, MaterialPageRoute(builder: (context)=> ConfirmUiWidget(
                       response: value,
                     )));
                   }

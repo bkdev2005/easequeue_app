@@ -73,7 +73,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        appBar: appBarWidget(context, 'Today\'s Appointments'),
+        appBar: appBarWidget(context, 'Your Schedule Today'),
         body: SafeArea(
           top: true,
           child: Column(

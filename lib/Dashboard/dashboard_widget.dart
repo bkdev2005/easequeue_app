@@ -41,6 +41,13 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   late HomePageModel _model;
   List<dynamic> appointments = [];
+  final List<String> hints = [
+    '"Business"',
+    '"Category"',
+    '"Service"'
+  ];
+  int currentIndex = 0;
+  Timer? _timer;
   bool isMainLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   WebSocket? _webSocket;
@@ -65,6 +72,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => HomePageModel());
+    _timer = Timer.periodic(Duration(seconds: 2), (timer) {
+      setState(() {
+        currentIndex = (currentIndex + 1) % hints.length;
+      });
+    });
     _scrollController = ScrollController()
       ..addListener(() {
         setState(() {
@@ -169,6 +181,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   @override
   void dispose() {
     _model.dispose();
+    _timer?.cancel();
     _scrollController.dispose();
     super.dispose();
   }
@@ -318,7 +331,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                             FontWeight.w500,
                                                       ),
                                                 ),
-                                              ), 
+                                              ),
                                               const Icon(Icons.keyboard_arrow_down_rounded,
                                                 color: Colors.white, size: 18,)
                                               ])),
@@ -411,14 +424,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                               opacity: 1.0 -
                                                   opacity, // Hide text as scroll progresses
                                               child: Text(
-                                                'What service do you need? 🤔',
+                                                'Skip the Wait, Get in Line Smarter 😎',
                                                 style:
                                                     FlutterFlowTheme.of(context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
                                                           color: Colors.white,
-                                                          fontSize: 22,
+                                                          fontSize: 20,
                                                           letterSpacing: 0.0,
                                                           fontWeight:
                                                               FontWeight.w500,
@@ -454,7 +467,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       fontFamily: 'Inter',
                                                       letterSpacing: 0.0,
                                                     ),
-                                            hintText: 'Search anything',
+                                            hintText: 'Search for ${hints[currentIndex]}',
                                             hintStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .labelMedium
@@ -463,7 +476,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       letterSpacing: 0.0,
                                                     ),
                                             enabledBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1,
                                               ),
@@ -564,10 +577,38 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           if (snap != null) {
                                             data = getJsonField(jsonDecode(snap), r'''$.data''');
                                           }
-                                          
+
 
                                           return Column(
                                             children: [
+                                             Padding(padding: EdgeInsets.fromLTRB(20, 20, 20, 0), child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  Text('Your Schedule Today', style: TextStyle(
+                                                    color: FlutterFlowTheme.of(context).primaryText,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500
+                                                  ),),
+                                                  if(appointments.length > 2)
+                                                  GestureDetector(
+                                                      onTap: (){
+                                                        Navigator.push(
+                                                          context,
+                                                          MaterialPageRoute(
+                                                            builder:
+                                                                (context) =>
+                                                                DetailAppointmentsWidget(),
+                                                          ),
+                                                        ).then((value) {
+                                                          callAppointments();
+                                                        });
+                                                      },
+                                                      child: Text('See all', style: TextStyle(
+                                                      color: FlutterFlowTheme.of(context).primaryText,
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w400
+                                                  ),))
+                                                ],
+                                              )),
                                               SizedBox(
                                                 height: 200,
                                                 child: PageView.builder(
@@ -618,12 +659,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                 });
                                                               },
                                                               child: Container(
-                                                                margin: const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        10),
                                                                 decoration:
                                                                     BoxDecoration(
+                                                                      border: Border.all(
+                                                                        color: Colors.black12
+                                                                      ),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(

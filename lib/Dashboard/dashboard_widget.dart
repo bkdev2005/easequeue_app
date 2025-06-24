@@ -613,8 +613,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 height: 205,
                                                 child: PageView.builder(
                                                   controller: _pageController,
-                                                  itemCount:
-                                                      appointments.length,
+                                                  itemCount: appointments.length > 5 ? 5 : appointments.length,
                                                   onPageChanged: (index) {
                                                     setState(() {
                                                       _currentPage = index;
@@ -791,7 +790,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: List.generate(
-                                                      appointments.length,
+                                           appointments.length > 5 ? 5 : appointments.length,
                                                       (index) {
                                                     return Container(
                                                       width: 8,
@@ -950,8 +949,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                       .circular(
                                                                           8),
                                                               child:
-                                                                  Image.asset(
-                                                                'assets/images/scissor-and-comb.png',
+                                                                  Image.network(
+                                                                    'http://65.2.83.191/shared/${categoryListItem['image']}',
                                                                 width: 45,
                                                                 height: 45,
                                                                 fit: BoxFit

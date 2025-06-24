@@ -51,6 +51,7 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
+      backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       body: Center(
         child: Image.asset('assets/images/GOLDEN (2).gif'),)
     );

@@ -417,11 +417,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             businessList[businessListIndex];
                             final isFavourite = favBusinessList
                                 .contains(businessListItem['uuid']);
-                            bool temporaryClosed = (businessListItem['temporary_closed']);
+                            bool temporaryClosed = (businessListItem['temporary_closed'] || businessListItem['is_closed']);
 
                             return  GestureDetector(
                                 onTap: () {
-                                  if(businessListItem['temporary_closed']){
+                                  if(businessListItem['temporary_closed'] ||  businessListItem['is_closed']){
                                     Fluttertoast.showToast(msg: 'Currently Closed');
                                   }else{
                                   Navigator.push(
@@ -471,7 +471,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                       null)
                                                       ? Image.network(
                                                     'http://43.204.107.110/shared/${businessListItem['profile_picture']}',
-                                                    fit: BoxFit.contain,
+                                                    fit: BoxFit.cover,
                                                   )
                                                       : Padding(
                                                       padding:
@@ -507,7 +507,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                       Opacity(opacity: (temporaryClosed)? 0.5 : 1, child:
                                                       Text(
                                                         businessListItem['address']
-                                                        ['building'] ??
+                                                        ['street_1'] ??
                                                             '',
                                                         style: FlutterFlowTheme.of(
                                                             context)
@@ -540,9 +540,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                           ),
                                                         ),
                                                       ])),
-                                                        if(businessListItem['temporary_closed'])
+                                                        if(businessListItem['temporary_closed'] || businessListItem['is_closed'])
                                                         const SizedBox(width: 10,),
-                                                        if(businessListItem['temporary_closed'])
+                                                        if(businessListItem['temporary_closed'] || businessListItem['is_closed'])
                                                           Text(
                                                               'Closed',
                                                               style: FlutterFlowTheme

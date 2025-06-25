@@ -244,6 +244,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                         borderSide: BorderSide(
                                           color: Colors.black
                                         ),
+                                        color: Colors.white,
                                         elevation: 0,
                                         textStyle: TextStyle(color: Colors.black)
                                       )))

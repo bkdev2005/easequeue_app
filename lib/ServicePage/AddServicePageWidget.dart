@@ -161,7 +161,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                       }
                     });
                   },
-                  text: 'Add Other',
+                  text: 'Book Another',
                   options: FFButtonOptions(
                     height: 38,
                     padding: EdgeInsetsDirectional.fromSTEB(16, 0, 16, 0),
@@ -249,15 +249,24 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
                                               Container(
-                                                width: 70,
-                                                height: 70,
+                                                width: 60,
+                                                height: 60,
                                                 decoration: BoxDecoration(
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .primary,
                                                   shape: BoxShape.circle,
                                                 ),
-                                                child: Align(
+                                                child: (widget.businessDetail[
+                                                'profile_picture'] !=
+                                                    null)
+                                                    ? ClipRRect(
+                                                    borderRadius: BorderRadius.circular(30),
+                                                    child: Image.network(
+                                                  'http://43.204.107.110/shared/${widget.businessDetail['profile_picture']}',
+                                                  fit: BoxFit.cover,
+                                                ))
+                                                    : Align(
                                                   alignment:
                                                       AlignmentDirectional(
                                                           0, 0),
@@ -494,7 +503,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         ),
                                       ],
                                     ),
-                                    Align(
+                                   /* Align(
                                       alignment: AlignmentDirectional(1, -1),
                                       child: Container(
                                         decoration: const BoxDecoration(
@@ -543,7 +552,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ),*/
                                   ],
                                 ),
                               ),
@@ -715,6 +724,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 ),
                                                       ),
                                                     ),
+
                                                 ],
                                               ),
                                             ),

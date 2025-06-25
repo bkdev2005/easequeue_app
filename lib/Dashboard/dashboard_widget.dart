@@ -41,11 +41,7 @@ class HomePageWidget extends StatefulWidget {
 class _HomePageWidgetState extends State<HomePageWidget> {
   late HomePageModel _model;
   List<dynamic> appointments = [];
-  final List<String> hints = [
-    '"Business"',
-    '"Category"',
-    '"Service"'
-  ];
+  final List<String> hints = ['"Business"', '"Category"', '"Service"'];
   int currentIndex = 0;
   Timer? _timer;
   bool isMainLoading = false;
@@ -88,10 +84,11 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     _model.textController ??= TextEditingController();
     _model.textFieldFocusNode ??= FocusNode();
 
-    fetchData('categories/with-business', context)?.then((value) =>   setState(() {
-          categoriesList =
-              getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
-        }));
+    fetchData('categories/with-business', context)
+        ?.then((value) => setState(() {
+              categoriesList =
+                  getJsonField(value!, r'''$.data[:]''', true)?.toList() ?? [];
+            }));
 
     log('token: ${FFAppState().token}');
 
@@ -280,45 +277,40 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         ),
                                       )),
                                   Expanded(
-                                    child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            12, 0, 0, 0),
-                                        child:  Column(
-                                            mainAxisSize: MainAxisSize.max,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Text(
-                                                FFAppState()
-                                                        .user['full_name'] ??
-                                                    'Your Name',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'Inter',
-                                                          color: Colors.white,
-                                                          fontSize: 16,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
+                                      child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        12, 0, 0, 0),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.max,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          FFAppState().user['full_name'] ??
+                                              'Your Name',
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                color: Colors.white,
+                                                fontSize: 16,
+                                                letterSpacing: 0.0,
+                                                fontWeight: FontWeight.w500,
                                               ),
-
-                                    GestureDetector(
-                                      onTap: () {
-                                        navigateTo(
-                                            context,
-                                           const SelectCityWidget()).then((onValue)=> setState(() {
-                                           }));
-
-                                      },
-                                      child: Row( children: [
+                                        ),
+                                        GestureDetector(
+                                            onTap: () {
+                                              navigateTo(context,
+                                                      const SelectCityWidget())
+                                                  .then((onValue) =>
+                                                      setState(() {}));
+                                            },
+                                            child: Row(children: [
                                               Padding(
                                                 padding: EdgeInsetsDirectional
                                                     .fromSTEB(0, 2, 4, 0),
                                                 child: Text(
-                                                 FFAppState().city,
+                                                  FFAppState().city,
                                                   style: FlutterFlowTheme.of(
                                                           context)
                                                       .bodyMedium
@@ -332,13 +324,16 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       ),
                                                 ),
                                               ),
-                                              const Icon(Icons.keyboard_arrow_down_rounded,
-                                                color: Colors.white, size: 18,)
-                                              ])),
-                                            ],
-                                          ),
-                                        )),
-
+                                              const Icon(
+                                                Icons
+                                                    .keyboard_arrow_down_rounded,
+                                                color: Colors.white,
+                                                size: 18,
+                                              )
+                                            ])),
+                                      ],
+                                    ),
+                                  )),
                                   FlutterFlowIconButton(
                                     borderRadius: 8,
                                     buttonSize: 40,
@@ -467,7 +462,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       fontFamily: 'Inter',
                                                       letterSpacing: 0.0,
                                                     ),
-                                            hintText: 'Search for ${hints[currentIndex]}',
+                                            hintText:
+                                                'Search for ${hints[currentIndex]}',
                                             hintStyle:
                                                 FlutterFlowTheme.of(context)
                                                     .labelMedium
@@ -575,45 +571,68 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           log('data stream: ${snapshot.data}');
                                           dynamic data;
                                           if (snap != null) {
-                                            data = getJsonField(jsonDecode(snap), r'''$.data''');
+                                            data = getJsonField(
+                                                jsonDecode(snap),
+                                                r'''$.data''');
                                           }
-
 
                                           return Column(
                                             children: [
-                                             Padding(padding: EdgeInsets.fromLTRB(20, 20, 20, 0), child: Row( mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  Text('Your Schedule Today', style: TextStyle(
-                                                    color: FlutterFlowTheme.of(context).primaryText,
-                                                    fontSize: 16,
-                                                    fontWeight: FontWeight.w500
-                                                  ),),
-                                                  if(appointments.length > 1)
-                                                  GestureDetector(
-                                                      onTap: (){
-                                                        Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                            builder:
-                                                                (context) =>
-                                                                DetailAppointmentsWidget(),
-                                                          ),
-                                                        ).then((value) {
-                                                          callAppointments();
-                                                        });
-                                                      },
-                                                      child: Text('See all', style: TextStyle(
-                                                      color: FlutterFlowTheme.of(context).primaryText,
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w400
-                                                  ),))
-                                                ],
-                                              )),
+                                              Padding(
+                                                  padding: EdgeInsets.fromLTRB(
+                                                      20, 20, 20, 0),
+                                                  child: Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Text(
+                                                        'Your Schedule Today',
+                                                        style: TextStyle(
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primaryText,
+                                                            fontSize: 16,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      ),
+                                                      if (appointments.length >
+                                                          1)
+                                                        GestureDetector(
+                                                            onTap: () {
+                                                              Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                  builder:
+                                                                      (context) =>
+                                                                          DetailAppointmentsWidget(),
+                                                                ),
+                                                              ).then((value) {
+                                                                callAppointments();
+                                                              });
+                                                            },
+                                                            child: Text(
+                                                              'See all',
+                                                              style: TextStyle(
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryText,
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400),
+                                                            ))
+                                                    ],
+                                                  )),
                                               SizedBox(
-                                                height: 205,
+                                                height: 225,
                                                 child: PageView.builder(
                                                   controller: _pageController,
-                                                  itemCount: appointments.length > 5 ? 5 : appointments.length,
+                                                  itemCount:
+                                                      appointments.length > 5
+                                                          ? 5
+                                                          : appointments.length,
                                                   onPageChanged: (index) {
                                                     setState(() {
                                                       _currentPage = index;
@@ -660,9 +679,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               child: Container(
                                                                 decoration:
                                                                     BoxDecoration(
-                                                                      border: Border.all(
-                                                                        color: Colors.black12
-                                                                      ),
+                                                                  border: Border.all(
+                                                                      color: Colors
+                                                                          .black12),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -703,7 +722,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                     child: (appointmentDetail['profile_picture'] != null)
                                                                                         ? Image.network(
                                                                                             'http://43.204.107.110/shared/${appointmentDetail['profile_picture']}',
-                                                                                            fit: BoxFit.contain,
+                                                                                            fit: BoxFit.cover,
                                                                                           )
                                                                                         : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
                                                                             Expanded(
@@ -712,7 +731,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                 child: Column(
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
-                                                                                    Text(
+                                                                                    Row( children: [
+                                                                                      Text(
                                                                                       appointmentDetail['business_name'] ?? 'N/A',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium?.override(
                                                                                                 fontFamily: 'Inter',
@@ -721,21 +741,49 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                               ) ??
                                                                                           TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                                                                                     ),
-                                                                                    Row( children: [
-                                                                                    Expanded(child: Text(
-                                                                                      '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                      const SizedBox(
+                                                                                        width: 8,
+                                                                                      ),
+                                                                                      Text(
+                                                                                       '(${appointmentDetail['queue_name']})',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                          fontFamily: 'Inter',
+                                                                                          fontSize: 14,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                        ) ??
+                                                                                            TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                                                                      ),
+                                                                                    ]),
+                                                                                    Text(
+                                                                                      'Your Token: ${appointmentDetail['your_token']??0}',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                                fontFamily: 'Inter',
-                                                                                                fontSize: 14,
-                                                                                              ) ??
-                                                                                          TextStyle(fontSize: 14),
-                                                                                      maxLines: 2,
-                                                                                      overflow: TextOverflow.ellipsis,
-                                                                                    )),
-                                                                                      IconButton(onPressed: (){
-                                                                                        openGoogleMapSearch('${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}');
-                                                                                      },
-                                                                                          icon: Icon(Icons.pin_drop,
+                                                                                        fontFamily: 'Inter',
+                                                                                        fontSize: 14,
+                                                                                        fontWeight: FontWeight.w500,
+                                                                                      ) ??
+                                                                                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                                                                    ),
+                                                                                    Row(
+                                                                                        crossAxisAlignment: CrossAxisAlignment.center,
+                                                                                        children: [
+                                                                                      Expanded(
+                                                                                          child: Text(
+                                                                                        '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                        style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                  fontFamily: 'Inter',
+                                                                                                  fontSize: 14,
+                                                                                          fontWeight: FontWeight.w300
+                                                                                                ) ??
+                                                                                            TextStyle(fontSize: 14),
+                                                                                        maxLines: 2,
+                                                                                        overflow: TextOverflow.ellipsis,
+                                                                                      )),
+                                                                                      IconButton(
+                                                                                          onPressed: () {
+                                                                                            openGoogleMapSearch('${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}');
+                                                                                          },
+                                                                                          icon: const Icon(
+                                                                                            Icons.pin_drop,
                                                                                             size: 20,
                                                                                             color: Colors.redAccent,
                                                                                           ))
@@ -744,7 +792,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                 ),
                                                                               ),
                                                                             ),
-
                                                                           ],
                                                                         ),
                                                                       ),
@@ -763,13 +810,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           mainAxisAlignment:
                                                                               MainAxisAlignment.spaceEvenly,
                                                                           children: [
-                                                                            _buildInfoColumn('Your token',
+                                                                            _buildInfoColumn('Running token',
                                                                                 '${message['current_token'] ?? '0'}'),
                                                                             _buildDivider(),
-                                                                            _buildInfoColumn('Waiting count',
-                                                                                '${message['waiting_count'] ?? ''}'),
+                                                                            _buildInfoColumn('Your position',
+                                                                                '${message['position'] ?? ''}'),
                                                                             _buildDivider(),
-                                                                            _buildInfoColumn('Waiting time',
+                                                                            _buildInfoColumn('Appointment time',
                                                                                 '${message['estimated_appointment_time'].toString()}'),
                                                                           ],
                                                                         ),
@@ -790,7 +837,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   mainAxisAlignment:
                                                       MainAxisAlignment.center,
                                                   children: List.generate(
-                                           appointments.length > 5 ? 5 : appointments.length,
+                                                      appointments.length > 5
+                                                          ? 5
+                                                          : appointments.length,
                                                       (index) {
                                                     return Container(
                                                       width: 8,
@@ -880,8 +929,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                       categoryId:
                                                           categoryListItem[
                                                               'uuid'],
-                                                      categoryName: categoryListItem[
-                                                      'name'],
+                                                      categoryName:
+                                                          categoryListItem[
+                                                              'name'],
                                                       latitude: latitude,
                                                       longitude: longitude,
                                                     ),
@@ -950,7 +1000,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           8),
                                                               child:
                                                                   Image.network(
-                                                                    'http://43.204.107.110/shared/${categoryListItem['image']}',
+                                                                'http://43.204.107.110/shared/${categoryListItem['image']}',
                                                                 width: 45,
                                                                 height: 45,
                                                                 fit: BoxFit

@@ -656,7 +656,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                         isScrollControlled: true,
                                                         builder: (context){
                                                       return Padding(padding: MediaQuery.viewInsetsOf(context),
-                                                          child: BusinessInfoWidget());
+                                                          child: BusinessInfoWidget(
+                                                            data: businessListItem,
+                                                          ));
                                                         });
                                                   },
                                                   child: const Icon(

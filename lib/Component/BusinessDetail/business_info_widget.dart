@@ -1,3 +1,10 @@
+import 'dart:developer';
+
+import 'package:eqlite/flutter_flow/nav/nav.dart';
+import 'package:eqlite/function.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+
+import '../../apiFunction.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import 'dart:ui';
@@ -10,8 +17,8 @@ import 'business_info_model.dart';
 export 'business_info_model.dart';
 
 class BusinessInfoWidget extends StatefulWidget {
-  const BusinessInfoWidget({super.key});
-
+  const BusinessInfoWidget({super.key, required this.data});
+  final dynamic data;
   @override
   State<BusinessInfoWidget> createState() => _BusinessInfoWidgetState();
 }
@@ -19,6 +26,7 @@ class BusinessInfoWidget extends StatefulWidget {
 class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
   late BusinessInfoModel _model;
   bool showTime = false;
+  List<dynamic> scheduleData = [];
 
   @override
   void setState(VoidCallback callback) {
@@ -29,29 +37,42 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
   @override
   void initState() {
     super.initState();
+    fetchData('business_schedule?entity_type=${widget.data['address']['entity_type']}&entity_id=${widget.data['address']['entity_id']}',
+        context)?.then((response){
+      log('response: $response');
+      setState((){
+        scheduleData = response['data'];
+      });
+    });
     _model = createModel(context, () => BusinessInfoModel());
   }
 
   @override
   void dispose() {
     _model.maybeDispose();
-
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+
+    int todayIndex = DateTime.now().weekday % 7;
+    final todayData = scheduleData.firstWhere(
+          (d) => d['day_of_week'] == (todayIndex-1),
+      orElse: () => null,
+    );
+
     return Container(
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(0),
           bottomRight: Radius.circular(0),
           topLeft: Radius.circular(12),
           topRight: Radius.circular(12),
         ),
       ),
-      child: Column(
+      child: Stack( children: [ Column(
         mainAxisSize: MainAxisSize.min,
         children: [
           Row(
@@ -78,17 +99,19 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
               mainAxisSize: MainAxisSize.max,
               children: [
                 Text(
-                  'Mukta A2 Cinema',
+                  widget.data['name'],
                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                         fontFamily: 'Inter',
-                        fontSize: 16,
+                        fontSize: 18,
                         letterSpacing: 0.0,
                         fontWeight: FontWeight.w500,
                         fontStyle:
                             FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                       ),
                 ),
-                IconButton(onPressed: () {}, icon: Icon(Icons.close))
+                IconButton(onPressed: () {
+                  context.pop();
+                }, icon: Icon(Icons.close))
               ],
             ),
           ),
@@ -167,7 +190,7 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                 child: Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
                   child: Text(
-                    'New Ranip, Ahmedabad, gujarat, \n382481',
+                    '${((getJsonField(widget.data, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.data, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.data, r'''$.address.building''')).toString()}, ${(getJsonField(widget.data, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.data, r'''$.address.country''')).toString()}-${(getJsonField(widget.data, r'''$.address.postal_code''')).toString()}',
                     style: FlutterFlowTheme.of(context).bodyMedium.override(
                           fontFamily: 'Inter',
                           letterSpacing: 0.0,
@@ -180,6 +203,17 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                   ),
                 ),
               ),
+              IconButton(
+                  onPressed: () {
+                    openGoogleMapSearch( '${((getJsonField(widget.data, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.data, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.data, r'''$.address.building''')).toString()}, ${(getJsonField(widget.data, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.data, r'''$.address.country''')).toString()}-${(getJsonField(widget.data, r'''$.address.postal_code''')).toString()}',);
+                  },
+                  icon: const Icon(
+                    Icons.near_me_rounded,
+                    color: Colors.blue,
+                  )),
+             const SizedBox(
+                width: 5,
+              )
             ],
           ),
           Divider(
@@ -201,53 +235,53 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                   ),
                 ),
               ),
-              if(!showTime)
-              Expanded(
-                child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 20, 0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+              if (!showTime && scheduleData.isNotEmpty)
+                Expanded(
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.fromSTEB(10, 0, 20, 0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
-                      children: [ Text(
-                    'Mon - Sat',
-                    style: FlutterFlowTheme.of(context).bodyMedium.override(
-                      fontFamily: 'Inter',
-                      letterSpacing: 0.0,
-                      fontWeight: FlutterFlowTheme.of(context)
-                          .bodyMedium
-                          .fontWeight,
-                      fontStyle:
-                      FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                    ),
-                  ),
+                      children: [
                         Text(
-                          '09:00 am - 09:00 pm',
+                          days[todayData['day_of_week']],
                           style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Inter',
                             letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle:
-                            FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
                           ),
                         ),
-
-                  ]),
+                        Text(
+                          (todayData['is_open'])
+                              ? formatTimeRange(
+                              todayData['opening_time'],
+                              todayData['closing_time'])
+                              : 'Closed',
+                          style: FlutterFlowTheme.of(context).bodyMedium.override(
+                            fontFamily: 'Inter',
+                            letterSpacing: 0.0,
+                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
+                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
-              ),
-              if(showTime)
-              Expanded(child:
-              Column(
-                  children: List.generate(days.length, (index) {
-                    final day = days[index];
-                return Padding(
+
+              if (showTime && scheduleData.isNotEmpty)
+                Expanded(
+                    child: Column(
+                        children: List.generate(scheduleData.length, (index) {
+                  final day = scheduleData[index];
+                  return Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(10, 0, 20, 0),
                     child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            day,
+                            days[day['day_of_week']],
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -262,7 +296,9 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                                 ),
                           ),
                           Text(
-                            '09:00 am - 09:00 pm',
+                              (day['is_open'])
+                                  ? formatTimeRange(day['opening_time'], day['closing_time'])
+                                  : 'Closed',
                             style: FlutterFlowTheme.of(context)
                                 .bodyMedium
                                 .override(
@@ -277,60 +313,24 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                                 ),
                           ),
                         ]),
-                );
-              }))),
+                  );
+                }))),
               IconButton(
-                  onPressed: (){
-                    setState((){
+                  onPressed: () {
+                    setState(() {
                       showTime = !showTime;
                     });
-                  }, icon: Icon((showTime)? Icons.keyboard_arrow_up_rounded : Icons.keyboard_arrow_down_rounded))
+                  },
+                  icon: Icon((showTime)
+                      ? Icons.keyboard_arrow_up_rounded
+                      : Icons.keyboard_arrow_down_rounded))
             ],
           ),
           Divider(
             thickness: 0.5,
             color: FlutterFlowTheme.of(context).secondaryText,
           ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 2),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-                  child: Icon(
-                    Icons.favorite_border,
-                    color: FlutterFlowTheme.of(context).primaryText,
-                    size: 20,
-                  ),
-                ),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-                    child: Text(
-                      'Tap to add to your favorite',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            fontSize: 12,
-                            letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .fontStyle,
-                          ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Divider(
-            thickness: 0.5,
-            color: FlutterFlowTheme.of(context).secondaryText,
-          ),
+
           Padding(
             padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 2),
             child: Row(
@@ -369,15 +369,27 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Icon(
-                      Icons.access_alarm_outlined,
-                      color: FlutterFlowTheme.of(context).primaryText,
+                    InkWell(
+                        onTap: (){
+                          dialNumber(widget.data[
+                          'phone_number']);
+                        },
+                        child: Container(
+                      height: 40,
+                         width: 40,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(5),
+                          color: FlutterFlowTheme.of(context).primaryText
+                        ),
+                        child: Padding(padding: EdgeInsets.all(8), child: Icon(
+                      Icons.call_rounded,
+                      color: FlutterFlowTheme.of(context).secondaryBackground,
                       size: 24,
-                    ),
+                    )))),
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 7, 0, 0),
                       child: Text(
-                        'Appointment \nCancellation',
+                        'Call',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Inter',
@@ -397,15 +409,15 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Icon(
-                      Icons.sixteen_mp,
+                    FaIcon(
+                      FontAwesomeIcons.whatsappSquare,
                       color: FlutterFlowTheme.of(context).primaryText,
-                      size: 24,
+                      size: 46,
                     ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                       child: Text(
-                        'Appointment \nCancellation',
+                        'WhatsApp',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Inter',
@@ -425,33 +437,61 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Icon(
-                      Icons.arrow_circle_right,
+                    FaIcon(
+                      FontAwesomeIcons.instagramSquare,
                       color: FlutterFlowTheme.of(context).primaryText,
-                      size: 24,
+                      size: 46,
                     ),
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
                       child: Text(
-                        'Appointment \nCancellation',
+                        'Instagram',
                         textAlign: TextAlign.center,
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                              fontFamily: 'Inter',
-                              fontSize: 10,
-                              letterSpacing: 0.0,
-                              fontWeight: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontWeight,
-                              fontStyle: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .fontStyle,
-                            ),
+                          fontFamily: 'Inter',
+                          fontSize: 10,
+                          letterSpacing: 0.0,
+                          fontWeight: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontWeight,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontStyle,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    FaIcon(
+                      FontAwesomeIcons.facebookSquare,
+                      color: FlutterFlowTheme.of(context).primaryText,
+                      size: 46,
+                    ),
+                    Padding(
+                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                      child: Text(
+                        'Facebook',
+                        textAlign: TextAlign.center,
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                          fontFamily: 'Inter',
+                          fontSize: 10,
+                          letterSpacing: 0.0,
+                          fontWeight: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontWeight,
+                          fontStyle: FlutterFlowTheme.of(context)
+                              .bodyMedium
+                              .fontStyle,
+                        ),
                       ),
                     ),
                   ],
                 ),
               ]
-                  .divide(SizedBox(width: 15))
+                  .divide(SizedBox(width: 20))
                   .addToStart(SizedBox(width: 15))
                   .addToEnd(SizedBox(width: 15)),
             ),
@@ -461,8 +501,19 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
           )
         ],
       ),
-    );
+
+    ]));
   }
 
-  List<String> days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+
+  List<String> days = [
+    'Monday',
+    'Tuesday',
+    'Wednesday',
+    'Thursday',
+    'Friday',
+    'Saturday',
+    'Sunday'
+  ];
 }

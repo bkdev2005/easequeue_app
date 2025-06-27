@@ -398,6 +398,26 @@ String formatTimestamp(String timestamp) {
   return DateFormat("dd MMM yy, hh:mm a").format(dateTime);
 }
 
+String formatTimeRange(String open, String close) {
+  return '${_formatTime(open)} - ${_formatTime(close)}';
+}
+
+String _formatTime(String time) {
+  if (time.isEmpty) return '';
+  final parts = time.split(':');
+  int hour = int.parse(parts[0]);
+  final minute = parts[1];
+  String period = 'am';
+  if (hour >= 12) {
+    period = 'pm';
+    if (hour > 12) hour -= 12;
+  } else if (hour == 0) {
+    hour = 12;
+  }
+  return '${hour.toString().padLeft(2, '0')}:$minute $period';
+}
+
+
 
 InputDecoration searchInputDecoration(BuildContext context, String hintText){
   return InputDecoration(

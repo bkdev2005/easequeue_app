@@ -650,7 +650,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                           .primary),
                                                 ),
                                                 SizedBox(height: 15,),
-                                                GestureDetector(
+                                                InkWell(
+                                                  borderRadius: BorderRadius.circular(30),
                                                   onTap: () {
                                                     showModalBottomSheet(context: context,
                                                         isScrollControlled: true,
@@ -661,12 +662,12 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                           ));
                                                         });
                                                   },
-                                                  child: const Icon(
+                                                  child: const Padding(padding: EdgeInsets.all(5), child: Icon(
                                                        Icons.info_outlined,
                                                       size: 20,
                                                       color: Colors.black54,
                                                 ),
-                                              )
+                                              ))
 
                                         ],
                                       ),

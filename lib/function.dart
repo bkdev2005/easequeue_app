@@ -565,3 +565,11 @@ Future<void> openGoogleMapSearch(String query) async {
     throw 'Could not launch $url';
   }
 }
+
+String changeFormat(String dateTime) {
+  String input = dateTime;
+  DateTime dt = DateFormat("dd MMMM yyyy hh:mm a").parse(input);
+  String formatted = DateFormat("dd MMMM yyyy'\n'hh:mm a").format(dt);
+  print(formatted); // 25 June 2025\n08:09 PM
+  return formatted;
+}

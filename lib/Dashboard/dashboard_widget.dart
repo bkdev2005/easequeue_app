@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/material.dart';
+import 'dart:math' as math;
 import 'package:eqlite/BusinessPage/businessWidget.dart';
 import 'package:eqlite/Component/AppointmentTime/AppointmentTimeWidget.dart';
 import 'package:eqlite/DetailAppointment/detail_Appointment_Widget.dart';
@@ -676,7 +678,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                   callAppointments();
                                                                 });
                                                               },
-                                                              child: Container(
+                                                              child: Stack( children: [
+                                                                Container(
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   border: Border.all(
@@ -694,8 +697,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                   padding:
                                                                       const EdgeInsetsDirectional
                                                                           .fromSTEB(
+                                                                          12,
                                                                           10,
-                                                                          20,
                                                                           10,
                                                                           15),
                                                                   child: Column(
@@ -718,7 +721,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                         border: Border.all(
                                                                                           color: Colors.black26,
                                                                                         ),
-                                                                                        borderRadius: BorderRadius.circular(5)),
+                                                                                        borderRadius: BorderRadius.circular(8)),
                                                                                     child: (appointmentDetail['profile_picture'] != null)
                                                                                         ? Image.network(
                                                                                             'http://43.204.107.110/shared/${appointmentDetail['profile_picture']}',
@@ -727,7 +730,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                         : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
                                                                             Expanded(
                                                                               child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.only(start: 10),
+                                                                                padding: const EdgeInsetsDirectional.only(start: 10, top: 2),
                                                                                 child: Column(
                                                                                   crossAxisAlignment: CrossAxisAlignment.start,
                                                                                   children: [
@@ -755,7 +758,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                       ),
                                                                                     ]),
                                                                                     Text(
-                                                                                      'Your Token: ${appointmentDetail['your_token']??0}',
+                                                                                      'Token No.: ${appointmentDetail['your_token']??0}',
                                                                                       style: FlutterFlowTheme.of(context).bodyMedium?.override(
                                                                                         fontFamily: 'Inter',
                                                                                         fontSize: 14,
@@ -825,7 +828,15 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                   ),
                                                                 ),
                                                               ),
-                                                            )));
+                                                                if( message['is_queue_running'] == true)
+                                                        RunningBorderCard(
+                                                            isQueueRunning: message['is_queue_running'] == true,
+                                                            child: Container(
+                                                                  decoration: const BoxDecoration(
+                                                                    shape: BoxShape.circle,
+                                                                  ),
+                                                                ))
+                                                            ]))));
                                                   },
                                                 ),
                                               ),
@@ -1145,3 +1156,83 @@ class _HomePageWidgetState extends State<HomePageWidget> {
     );
   }
 }
+
+
+
+class RunningBorderCard extends StatefulWidget {
+  final bool isQueueRunning;
+  final Widget child;
+
+  const RunningBorderCard({
+    super.key,
+    required this.isQueueRunning,
+    required this.child,
+  });
+
+  @override
+  State<RunningBorderCard> createState() => _RunningBorderCardState();
+}
+
+class _RunningBorderCardState extends State<RunningBorderCard>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller =
+    AnimationController(vsync: this, duration: const Duration(seconds: 3))
+      ..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!widget.isQueueRunning) {
+      return Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          color: Colors.white,
+          border: Border.all(color: Colors.grey.shade300, width: 1),
+        ),
+        child: widget.child,
+      );
+    }
+
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, child) {
+        return Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: ShaderMask(
+            shaderCallback: (rect) {
+              return SweepGradient(
+                startAngle: 0.0,
+                endAngle: math.pi * 2,
+                colors: [Colors.green, Colors.transparent],
+                stops: [0.5, 1],
+                transform: GradientRotation(_controller.value * 2 * math.pi),
+              ).createShader(rect);
+            },
+            blendMode: BlendMode.srcIn,
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(color: Colors.green, width: 3),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: widget.child,
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+

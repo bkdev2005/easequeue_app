@@ -280,6 +280,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                       children: List.generate(next7Days.length, (index) {
                         final day = jsonDecode(next7Days[index]);
                         return Material(
+                          borderRadius: BorderRadius.circular(5),
                             elevation: 2,
                             color: Colors.white,
                             child: InkWell(

@@ -287,7 +287,7 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                                 .override(
                                   fontFamily: 'Inter',
                                   letterSpacing: 0.0,
-                                  fontWeight: FlutterFlowTheme.of(context)
+                                  fontWeight: (index == 0)? FontWeight.w600: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .fontWeight,
                                   fontStyle: FlutterFlowTheme.of(context)
@@ -304,9 +304,10 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                                 .override(
                                   fontFamily: 'Inter',
                                   letterSpacing: 0.0,
-                                  fontWeight: FlutterFlowTheme.of(context)
+                                  fontWeight: (index == 0)? FontWeight.w600: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .fontWeight,
+                                  color: (day['is_open'])? Colors.black: Colors.redAccent,
                                   fontStyle: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .fontStyle,
@@ -341,7 +342,7 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(15, 0, 0, 0),
                     child: Text(
-                      'Available Facilities',
+                      'Contact',
                       style: FlutterFlowTheme.of(context).bodyMedium.override(
                             fontFamily: 'Inter',
                             fontSize: 12,

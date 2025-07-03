@@ -312,7 +312,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             fontSize: 18,
                                                             letterSpacing: 0.0,
                                                             fontWeight:
-                                                                FontWeight.w500,
+                                                                FontWeight.w600,
                                                           ),
                                                     ),
                                                     Padding(
@@ -330,7 +330,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                     null)
                                                                 ? businessDetail[
                                                                         'address']
-                                                                    ['building']
+                                                                    ['street_1']
                                                                 : 'N/A',
                                                             style: FlutterFlowTheme
                                                                     .of(context)
@@ -503,7 +503,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         ),
                                       ],
                                     ),
-                                   /* Align(
+                                    Align(
                                       alignment: AlignmentDirectional(1, -1),
                                       child: Container(
                                         decoration: const BoxDecoration(
@@ -552,15 +552,72 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                           ),
                                         ),
                                       ),
-                                    ),*/
+                                    ),
                                   ],
                                 ),
                               ),
                             ),
                           ),
+                          const SizedBox(
+                            height: 15,
+                          ),
+                          Divider(
+                            thickness: 0.5,
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                          ),
+
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              Container(
+                                decoration: BoxDecoration(),
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                  child: Icon(
+                                    Icons.location_on_outlined,
+                                    color: FlutterFlowTheme.of(context).primaryText,
+                                    size: 20,
+                                  ),
+                                ),
+                              ),
+                              Expanded(
+                                child: Padding(
+                                  padding: EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
+                                  child: Text(
+                                    '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}',
+                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                      fontFamily: 'Inter',
+                                      letterSpacing: 0.0,
+                                      fontWeight: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .fontWeight,
+                                      fontStyle:
+                                      FlutterFlowTheme.of(context).bodyMedium.fontStyle,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                  onPressed: () {
+                                    openGoogleMapSearch( '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}',);
+                                  },
+                                  icon: const Icon(
+                                    Icons.near_me_rounded,
+                                    color: Colors.blue,
+                                  )),
+                              const SizedBox(
+                                width: 5,
+                              )
+                            ],
+                          ),
+                          Divider(
+                            thickness: 0.5,
+                            color: FlutterFlowTheme.of(context).secondaryText,
+                          ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
+                                EdgeInsetsDirectional.fromSTEB(20, 10, 0, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [

@@ -186,34 +186,41 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                   Divider(
                                     thickness: 1,
                                   ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 5, 0, 0),
-                                    child: Text(
-                                      'Service: ${serviceName(appointmentListItem['services'])}',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        letterSpacing: 0.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 5, 0, 0),
-                                    child: Text(
-                                      (appointmentListItem['appointment_time'] != null)?
-                                      (appointmentListItem['appointment_time'])??'': '',
-                                      style: FlutterFlowTheme.of(context)
-                                          .bodyMedium
-                                          .override(
-                                        fontFamily: 'Inter',
-                                        letterSpacing: 0.0,
-                                      ),
-                                    ),
-                                  ),
+                                  Row(
+                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsetsDirectional.fromSTEB(
+                                              0, 5, 0, 0),
+                                          child: Text(
+                                            'Service: ${serviceName(appointmentListItem['services'])}',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 16,
+                                              letterSpacing: 0.0,
+                                            ),
+                                          ),
+                                        ),
+                                        Padding(
+                                          padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 5, 0, 0),
+                                          child: Text(
+                                            changeFormat(appointmentListItem['created_at']),
+                                            textAlign: TextAlign.end,
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 10,
+                                              fontWeight: FontWeight.w300,
+                                              letterSpacing: 0.0,
+                                            ),
+                                          ),
+                                        ),
+                                      ]),
                                   Padding(padding: EdgeInsets.only(top: 15),
                                     child: FFButtonWidget(text: 'Cancel Appointment',
                                       onPressed: (){

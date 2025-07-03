@@ -628,7 +628,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                     ],
                                                   )),
                                               SizedBox(
-                                                height: 225,
+                                                height: 240,
                                                 child: PageView.builder(
                                                   controller: _pageController,
                                                   itemCount:
@@ -683,8 +683,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                 decoration:
                                                                     BoxDecoration(
                                                                   border: Border.all(
-                                                                      color: Colors
-                                                                          .black12),
+                                                                    width: 2,
+                                                                      color: (message['is_queue_running'] == false)? Colors
+                                                                          .redAccent : Colors.transparent),
                                                                   borderRadius:
                                                                       BorderRadius
                                                                           .circular(
@@ -788,9 +789,21 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                           icon: const Icon(
                                                                                             Icons.pin_drop,
                                                                                             size: 20,
-                                                                                            color: Colors.redAccent,
+                                                                                            color: Colors.black,
                                                                                           ))
                                                                                     ]),
+
+                                                                                    Text(
+                                                                                ( message['is_queue_running'])? '🟢 This queue is running now ': '🔴 This queue is stop now ',
+                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                        fontFamily: 'Inter',
+                                                                                        fontSize: 12,
+                                                                                        color: (! message['is_queue_running'])? const Color(
+                                                                                            0xCABD4747) :  Color(
+                                                                                            0xC0196906),
+                                                                                        fontWeight: FontWeight.w300,
+                                                                                      )
+                                                                                    ),
                                                                                   ],
                                                                                 ),
                                                                               ),
@@ -798,6 +811,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           ],
                                                                         ),
                                                                       ),
+
                                                                       const Divider(
                                                                           thickness:
                                                                               1,

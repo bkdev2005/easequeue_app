@@ -431,11 +431,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
                             return GestureDetector(
                                 onTap: () {
-                                  if (businessListItem['temporary_closed'] ||
-                                      businessListItem['is_closed']) {
-                                    Fluttertoast.showToast(
-                                        msg: 'Currently Closed');
-                                  } else {
+
                                     Navigator.push(
                                       context,
                                       MaterialPageRoute(
@@ -446,7 +442,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                         ),
                                       ),
                                     );
-                                  }
+
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 12),
@@ -468,11 +464,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                         children: [
                                           Padding(
                                               padding: EdgeInsets.only(top: 5),
-                                              child: Opacity(
-                                                  opacity: (temporaryClosed)
-                                                      ? 0.5
-                                                      : 1,
-                                                  child: Container(
+                                              child:  Container(
                                                       width: 35,
                                                       height: 35,
                                                       decoration: BoxDecoration(
@@ -495,7 +487,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                   EdgeInsets
                                                                       .all(8),
                                                               child: Image.asset(
-                                                                  'assets/images/images.png'))))),
+                                                                  'assets/images/images.png')))),
                                           // Business Info
                                           Expanded(
                                               child: Padding(
@@ -504,11 +496,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                               crossAxisAlignment:
                                                   CrossAxisAlignment.start,
                                               children: [
-                                                Opacity(
-                                                    opacity: (temporaryClosed)
-                                                        ? 0.5
-                                                        : 1,
-                                                    child: Text(
+                                                Text(
                                                       businessListItem[
                                                               'name'] ??
                                                           'N/A',
@@ -522,15 +510,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                             fontWeight:
                                                                 FontWeight.w500,
                                                           ),
-                                                    )),
+                                                    ),
                                                 if (businessListItem[
                                                         'address'] !=
                                                     null)
-                                                  Opacity(
-                                                      opacity: (temporaryClosed)
-                                                          ? 0.5
-                                                          : 1,
-                                                      child: Text(
+                                                  Text(
                                                         businessListItem[
                                                                     'address']
                                                                 ['street_1'] ??
@@ -546,14 +530,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
-                                                      )),
+                                                      ),
                                                 const SizedBox(height: 4),
                                                 Row(children: [
-                                                  Opacity(
-                                                      opacity: (temporaryClosed)
-                                                          ? 0.5
-                                                          : 1,
-                                                      child: Row(children: [
+                                                   Row(children: [
                                                         const Icon(
                                                             Icons.timer_sharp,
                                                             size: 16),
@@ -572,7 +552,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                     0.0,
                                                               ),
                                                         ),
-                                                      ])),
+                                                      ]),
                                                   if (businessListItem[
                                                           'temporary_closed'] ||
                                                       businessListItem[

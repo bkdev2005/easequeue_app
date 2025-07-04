@@ -666,191 +666,152 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                         16),
                                                             child:
                                                                 GestureDetector(
-                                                              onTap: () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  MaterialPageRoute(
-                                                                    builder:
-                                                                        (context) =>
-                                                                            DetailAppointmentsWidget(),
-                                                                  ),
-                                                                ).then((value) {
-                                                                  callAppointments();
-                                                                });
-                                                              },
-                                                              child: Stack( children: [
-                                                                Container(
-                                                                decoration:
-                                                                    BoxDecoration(
-                                                                  border: Border.all(
-                                                                    width: 2,
-                                                                      color: (message['is_queue_running'] == false)? Colors
-                                                                          .redAccent : Colors.transparent),
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              16),
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryBackground,
-                                                                ),
-                                                                child: Padding(
-                                                                  padding:
-                                                                      const EdgeInsetsDirectional
-                                                                          .fromSTEB(
-                                                                          12,
-                                                                          10,
-                                                                          10,
-                                                                          15),
-                                                                  child: Column(
-                                                                    mainAxisAlignment:
-                                                                        MainAxisAlignment
-                                                                            .spaceBetween,
-                                                                    children: [
-                                                                      Expanded(
-                                                                        child:
-                                                                            Row(
-                                                                          crossAxisAlignment:
-                                                                              CrossAxisAlignment.start,
-                                                                          children: [
-                                                                            Padding(
-                                                                                padding: EdgeInsets.only(top: 3),
-                                                                                child: Container(
-                                                                                    width: 45,
-                                                                                    height: 45,
-                                                                                    decoration: BoxDecoration(
-                                                                                        border: Border.all(
-                                                                                          color: Colors.black26,
+                                                                    onTap: () {
+                                                                      Navigator
+                                                                          .push(
+                                                                        context,
+                                                                        MaterialPageRoute(
+                                                                          builder: (context) =>
+                                                                              DetailAppointmentsWidget(),
+                                                                        ),
+                                                                      ).then(
+                                                                          (value) {
+                                                                        callAppointments();
+                                                                      });
+                                                                    },
+                                                                    child: Stack(
+                                                                        children: [
+                                                                          Container(
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              border: Border.all(width: 2, color: (message['is_queue_running'] == false) ? Colors.redAccent : Colors.transparent),
+                                                                              borderRadius: BorderRadius.circular(16),
+                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                            ),
+                                                                            child:
+                                                                                Padding(
+                                                                              padding: const EdgeInsetsDirectional.fromSTEB(12, 10, 10, 15),
+                                                                              child: Column(
+                                                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                                                children: [
+                                                                                  Expanded(
+                                                                                    child: Row(
+                                                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                      children: [
+                                                                                        Padding(
+                                                                                            padding: EdgeInsets.only(top: 3),
+                                                                                            child: Container(
+                                                                                                width: 45,
+                                                                                                height: 45,
+                                                                                                decoration: BoxDecoration(
+                                                                                                    border: Border.all(
+                                                                                                      color: Colors.black26,
+                                                                                                    ),
+                                                                                                    borderRadius: BorderRadius.circular(8)),
+                                                                                                child: (appointmentDetail['profile_picture'] != null)
+                                                                                                    ? Image.network(
+                                                                                                        'http://43.204.107.110/shared/${appointmentDetail['profile_picture']}',
+                                                                                                        fit: BoxFit.cover,
+                                                                                                      )
+                                                                                                    : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
+                                                                                        Expanded(
+                                                                                          child: Padding(
+                                                                                            padding: const EdgeInsetsDirectional.only(start: 10, top: 2),
+                                                                                            child: Column(
+                                                                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                                                                              children: [
+                                                                                                Row(children: [
+                                                                                                  Text(
+                                                                                                    appointmentDetail['business_name'] ?? 'N/A',
+                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                              fontFamily: 'Inter',
+                                                                                                              fontSize: 16,
+                                                                                                              fontWeight: FontWeight.w500,
+                                                                                                            ) ??
+                                                                                                        TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                                                                  ),
+                                                                                                  const SizedBox(
+                                                                                                    width: 8,
+                                                                                                  ),
+                                                                                                  Text(
+                                                                                                    '(${appointmentDetail['queue_name']})',
+                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                              fontFamily: 'Inter',
+                                                                                                              fontSize: 14,
+                                                                                                              fontWeight: FontWeight.w400,
+                                                                                                            ) ??
+                                                                                                        TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                                                                                  ),
+                                                                                                ]),
+                                                                                                Text(
+                                                                                                  'Token No.: ${appointmentDetail['your_token'] ?? 0}',
+                                                                                                  style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                            fontFamily: 'Inter',
+                                                                                                            fontSize: 14,
+                                                                                                            fontWeight: FontWeight.w500,
+                                                                                                          ) ??
+                                                                                                      TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                                                                                ),
+                                                                                                Row(crossAxisAlignment: CrossAxisAlignment.center, children: [
+                                                                                                  Expanded(
+                                                                                                      child: Text(
+                                                                                                    '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
+                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w300) ?? TextStyle(fontSize: 14),
+                                                                                                    maxLines: 2,
+                                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                                  )),
+                                                                                                  IconButton(
+                                                                                                      onPressed: () {
+                                                                                                        openGoogleMapSearch('${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}');
+                                                                                                      },
+                                                                                                      icon: const Icon(
+                                                                                                        Icons.pin_drop,
+                                                                                                        size: 20,
+                                                                                                        color: Colors.black,
+                                                                                                      ))
+                                                                                                ]),
+                                                                                                Text((message['is_queue_running'] == true) ? '🟢 This queue is running now ' : '🔴 This queue is stop now ',
+                                                                                                    style: FlutterFlowTheme.of(context).bodyMedium?.override(
+                                                                                                          fontFamily: 'Inter',
+                                                                                                          fontSize: 12,
+                                                                                                          color: (message['is_queue_running'] == false) ? const Color(0xCABD4747) : Color(0xC0196906),
+                                                                                                          fontWeight: FontWeight.w300,
+                                                                                                        )),
+                                                                                              ],
+                                                                                            ),
+                                                                                          ),
                                                                                         ),
-                                                                                        borderRadius: BorderRadius.circular(8)),
-                                                                                    child: (appointmentDetail['profile_picture'] != null)
-                                                                                        ? Image.network(
-                                                                                            'http://43.204.107.110/shared/${appointmentDetail['profile_picture']}',
-                                                                                            fit: BoxFit.cover,
-                                                                                          )
-                                                                                        : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
-                                                                            Expanded(
-                                                                              child: Padding(
-                                                                                padding: const EdgeInsetsDirectional.only(start: 10, top: 2),
-                                                                                child: Column(
-                                                                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                                                                  children: [
-                                                                                    Row( children: [
-                                                                                      Text(
-                                                                                      appointmentDetail['business_name'] ?? 'N/A',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                                fontFamily: 'Inter',
-                                                                                                fontSize: 16,
-                                                                                                fontWeight: FontWeight.w500,
-                                                                                              ) ??
-                                                                                          TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                                                                                      ],
                                                                                     ),
-                                                                                      const SizedBox(
-                                                                                        width: 8,
-                                                                                      ),
-                                                                                      Text(
-                                                                                       '(${appointmentDetail['queue_name']})',
-                                                                                        style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                          fontFamily: 'Inter',
-                                                                                          fontSize: 14,
-                                                                                          fontWeight: FontWeight.w400,
-                                                                                        ) ??
-                                                                                            TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
-                                                                                      ),
-                                                                                    ]),
-                                                                                    Text(
-                                                                                      'Token No.: ${appointmentDetail['your_token']??0}',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                        fontFamily: 'Inter',
-                                                                                        fontSize: 14,
-                                                                                        fontWeight: FontWeight.w500,
-                                                                                      ) ??
-                                                                                          TextStyle(fontSize: 16, fontWeight: FontWeight.w400),
+                                                                                  ),
+                                                                                  const Divider(thickness: 1, color: Color(0xB2BABABA)),
+                                                                                  Padding(
+                                                                                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                                                                                    child: Row(
+                                                                                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                                                      children: [
+                                                                                        _buildInfoColumn('Running token', '${message['current_token'] ?? '0'}'),
+                                                                                        _buildDivider(),
+                                                                                        _buildInfoColumn('Your position', '${message['position'] ?? ''}'),
+                                                                                        _buildDivider(),
+                                                                                        _buildInfoColumn('Appointment time', '${message['estimated_appointment_time'].toString()}'),
+                                                                                      ],
                                                                                     ),
-                                                                                    Row(
-                                                                                        crossAxisAlignment: CrossAxisAlignment.center,
-                                                                                        children: [
-                                                                                      Expanded(
-                                                                                          child: Text(
-                                                                                        '${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}',
-                                                                                        style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                                  fontFamily: 'Inter',
-                                                                                                  fontSize: 14,
-                                                                                          fontWeight: FontWeight.w300
-                                                                                                ) ??
-                                                                                            TextStyle(fontSize: 14),
-                                                                                        maxLines: 2,
-                                                                                        overflow: TextOverflow.ellipsis,
-                                                                                      )),
-                                                                                      IconButton(
-                                                                                          onPressed: () {
-                                                                                            openGoogleMapSearch('${((getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() != '') ? (getJsonField(appointmentDetail, r'''$.business_address[0].unit_number''')).toString() + ', ' : ''}${(getJsonField(appointmentDetail, r'''$.business_address[0].building''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].street_1''')).toString()}, ${(getJsonField(appointmentDetail, r'''$.business_address[0].country''')).toString()}-${(getJsonField(appointmentDetail, r'''$.business_address[0].postal_code''')).toString()}');
-                                                                                          },
-                                                                                          icon: const Icon(
-                                                                                            Icons.pin_drop,
-                                                                                            size: 20,
-                                                                                            color: Colors.black,
-                                                                                          ))
-                                                                                    ]),
-
-                                                                                    Text(
-                                                                                ( message['is_queue_running'])? '🟢 This queue is running now ': '🔴 This queue is stop now ',
-                                                                                      style: FlutterFlowTheme.of(context).bodyMedium?.override(
-                                                                                        fontFamily: 'Inter',
-                                                                                        fontSize: 12,
-                                                                                        color: (! message['is_queue_running'])? const Color(
-                                                                                            0xCABD4747) :  Color(
-                                                                                            0xC0196906),
-                                                                                        fontWeight: FontWeight.w300,
-                                                                                      )
-                                                                                    ),
-                                                                                  ],
-                                                                                ),
+                                                                                  ),
+                                                                                ],
                                                                               ),
                                                                             ),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-
-                                                                      const Divider(
-                                                                          thickness:
-                                                                              1,
-                                                                          color:
-                                                                              Color(0xB2BABABA)),
-                                                                      Padding(
-                                                                        padding: const EdgeInsets
-                                                                            .symmetric(
-                                                                            horizontal:
-                                                                                15),
-                                                                        child:
-                                                                            Row(
-                                                                          mainAxisAlignment:
-                                                                              MainAxisAlignment.spaceEvenly,
-                                                                          children: [
-                                                                            _buildInfoColumn('Running token',
-                                                                                '${message['current_token'] ?? '0'}'),
-                                                                            _buildDivider(),
-                                                                            _buildInfoColumn('Your position',
-                                                                                '${message['position'] ?? ''}'),
-                                                                            _buildDivider(),
-                                                                            _buildInfoColumn('Appointment time',
-                                                                                '${message['estimated_appointment_time'].toString()}'),
-                                                                          ],
-                                                                        ),
-                                                                      ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              ),
-                                                                if( message['is_queue_running'] == true)
-                                                        RunningBorderCard(
-                                                            isQueueRunning: message['is_queue_running'] == true,
-                                                            child: Container(
-                                                                  decoration: const BoxDecoration(
-                                                                    shape: BoxShape.circle,
-                                                                  ),
-                                                                ))
-                                                            ]))));
+                                                                          ),
+                                                                          if (message['is_queue_running'] ==
+                                                                              true)
+                                                                            RunningBorderCard(
+                                                                                isQueueRunning: message['is_queue_running'] == true,
+                                                                                child: Container(
+                                                                                  decoration: const BoxDecoration(
+                                                                                    shape: BoxShape.circle,
+                                                                                  ),
+                                                                                ))
+                                                                        ]))));
                                                   },
                                                 ),
                                               ),
@@ -1171,8 +1132,6 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   }
 }
 
-
-
 class RunningBorderCard extends StatefulWidget {
   final bool isQueueRunning;
   final Widget child;
@@ -1195,8 +1154,8 @@ class _RunningBorderCardState extends State<RunningBorderCard>
   void initState() {
     super.initState();
     _controller =
-    AnimationController(vsync: this, duration: const Duration(seconds: 3))
-      ..repeat();
+        AnimationController(vsync: this, duration: const Duration(seconds: 3))
+          ..repeat();
   }
 
   @override
@@ -1249,4 +1208,3 @@ class _RunningBorderCardState extends State<RunningBorderCard>
     );
   }
 }
-

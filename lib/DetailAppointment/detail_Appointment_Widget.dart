@@ -143,13 +143,29 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                             .bodyMedium
                                             .override(
                                           fontFamily: 'Inter',
-                                          color: Color(0xFF165222),
+                                          color: (appointmentListItem[
+                                        'user_status'] == 'Cancelled')? Colors.red : (appointmentListItem[
+                                        'user_status'] == 'Registered')? Colors.orangeAccent : Colors.green,
                                           fontSize: 12,
                                           letterSpacing: 0.0,
                                           fontWeight: FontWeight.normal,
                                         ),
                                       ),
                                     ],
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        0, 5, 0, 0),
+                                    child: Text(
+                                      'Token No.: ${appointmentListItem['your_token']}',
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: 'Inter',
+                                        letterSpacing: 0.0,
+                                      ),
+                                    ),
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
@@ -172,7 +188,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                   ),
                                   Padding(
                                     padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 8, 0, 0),
+                                        0, 5, 0, 0),
                                     child: Text(
                                       '₹ ${appointmentListItem['total_price']}',
                                       style: FlutterFlowTheme.of(context)

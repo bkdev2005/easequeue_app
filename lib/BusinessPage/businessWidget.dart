@@ -280,7 +280,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                       children: List.generate(next7Days.length, (index) {
                         final day = jsonDecode(next7Days[index]);
                         return Material(
-                          borderRadius: BorderRadius.circular(5),
+                            borderRadius: BorderRadius.circular(5),
                             elevation: 2,
                             color: Colors.white,
                             child: InkWell(
@@ -431,18 +431,16 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
                             return GestureDetector(
                                 onTap: () {
-
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) =>
-                                            AddServicePageWidget(
-                                          businessDetail: businessListItem,
-                                          date: selectDay,
-                                        ),
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          AddServicePageWidget(
+                                        businessDetail: businessListItem,
+                                        date: selectDay,
                                       ),
-                                    );
-
+                                    ),
+                                  );
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 12),
@@ -451,20 +449,22 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                     borderRadius: BorderRadius.circular(12),
                                     color: Colors.white,
                                     child: Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          horizontal: 0, vertical: 6),
-                                      padding: const EdgeInsets.fromLTRB(
-                                          15, 8, 15, 8),
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(12),
-                                      ),
-                                      child: Row(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                              padding: EdgeInsets.only(top: 5),
-                                              child:  Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            horizontal: 0, vertical: 6),
+                                        padding: const EdgeInsets.fromLTRB(
+                                            15, 8, 15, 8),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                        ),
+                                        child: Row(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Padding(
+                                                  padding:
+                                                      EdgeInsets.only(top: 5),
+                                                  child: Container(
                                                       width: 35,
                                                       height: 35,
                                                       decoration: BoxDecoration(
@@ -488,15 +488,16 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                       .all(8),
                                                               child: Image.asset(
                                                                   'assets/images/images.png')))),
-                                          // Business Info
-                                          Expanded(
-                                              child: Padding(
-                                            padding: EdgeInsets.only(left: 10),
-                                            child: Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Text(
+                                              // Business Info
+                                              Expanded(
+                                                  child: Padding(
+                                                padding:
+                                                    EdgeInsets.only(left: 10),
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
                                                       businessListItem[
                                                               'name'] ??
                                                           'N/A',
@@ -511,14 +512,16 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                 FontWeight.w500,
                                                           ),
                                                     ),
-                                                if (businessListItem[
-                                                        'address'] !=
-                                                    null)
-                                                  Text(
+                                                    if (businessListItem[
+                                                            'address'] !=
+                                                        null)
+                                                      Text(
                                                         businessListItem[
                                                                     'address']
                                                                 ['street_1'] ??
                                                             '',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow.ellipsis,
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
@@ -531,128 +534,89 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                       0.0,
                                                                 ),
                                                       ),
-                                                const SizedBox(height: 4),
-                                                Row(children: [
-                                                   Row(children: [
-                                                        const Icon(
-                                                            Icons.timer_sharp,
-                                                            size: 16),
-                                                        const SizedBox(
-                                                            width: 4),
-                                                        Text(
-                                                          '${businessListItem['distance_time']} - ${businessListItem['distance']}',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                fontSize: 12,
-                                                                fontFamily:
-                                                                    'Inter',
-                                                                letterSpacing:
-                                                                    0.0,
-                                                              ),
-                                                        ),
-                                                      ]),
-                                                  if (businessListItem[
-                                                          'temporary_closed'] ||
-                                                      businessListItem[
-                                                          'is_closed'])
-                                                    const SizedBox(
-                                                      width: 10,
-                                                    ),
-                                                  if (businessListItem[
-                                                          'temporary_closed'] ||
-                                                      businessListItem[
-                                                          'is_closed'])
-                                                    Row(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        mainAxisAlignment:
-                                                            MainAxisAlignment
-                                                                .spaceBetween,
-                                                        children: [
-                                                          Text('Closed',
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w600,
-                                                                    color: Colors
-                                                                        .redAccent,
-                                                                    fontFamily:
-                                                                        'Inter',
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                  )),
-                                                        ]),
-                                                ])
-                                              ],
-                                            ),
-                                          )),
+                                                    const SizedBox(height: 4),
+                                                    Row(children: [
+                                                      if (businessListItem[
+                                                              'temporary_closed'] ||
+                                                          businessListItem[
+                                                              'is_closed'])
+                                                        if (businessListItem[
+                                                                'temporary_closed'] ||
+                                                            businessListItem[
+                                                                'is_closed'])
+                                                          Row(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .max,
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                Text('Closed',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontSize:
+                                                                              14,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                          color:
+                                                                              Colors.redAccent,
+                                                                          fontFamily:
+                                                                              'Inter',
+                                                                          letterSpacing:
+                                                                              0.0,
+                                                                        )),
+                                                              ]),
+                                                    ])
+                                                  ],
+                                                ),
+                                              )),
 
-                                          const SizedBox(width: 12),
+                                              const SizedBox(width: 12),
 
-                                          // Info Icon
-                                          // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
+                                              // Info Icon
+                                              // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
                                               Column(
                                                 children: [
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    // setState(() {
-                                                    //   page = 1;
-                                                    //   // data.clear();
-                                                    // });
-                                                    sendData({
-                                                      "user_id": FFAppState().userId,
-                                                      "business_id":
-                                                      businessListItem['uuid']
-                                                    }, 'favourite')
-                                                        .then((value) {
-                                                      log('value: $value');
-                                                      callBusinessApi();
-                                                    });
-                                                  },
-                                                  child: Icon(
-                                                      businessListItem['is_favourite']
-                                                          ? Icons.favorite_rounded
-                                                          : Icons
-                                                          .favorite_border_rounded,
-                                                      size: 24,
-                                                      color: isFavourite
-                                                          ? FlutterFlowTheme.of(
-                                                          context)
-                                                          .primary
-                                                          : FlutterFlowTheme.of(
-                                                          context)
-                                                          .primary),
-                                                ),
-                                                SizedBox(height: 15,),
-                                                InkWell(
-                                                  borderRadius: BorderRadius.circular(30),
-                                                  onTap: () {
-                                                    showModalBottomSheet(context: context,
-                                                        isScrollControlled: true,
-                                                        builder: (context){
-                                                      return Padding(padding: MediaQuery.viewInsetsOf(context),
-                                                          child: BusinessInfoWidget(
-                                                            data: businessListItem,
-                                                          ));
-                                                        });
-                                                  },
-                                                  child: const Padding(padding: EdgeInsets.all(5), child: Icon(
-                                                       Icons.info_outlined,
-                                                      size: 20,
-                                                      color: Colors.black54,
-                                                ),
-                                              ))
-
-                                        ],
-                                      ),
-                                    ])),
+                                                  GestureDetector(
+                                                    onTap: () {
+                                                      // setState(() {
+                                                      //   page = 1;
+                                                      //   // data.clear();
+                                                      // });
+                                                      sendData({
+                                                        "user_id":
+                                                            FFAppState().userId,
+                                                        "business_id":
+                                                            businessListItem[
+                                                                'uuid']
+                                                      }, 'favourite')
+                                                          .then((value) {
+                                                        log('value: $value');
+                                                        callBusinessApi();
+                                                      });
+                                                    },
+                                                    child: Icon(
+                                                        businessListItem[
+                                                                'is_favourite']
+                                                            ? Icons
+                                                                .favorite_rounded
+                                                            : Icons
+                                                                .favorite_border_rounded,
+                                                        size: 24,
+                                                        color: isFavourite
+                                                            ? FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary
+                                                            : FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary),
+                                                  ),
+                                                ],
+                                              ),
+                                            ])),
                                   ),
                                 ));
                           },

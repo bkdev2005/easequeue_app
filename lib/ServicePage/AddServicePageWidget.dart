@@ -7,6 +7,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:screenshot/screenshot.dart';
 
+import '../Component/BusinessDetail/business_info_widget.dart';
 import '../FixAppointment/fix_Appointment_Widget.dart';
 import '../apiFunction.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -112,17 +113,43 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         });
         log('Service: $value');
       });
+
     }
-    
+
+    fetchData('business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
+        context)?.then((response){
+      log('response scheduke: ${response['data']}');
+      setState((){
+        scheduleData = response['data'];
+      });
+        });
+    if(widget.date != null){
+    appointmentDate = jsonDecode(widget.date);
+    formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
+    }else{
+      DateTime now = DateTime.now();
+
+      String formattedDate = '${DateFormat('EEE').format(now)}, '
+          '${now.day.toString().padLeft(2, '0')} '
+          '${DateFormat('MMM').format(now)}';
+      formatAppointmentDate = formattedDate;
+    }
+
     fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}', context)?.then((response){
       log('response: $response');
       setState(() {
         ratingData = response['data'];
       });
     });
+
+    isAddedFav = widget.businessDetail['is_favourite'];
   }
 
   dynamic ratingData;
+  bool isAddedFav = false;
+  List<dynamic> scheduleData = [];
+  dynamic appointmentDate;
+  String formatAppointmentDate = '';
   List<dynamic> serviceList = [];
   List<dynamic> selectedServiceIndex = [];
   List<dynamic> selectedServiceData = [];
@@ -157,26 +184,22 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
-                    Icons.favorite_border,
+                    (isAddedFav)? Icons.favorite_rounded : Icons.favorite_border,
                     color: FlutterFlowTheme.of(context).primary,
                     size: 24,
                   ),
                   onPressed: () async{
-                    await showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: false,
-                        builder: (context) {
-                          return Padding(
-                              padding: MediaQuery.viewInsetsOf(context),
-                              child: AddAnotherCustomerWidget());
-                        }).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          appointeeUUID = value;
-                        });
-                      }
+                    await sendData({
+                      "user_id":
+                      FFAppState().userId,
+                      "business_id":
+                      widget.businessDetail[
+                      'uuid']
+                    }, 'favourite')
+                        .then((value) {
+                      setState(() {
+                        isAddedFav = !isAddedFav;
+                      });
                     });
                   },
                 ),
@@ -268,8 +291,31 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   color: FlutterFlowTheme.of(context).primary),
                               child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    18, 60, 18, 20),
-                                child: Material(
+                                    18, 35, 18, 20),
+                                child: Column( children:[
+                                  
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.end,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                     
+                                      Text(formatAppointmentDate,
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          color: FlutterFlowTheme.of(context).secondaryBackground
+                                        ),
+                                      ),
+                                      const SizedBox(
+                                        height: 5,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(
+                                    height: 8,
+                                  ),
+                                  Material(
                                   color: Colors.transparent,
                                   elevation: 2,
                                   shape: RoundedRectangleBorder(
@@ -341,20 +387,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                       .max,
                                                               children: [
                                                                Expanded(child: Text(
-                                                                  (businessDetail['address'] !=
-                                                                          null)
-                                                                      ? '${businessDetail['distance_time'] ?? ''} - ' +
-                                                                          businessDetail[
-                                                                              'distance'] +
-                                                                          ' • ' +
-                                                                          businessDetail['address']
-                                                                              [
-                                                                              'street_1'] +
-                                                                          ', ' +
-                                                                          businessDetail['address']
-                                                                              [
-                                                                              'city']
-                                                                      : 'N/A',
+                                                                 '${businessDetail['distance_time'] ?? ''}'
+                                                                     '${(businessDetail['distance_time'] != null && businessDetail['distance'] != null) ? ' - ' : ''}'
+                                                                     '${businessDetail['distance'] ?? ''}'
+                                                                     '${(businessDetail['address'] != null)
+                                                                     ? ' • ${businessDetail['address']?['street_1'] ?? ''}, ${businessDetail['address']?['city'] ?? ''}'
+                                                                     : ''}',
                                                                   style: FlutterFlowTheme.of(
                                                                           context)
                                                                       .bodyMedium
@@ -475,6 +513,18 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                 ),
                                                 Row(
                                                   children: [
+                                                    GestureDetector(
+                                                        onTap: (){
+                                                          showModalBottomSheet(context: context,
+                                                              isScrollControlled: true,
+                                                              builder: (context){
+                                                                return Padding(padding: MediaQuery.viewInsetsOf(context),
+                                                                    child: BusinessInfoWidget(
+                                                                      data: scheduleData,
+                                                                    ));
+                                                              });
+                                                        },
+                                                        child:
                                                     Container(
                                                       height: 35,
                                                       decoration: BoxDecoration(
@@ -523,7 +573,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                           ],
                                                         ),
                                                       ),
-                                                    ),
+                                                    )),
                                                     const SizedBox(
                                                       width: 8,
                                                     ),
@@ -603,6 +653,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
 
                                   ),
                                 ),
+                                ]),
                               )),
                           Padding(
                             padding:
@@ -811,7 +862,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               },
                             ),
                           ),
-                          Divider(
+                          const Divider(
                             indent: 20, endIndent: 20,
                           ),
                           Padding(
@@ -838,7 +889,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             ),
                           ),
                           Padding(
-                              padding: EdgeInsets.fromLTRB(20, 12, 20, 8),
+                              padding: EdgeInsets.fromLTRB(20, 12, 20, 20),
                               child: Column(children: [
                                 ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
@@ -850,7 +901,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 Row(
                                   children: [
                                     Expanded(
-                                        child: Text(businessDetail['distance'] +
+                                        child: Text((businessDetail['distance']??'') +
                                             ' • $businessAddress')),
                                     const SizedBox(
                                       height: 8,
@@ -880,10 +931,176 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         )),
                                   ],
                                 )
-                              ]))
+                              ])),
+
+                          const Divider(
+                            indent: 20, endIndent: 20,
+                          ),
+                          Padding(
+                            padding:
+                            EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  'Contact',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                    fontFamily: 'Inter',
+                                    fontSize: 16,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.w500,
+                                    fontStyle: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .fontStyle,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                          Padding(
+                            padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    InkWell(
+                                        onTap: (){
+                                          dialNumber(widget.businessDetail[
+                                          'phone_number']);
+                                        },
+                                        child: Container(
+                                            height: 40,
+                                            width: 40,
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(5),
+                                                color: FlutterFlowTheme.of(context).primaryText
+                                            ),
+                                            child: Padding(padding: EdgeInsets.all(8), child: Icon(
+                                              Icons.call_rounded,
+                                              color: FlutterFlowTheme.of(context).secondaryBackground,
+                                              size: 24,
+                                            )))),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 7, 0, 0),
+                                      child: Text(
+                                        'Call',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 10,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontWeight,
+                                          fontStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.whatsappSquare,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      size: 46,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      child: Text(
+                                        'WhatsApp',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 10,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontWeight,
+                                          fontStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.instagramSquare,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      size: 46,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      child: Text(
+                                        'Instagram',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 10,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontWeight,
+                                          fontStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    FaIcon(
+                                      FontAwesomeIcons.facebookSquare,
+                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      size: 46,
+                                    ),
+                                    Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      child: Text(
+                                        'Facebook',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                          fontFamily: 'Inter',
+                                          fontSize: 10,
+                                          letterSpacing: 0.0,
+                                          fontWeight: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontWeight,
+                                          fontStyle: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .fontStyle,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ]
+                                  .divide(SizedBox(width: 20))
+                                  .addToStart(SizedBox(width: 15))
+                                  .addToEnd(SizedBox(width: 15)),
+                            ),
+                          ),
                         ],
                       ),
                     )),
+                    if(selectedServiceData.isNotEmpty)
                     Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
                       child: FFButtonWidget(
@@ -906,6 +1123,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   MaterialPageRoute(
                                       builder: (context) =>
                                           FixAppointmentWidget(
+                                            formatDate: formatAppointmentDate,
                                             services: selectedServiceData,
                                             date: date,
                                             uuid: (appointeeUUID != '')

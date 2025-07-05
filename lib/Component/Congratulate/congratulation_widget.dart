@@ -140,7 +140,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                           ),
                                           Padding(
                                             padding: const EdgeInsetsDirectional
-                                                .fromSTEB(2, 0, 2, 0),
+                                                .fromSTEB(5, 0, 2, 0),
                                             child: Container(
                                               width: 5,
                                               height: 5,
@@ -170,7 +170,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                           Padding(
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
-                                                    2, 0, 2, 0),
+                                                    2, 0, 5, 0),
                                             child: Container(
                                               width: 5,
                                               height: 5,
@@ -237,7 +237,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                               ),
                                             ),
                                             const Divider(
-                                              thickness: 1,
+                                              thickness: 0.5,
                                               color: Color(0xFF929292),
                                             ),
                                             Padding(
@@ -277,7 +277,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                               ),
                                             ),
                                             const Divider(
-                                              thickness: 1,
+                                              thickness: 0.5,
                                               color: Color(0xFF929292),
                                             ),
                                             Row(
@@ -313,7 +313,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                               ],
                                             ),
                                             const Divider(
-                                              thickness: 1,
+                                              thickness: 0.5,
                                               color: Color(0xFF929292),
                                             ),
                                             Row(
@@ -350,7 +350,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                                               ],
                                             ),
                                             const Divider(
-                                              thickness: 1,
+                                              thickness: 0.5,
                                               color: Color(0xFF9C9C9C),
                                             ),
                                             Row(

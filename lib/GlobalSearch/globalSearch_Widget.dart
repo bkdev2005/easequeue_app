@@ -208,11 +208,12 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
+              Expanded(child:
               ListView.builder(
                 padding: const EdgeInsets.fromLTRB(
-                  0,
+                  20,
                   10,
-                  0,
+                  20,
                   20,
                 ),
                 itemCount: businessList.length,
@@ -220,103 +221,121 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   final businessItem = businessList[index];
-                  return GestureDetector(
-                      onTap: (){
+                  return  GestureDetector(
+                      onTap: () {
                         Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) =>
-                                    AddServicePageWidget(
-                                        businessDetail:
-                                        businessItem,
-                                    )));
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                AddServicePageWidget(
+                                  businessDetail: businessItem,
+                                ),
+                          ),
+                        );
                       },
                       child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: FlutterFlowTheme
-                              .of(context)
-                              .secondaryBackground,
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                'http://43.204.107.110/shared/${businessItem['profile_picture']}',
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
+                        padding: EdgeInsets.only(top: 12),
+                        child: Material(
+                          elevation: 2,
+                          borderRadius: BorderRadius.circular(12),
+                          color: Colors.white,
+                          child: Container(
+                              margin: const EdgeInsets.symmetric(
+                                  horizontal: 0, vertical: 6),
+                              padding: const EdgeInsets.fromLTRB(
+                                  15, 8, 15, 8),
+                              decoration: BoxDecoration(
+                                borderRadius:
+                                BorderRadius.circular(12),
                               ),
-                            ),
-                            Expanded(
-                              child: Padding(
-                                padding:
-                                EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-                                child: Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              child: Row(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      businessItem['name'] ?? 'N/A',
-                                      style: FlutterFlowTheme
-                                          .of(context)
-                                          .bodyMedium
-                                          .override(
-                                        fontFamily: 'Inter',
-                                        fontSize: 16,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 0, 0),
-                                      child: Text(
-                                        '${(getJsonField(businessItem, r'''$.address.unit_number''')).toString()}, '+
-                                            '${(getJsonField(businessItem, r'''$.address.building''')).toString()}, '+
-                                            '${(getJsonField(businessItem, r'''$.address.street_1''')).toString()}, '+
-                                            '${(getJsonField(businessItem, r'''$.address.country''')).toString()}'+
-                                            '-${(getJsonField(businessItem, r'''$.address.postal_code''')).toString()}',
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: FlutterFlowTheme
-                                            .of(context)
-                                            .bodyMedium
-                                            .override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 0, 0),
-                                      child: Text(
-                                        '🕐 ${businessItem['distance_time']} - ${businessItem['distance']}',
-                                        style: FlutterFlowTheme
-                                            .of(context)
-                                            .bodyMedium
-                                            .override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 12,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
+                                        padding:
+                                        EdgeInsets.only(top: 3),
+                                        child: Container(
+                                            width: 35,
+                                            height: 35,
+                                            decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color:
+                                                  Colors.black26,
+                                                ),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(5)),
+                                            child: (businessItem[
+                                            'profile_picture'] !=
+                                                null)
+                                                ? Image.network(
+                                              'http://43.204.107.110/shared/${businessItem['profile_picture']}',
+                                              fit: BoxFit.cover,
+                                            )
+                                                : Padding(
+                                                padding:
+                                                EdgeInsets
+                                                    .all(8),
+                                                child: Image.asset(
+                                                    'assets/images/images.png')))),
+                                    // Business Info
+                                    Expanded(
+                                        child: Padding(
+                                          padding:
+                                          EdgeInsets.only(left: 10),
+                                          child: Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [
+                                              Text(
+                                                businessItem[
+                                                'name'] ??
+                                                    'N/A',
+                                                style: FlutterFlowTheme
+                                                    .of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                  fontSize: 18,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: 0.0,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                ),
+                                              ),
+                                              if (businessItem[
+                                              'address'] !=
+                                                  null)
+                                                Text(
+                                                  businessItem[
+                                                  'address']
+                                                  ['street_1'] ??
+                                                      '',
+                                                  maxLines: 1,
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style:
+                                                  FlutterFlowTheme.of(
+                                                      context)
+                                                      .bodyMedium
+                                                      .override(
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                    'Inter',
+                                                    letterSpacing:
+                                                    0.0,
+                                                  ),
+                                                ),
+                                            ],
+                                          ),
+                                        )),
+
+
+                                    // Info Icon
+                                    // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
+
+                                  ])),
                         ),
-                      ),
-                    ));
+                      ));
                   Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
                     child: Container(
@@ -381,7 +400,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                       ),
                     ),
                   );
-                })
+                }))
             ],
           ),
         ),

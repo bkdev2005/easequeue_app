@@ -23,9 +23,11 @@ class FixAppointmentWidget extends StatefulWidget {
       {super.key,
       required this.services,
       required this.date,
+      required this.formatDate,
       required this.uuid});
   final List<dynamic> services;
   final String date;
+  final String formatDate;
   final String uuid;
   @override
   State<FixAppointmentWidget> createState() => _FixAppointmentWidgetState();
@@ -137,7 +139,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
             backgroundColor: FlutterFlowTheme.of(context).primary,
             automaticallyImplyLeading: false,
             leading: backIcon(context),
-            actions: [],
+            actions: [
+              Text(widget.formatDate,
+                style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: FlutterFlowTheme.of(context).secondaryBackground
+                ),
+              ),
+              const SizedBox(
+                width: 20,
+              )
+            ],
             centerTitle: false,
             elevation: 0,
           ),
@@ -429,9 +443,11 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               borderRadius:
                                                   BorderRadius.circular(10),
                                               border: Border.all(
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .secondaryText,
+                                                width:  (selectedQueueId !=
+                                                    queue['queue_id'])? 1:  2,
+                                                color:  (selectedQueueId !=
+                                                    queue['queue_id'])? Colors.grey[300]! : FlutterFlowTheme.of(context)
+                                                    .primary,
                                               ),
                                             ),
                                             child: Padding(
@@ -472,16 +488,17 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                           Text(
                                                             queue[
                                                                 'employee_name'],
+                                                            maxLines: 1,
+                                                            overflow:
+                                                            TextOverflow
+                                                                .ellipsis,
                                                             style: FlutterFlowTheme
                                                                     .of(context)
                                                                 .bodyMedium
                                                                 .override(
                                                                   fontFamily:
                                                                       'Inter',
-                                                                  fontSize:
-                                                                      queue['is_counter']
-                                                                          ? 16
-                                                                          : 18,
+                                                                  fontSize: 18,
                                                                   letterSpacing:
                                                                       0.0,
                                                                   fontWeight:
@@ -489,10 +506,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                           .w500,
                                                                 ),
                                                           ),
-                                                          if (queue[
-                                                              'is_counter'])
-                                                            Text(
-                                                              'Counter: ${queue['queue_name']}',
+
+                                                            Text('${queue['queue_name']}',
                                                               maxLines: 1,
                                                               overflow:
                                                                   TextOverflow
@@ -504,7 +519,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                     fontFamily:
                                                                         'Inter',
                                                                     fontSize:
-                                                                        16,
+                                                                        12,
                                                                     letterSpacing:
                                                                         0.0,
                                                                     fontWeight:

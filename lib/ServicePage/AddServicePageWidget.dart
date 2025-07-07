@@ -143,9 +143,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     });
 
     isAddedFav = widget.businessDetail['is_favourite'];
+    mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
+        'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/'  // note: Mapbox uses LONG,LAT
+        '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/400x150'
+        '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
   }
 
   dynamic ratingData;
+  String mapURL = '';
   bool isAddedFav = false;
   List<dynamic> scheduleData = [];
   dynamic appointmentDate;
@@ -293,12 +298,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     18, 35, 18, 20),
                                 child: Column( children:[
-                                  
+
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment: CrossAxisAlignment.center,
                                     children: [
-                                     
+
                                       Text(formatAppointmentDate,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
@@ -479,7 +484,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               ),
                                                               Padding(
                                                                 padding:
-                                                                EdgeInsetsDirectional
+                                                                const EdgeInsetsDirectional
                                                                     .fromSTEB(
                                                                     2, 0, 0, 0),
                                                                 child: Icon(
@@ -891,10 +896,51 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           Padding(
                               padding: EdgeInsets.fromLTRB(20, 12, 20, 20),
                               child: Column(children: [
-                                ClipRRect(
+                                GestureDetector(
+                                    onTap: (){
+                                      openGoogleMapSearch(
+                                          businessAddress
+                                      );
+                                    },
+                                    child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
-                                        'https://images.unsplash.com/photo-1619468129361-605ebea04b44?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NTYyMDF8MHwxfHNlYXJjaHwzfHxtYXB8ZW58MHx8fHwxNzUxNTYwNDU0fDA&ixlib=rb-4.1.0&q=80&w=1080')),
+                                      mapURL,
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) {
+                                          // Finished loading, show the image
+                                          return child;
+                                        }
+                                        // While loading, show a circular progress indicator
+                                        return Center(
+                                          child: CircularProgressIndicator(
+                                            value: loadingProgress.expectedTotalBytes != null
+                                                ? loadingProgress.cumulativeBytesLoaded /
+                                                loadingProgress.expectedTotalBytes!
+                                                : null,
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Container(
+                                          color: Colors.grey[200],
+                                          width: double.infinity,
+                                          height: 150,
+                                          alignment: Alignment.center,
+                                          child: const Column(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(Icons.location_on, color: Colors.red, size: 40),
+                                              SizedBox(height: 8),
+                                              Text(
+                                                'Failed to load map',
+                                                style: TextStyle(fontSize: 12, color: Colors.black54),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ))),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -959,9 +1005,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               ],
                             ),
                           ),
-                          
+
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 0),
+                            padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 20),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1102,7 +1148,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     )),
                     if(selectedServiceData.isNotEmpty)
                     Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 20),
+                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                       child: FFButtonWidget(
                           onPressed: () {
                             String date;

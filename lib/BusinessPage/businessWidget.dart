@@ -440,7 +440,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                         date: selectDay,
                                       ),
                                     ),
-                                  );
+                                  ).then((value){
+                                    callBusinessApi();
+                                    setState(() {
+                                    });
+                                  });
                                 },
                                 child: Padding(
                                   padding: EdgeInsets.only(top: 12),
@@ -452,7 +456,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                         margin: const EdgeInsets.symmetric(
                                             horizontal: 0, vertical: 6),
                                         padding: const EdgeInsets.fromLTRB(
-                                            15, 8, 15, 8),
+                                            15, 8, 0, 8),
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
@@ -534,7 +538,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                       0.0,
                                                                 ),
                                                       ),
-                                                    const SizedBox(height: 4),
+                                                    const SizedBox(height: 0),
                                                     Row(children: [
                                                       if (businessListItem[
                                                               'temporary_closed'] ||
@@ -580,8 +584,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                               // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
                                               Column(
                                                 children: [
-                                                  GestureDetector(
-                                                    onTap: () {
+                                                  IconButton(
+                                                    onPressed: () {
                                                       // setState(() {
                                                       //   page = 1;
                                                       //   // data.clear();
@@ -598,7 +602,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                         callBusinessApi();
                                                       });
                                                     },
-                                                    child: Icon(
+                                                    icon: Icon(
                                                         businessListItem[
                                                                 'is_favourite']
                                                             ? Icons

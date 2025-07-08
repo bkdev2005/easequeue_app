@@ -36,7 +36,9 @@ void getFcmToken() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  if(!isWeb){
   await Firebase.initializeApp(); // Initialize Firebase
+  }
   usePathUrlStrategy();
   await FlutterFlowTheme.initialize();
   getFcmToken();

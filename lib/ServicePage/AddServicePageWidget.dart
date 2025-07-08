@@ -43,9 +43,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     super.initState();
     _model = createModel(context, () => AddServicePageModel());
 
-    log('selectData: ${widget.businessDetail}');
-    businessAddress =
-        '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
+    log('selectData: ${widget.date}');
+
     if (widget.businessDetail == null) {
       setState(() {
         isLoading = true;
@@ -85,10 +84,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         businessDetail = widget.businessDetail;
       });
     }
+
+
     if (widget.businessDetail != null) {
       setState(() {
         isLoading = true;
       });
+      businessAddress =
+      '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
       fetchData(
               'business/${businessDetail['uuid']}/services?page=1&page_size=20',
               context)
@@ -114,39 +117,40 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         log('Service: $value');
       });
 
-    }
-
-    fetchData('business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
-        context)?.then((response){
-      log('response scheduke: ${response['data']}');
-      setState((){
-        scheduleData = response['data'];
-      });
+      fetchData('business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
+          context)?.then((response){
+        log('response scheduke: ${response['data']}');
+        setState((){
+          scheduleData = response['data'];
         });
-    if(widget.date != null){
-    appointmentDate = jsonDecode(widget.date);
-    formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
-    }else{
-      DateTime now = DateTime.now();
+      });
+      // if(widget.date != null){
+      //   appointmentDate = jsonDecode(widget.date);
+      //   formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
+      // }else{
+      //   DateTime now = DateTime.now();
+      //
+      //   String formattedDate = '${DateFormat('EEE').format(now)}, '
+      //       '${now.day.toString().padLeft(2, '0')} '
+      //       '${DateFormat('MMM').format(now)}';
+      //   formatAppointmentDate = formattedDate;
+      // }
 
-      String formattedDate = '${DateFormat('EEE').format(now)}, '
-          '${now.day.toString().padLeft(2, '0')} '
-          '${DateFormat('MMM').format(now)}';
-      formatAppointmentDate = formattedDate;
+      fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}', context)?.then((response){
+        log('response: $response');
+        setState(() {
+          ratingData = response['data'];
+        });
+      });
+
+      isAddedFav = widget.businessDetail['is_favourite']??false;
+      mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
+          'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/'  // note: Mapbox uses LONG,LAT
+          '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/600x200'
+          '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
     }
 
-    fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}', context)?.then((response){
-      log('response: $response');
-      setState(() {
-        ratingData = response['data'];
-      });
-    });
 
-    isAddedFav = widget.businessDetail['is_favourite'];
-    mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
-        'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/'  // note: Mapbox uses LONG,LAT
-        '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/400x150'
-        '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
   }
 
   dynamic ratingData;
@@ -208,6 +212,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     });
                   },
                 ),
+                const SizedBox(width: 6,),
                 FlutterFlowIconButton(
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -235,6 +240,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     });
                   },
                 ),
+                const SizedBox(width: 6,),
                 FlutterFlowIconButton(
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -902,10 +908,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                           businessAddress
                                       );
                                     },
+                                    child: Container(
+                                    width: double.infinity,
+                                    height: 150,
                                     child: ClipRRect(
                                     borderRadius: BorderRadius.circular(10),
                                     child: Image.network(
                                       mapURL,
+                                      fit: BoxFit.cover,
                                       loadingBuilder: (context, child, loadingProgress) {
                                         if (loadingProgress == null) {
                                           // Finished loading, show the image
@@ -940,7 +950,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                           ),
                                         );
                                       },
-                                    ))),
+                                    )))),
                                 const SizedBox(
                                   height: 10,
                                 ),
@@ -950,7 +960,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         child: Text((businessDetail['distance']??'') +
                                             ' • $businessAddress')),
                                     const SizedBox(
-                                      height: 8,
+                                      width: 8,
                                     ),
                                     InkWell(
                                         onTap: () {

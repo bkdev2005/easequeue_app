@@ -146,7 +146,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       isAddedFav = widget.businessDetail['is_favourite']??false;
       mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
           'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/'  // note: Mapbox uses LONG,LAT
-          '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/600x200'
+          '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/800x200'
           '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
     }
 
@@ -753,6 +753,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                   .width /
                                                               3) -
                                                           20,
+                                                      constraints: BoxConstraints(
+                                                        minHeight: (MediaQuery.of(
+                                                            context)
+                                                            .size
+                                                            .width /
+                                                            3) -
+                                                            20,
+                                                      ),
                                                       decoration: BoxDecoration(
                                                         color: FlutterFlowTheme
                                                                 .of(context)

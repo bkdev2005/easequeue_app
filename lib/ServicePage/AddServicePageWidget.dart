@@ -119,22 +119,23 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
 
       fetchData('business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
           context)?.then((response){
-        log('response scheduke: ${response['data']}');
+        log('response schedule: ${response['data']}');
         setState((){
           scheduleData = response['data'];
         });
       });
-      // if(widget.date != null){
-      //   appointmentDate = jsonDecode(widget.date);
-      //   formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
-      // }else{
-      //   DateTime now = DateTime.now();
-      //
-      //   String formattedDate = '${DateFormat('EEE').format(now)}, '
-      //       '${now.day.toString().padLeft(2, '0')} '
-      //       '${DateFormat('MMM').format(now)}';
-      //   formatAppointmentDate = formattedDate;
-      // }
+      if(widget.date != null){
+        log('date: ${widget.date}');
+        appointmentDate = jsonDecode(widget.date);
+        formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
+      }else{
+        DateTime now = DateTime.now();
+
+        String formattedDate = '${DateFormat('EEE').format(now)}, '
+            '${now.day.toString().padLeft(2, '0')} '
+            '${DateFormat('MMM').format(now)}';
+        formatAppointmentDate = formattedDate;
+      }
 
       fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}', context)?.then((response){
         log('response: $response');
@@ -419,7 +420,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               ],
                                                             ),
                                                           ),
-                                                          Padding(
+                                                         /* Padding(
                                                             padding:
                                                                 const EdgeInsetsDirectional
                                                                     .fromSTEB(
@@ -446,11 +447,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),
+                                                          ),*/
                                                         ],
                                                       ),
                                                     )),
-                                                    SizedBox(width: 6,),
+                                                   const SizedBox(width: 6,),
                                                     Column(children: [
                                                       Container(
                                                         decoration: const BoxDecoration(
@@ -519,10 +520,15 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                     ]),
                                                   ],
                                                 ),
+                                                const 
                                                 SizedBox(
                                                   height: 15,
                                                 ),
-                                                Row(
+                                                Align(
+                                                    alignment: Alignment.centerLeft,
+                                                    child: 
+                                                Wrap(
+                                                  runSpacing: 8,
                                                   children: [
                                                     GestureDetector(
                                                         onTap: (){
@@ -544,45 +550,51 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 .circular(6),
                                                         color: Colors.grey[200],
                                                       ),
-                                                      child: const Padding(
+                                                      child:  Padding(
                                                         padding:
                                                             EdgeInsets.fromLTRB(
                                                                 10, 0, 8, 0),
                                                         child: Row(
-                                                          children: [
-                                                            Text(
-                                                              'Open ',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .green,
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  fontSize: 13,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                            Text(
-                                                              'till 11:30 PM',
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .black45,
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  fontSize: 12,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500),
-                                                            ),
-                                                            Icon(
-                                                              Icons
-                                                                  .keyboard_arrow_down_rounded,
-                                                              size: 16,
-                                                              color: Colors
-                                                                  .black45,
-                                                            )
-                                                          ],
-                                                        ),
+                                                            mainAxisSize:
+                                                            MainAxisSize
+                                                                .min,
+                                                            children: [
+                                                              Text('${businessDetail['status']}',
+                                                                  style: FlutterFlowTheme.of(
+                                                                      context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                    fontSize:
+                                                                    12,
+                                                                    fontWeight:
+                                                                    FontWeight.w500,
+                                                                    color: (businessDetail[
+                                                                    'status'] != 'Closed')? Colors.green :
+                                                                    Colors.redAccent,
+                                                                    fontFamily:
+                                                                    'Inter',
+                                                                    letterSpacing:
+                                                                    0.0,
+                                                                  )),
+                                                              Text(' • ${businessDetail[
+                                                              'status_message']}',
+                                                                  style: FlutterFlowTheme.of(
+                                                                      context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                    fontSize:
+                                                                    12,
+                                                                    fontWeight:
+                                                                    FontWeight.w400,
+                                                                    color:
+                                                                    Colors.black45,
+                                                                    fontFamily:
+                                                                    'Inter',
+                                                                    letterSpacing:
+                                                                    0.0,
+                                                                  )),
+                                                              Icon(Icons.keyboard_arrow_down_rounded, size: 14,)
+                                                              ]),
                                                       ),
                                                     )),
                                                     const SizedBox(
@@ -656,7 +668,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                           ),
                                                         )),
                                                   ],
-                                                ),
+                                                )),
                                               ],
                                             )),
 

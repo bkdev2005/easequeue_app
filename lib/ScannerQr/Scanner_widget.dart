@@ -139,7 +139,7 @@ class _ScannerQrState extends State<ScannerQr> {
                   MaterialPageRoute(
                       builder: (context) => AddServicePageWidget(
                             businessDetail: data,
-                            date: todayDate,
+                            date: null,
                           ))).then((value) {
                 setState(() {
                   result = null;

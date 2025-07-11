@@ -4,6 +4,7 @@ import 'package:eqlite/Component/BusinessDetail/business_info_widget.dart';
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:screenshot/screenshot.dart';
 import '../function.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -538,43 +539,50 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                       0.0,
                                                                 ),
                                                       ),
-                                                    const SizedBox(height: 0),
-                                                    Row(children: [
-                                                      if (businessListItem[
-                                                              'temporary_closed'] ||
-                                                          businessListItem[
-                                                              'is_closed'])
-                                                        if (businessListItem[
-                                                                'temporary_closed'] ||
-                                                            businessListItem[
-                                                                'is_closed'])
-                                                          Row(
+                                                    const SizedBox(height: 3),
+
+                                                       Row(
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .max,
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
                                                               children: [
-                                                                Text('Closed',
+                                                                Text('${businessListItem[
+                                                                'status']}',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .bodyMedium
                                                                         .override(
                                                                           fontSize:
-                                                                              14,
+                                                                              12,
                                                                           fontWeight:
-                                                                              FontWeight.w600,
-                                                                          color:
+                                                                              FontWeight.w500,
+                                                                          color: (businessListItem[
+                                                                          'status'] != 'Closed')? Colors.green : 
                                                                               Colors.redAccent,
                                                                           fontFamily:
                                                                               'Inter',
                                                                           letterSpacing:
                                                                               0.0,
                                                                         )),
-                                                              ]),
-                                                    ])
-                                                  ],
+                                                                Expanded(child: Text(' • ${businessListItem[
+                                                                'status_message']}',
+                                                                    style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                      fontSize:
+                                                                      12,
+                                                                      fontWeight:
+                                                                      FontWeight.w400,
+                                                                      color:
+                                                                      Colors.black45,
+                                                                      fontFamily:
+                                                                      'Inter',
+                                                                      letterSpacing:
+                                                                      0.0,
+                                                                    )),
+                                                                )]),
+                                                      ],
                                                 ),
                                               )),
 

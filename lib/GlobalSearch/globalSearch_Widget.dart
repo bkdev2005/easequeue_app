@@ -325,6 +325,47 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                                                     0.0,
                                                   ),
                                                 ),
+                                              Row(
+                                                  mainAxisSize:
+                                                  MainAxisSize
+                                                      .max,
+                                                  children: [
+                                                    Text('${businessItem[
+                                                    'status']}',
+                                                        style: FlutterFlowTheme.of(
+                                                            context)
+                                                            .bodyMedium
+                                                            .override(
+                                                          fontSize:
+                                                          12,
+                                                          fontWeight:
+                                                          FontWeight.w500,
+                                                          color: (businessItem[
+                                                          'status'] != 'Closed')? Colors.green :
+                                                          Colors.redAccent,
+                                                          fontFamily:
+                                                          'Inter',
+                                                          letterSpacing:
+                                                          0.0,
+                                                        )),
+                                                    Expanded(child: Text(' • ${businessItem[
+                                                    'status_message']}',
+                                                        style: FlutterFlowTheme.of(
+                                                            context)
+                                                            .bodyMedium
+                                                            .override(
+                                                          fontSize:
+                                                          12,
+                                                          fontWeight:
+                                                          FontWeight.w400,
+                                                          color:
+                                                          Colors.black45,
+                                                          fontFamily:
+                                                          'Inter',
+                                                          letterSpacing:
+                                                          0.0,
+                                                        )),
+                                                    )]),
                                             ],
                                           ),
                                         )),

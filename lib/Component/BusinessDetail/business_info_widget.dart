@@ -156,7 +156,7 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                           children: List.generate(scheduleData.length, (index) {
                     final day = scheduleData[index];
                     return Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(15, 0, 20, 10),
+                      padding: EdgeInsetsDirectional.fromSTEB(15, 0, 20, 6),
                       child: Column(children: [
                         Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -175,17 +175,18 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                                           .fontStyle,
                                     ),
                               ),
+
                               Text(
                                 (day['is_open'])
-                                    ? formatTimeRange(day['opening_time'],
-                                        day['closing_time'])
+                                    ? buildOpenHours(day)
                                     : 'Closed',
+                                textAlign: TextAlign.end,
                                 style: FlutterFlowTheme.of(context)
                                     .bodyMedium
                                     .override(
                                       fontFamily: 'Inter',
                                       letterSpacing: 0.0,
-                                      fontSize: 16,
+                                      fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       color: (day['is_open'])
                                           ? Colors.black
@@ -212,6 +213,35 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
           ),
         ]));
   }
+
+  String formatTime(String time24) {
+    final timeParts = time24.split(':');
+    final hour = int.parse(timeParts[0]);
+    final minute = int.parse(timeParts[1]);
+    final t = TimeOfDay(hour: hour, minute: minute);
+    return t.format(context); // e.g. "9:00 AM"
+  }
+
+  String buildOpenHours(Map<String, dynamic> dayData) {
+    if (dayData['is_open'] == false) {
+      return "Closed";
+    }
+
+    String openingTime = formatTime(dayData['opening_time']);
+    String closingTime = formatTime(dayData['closing_time']);
+
+    List breaks = dayData['break_times'] ?? [];
+
+    if (breaks.isEmpty) {
+      return "$openingTime - $closingTime";
+    } else {
+      String firstBreakStart = formatTime(breaks[0]['start_break']);
+      String firstBreakEnd = formatTime(breaks[0]['end_break']);
+
+      return "$openingTime - $firstBreakStart &\n $firstBreakEnd - $closingTime";
+    }
+  }
+
 
   List<String> days = [
     'Monday',

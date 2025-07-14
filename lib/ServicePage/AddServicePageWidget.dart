@@ -6,6 +6,7 @@ import 'package:eqlite/function.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:screenshot/screenshot.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../Component/BusinessDetail/business_info_widget.dart';
 import '../FixAppointment/fix_Appointment_Widget.dart';
@@ -85,16 +86,15 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       });
     }
 
-
     if (widget.businessDetail != null) {
       setState(() {
         isLoading = true;
       });
       businessAddress =
-      '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
+          '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
 
-      final finalDate = '${jsonDecode(widget.date)['year']}-${getMonthNumber(jsonDecode(widget.date)['month'])}-${jsonDecode(widget.date)['date'].toString().padLeft(2, '0')}';
-
+      final finalDate =
+          '${jsonDecode(widget.date)['year']}-${getMonthNumber(jsonDecode(widget.date)['month'])}-${jsonDecode(widget.date)['date'].toString().padLeft(2, '0')}';
 
       fetchData(
               'business/${businessDetail['uuid']}/services?page=1&page_size=20&queue_date=$finalDate',
@@ -121,18 +121,21 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         log('Service: $value');
       });
 
-      fetchData('business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
-          context)?.then((response){
+      fetchData(
+              'business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
+              context)
+          ?.then((response) {
         log('response schedule: ${response['data']}');
-        setState((){
+        setState(() {
           scheduleData = response['data'];
         });
       });
-      if(widget.date != null){
+      if (widget.date != null) {
         log('date: ${widget.date}');
         appointmentDate = jsonDecode(widget.date);
-        formatAppointmentDate = '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
-      }else{
+        formatAppointmentDate =
+            '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
+      } else {
         DateTime now = DateTime.now();
 
         String formattedDate = '${DateFormat('EEE').format(now)}, '
@@ -141,21 +144,21 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         formatAppointmentDate = formattedDate;
       }
 
-      fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}', context)?.then((response){
+      fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}',
+              context)
+          ?.then((response) {
         log('response: $response');
         setState(() {
           ratingData = response['data'];
         });
       });
 
-      isAddedFav = widget.businessDetail['is_favourite']??false;
+      isAddedFav = widget.businessDetail['is_favourite'] ?? false;
       mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
-          'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/'  // note: Mapbox uses LONG,LAT
+          'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/' // note: Mapbox uses LONG,LAT
           '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/800x200'
           '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
     }
-
-
   }
 
   dynamic ratingData;
@@ -198,17 +201,16 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
-                    (isAddedFav)? Icons.favorite_rounded : Icons.favorite_border,
+                    (isAddedFav)
+                        ? Icons.favorite_rounded
+                        : Icons.favorite_border,
                     color: FlutterFlowTheme.of(context).primary,
                     size: 24,
                   ),
-                  onPressed: () async{
+                  onPressed: () async {
                     await sendData({
-                      "user_id":
-                      FFAppState().userId,
-                      "business_id":
-                      widget.businessDetail[
-                      'uuid']
+                      "user_id": FFAppState().userId,
+                      "business_id": widget.businessDetail['uuid']
                     }, 'favourite')
                         .then((value) {
                       setState(() {
@@ -217,7 +219,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     });
                   },
                 ),
-                const SizedBox(width: 6,),
+                const SizedBox(
+                  width: 6,
+                ),
                 FlutterFlowIconButton(
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
@@ -226,35 +230,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     color: FlutterFlowTheme.of(context).primary,
                     size: 24,
                   ),
-                  onPressed: () async{
-                    await showModalBottomSheet(
-                    context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.transparent,
-                    enableDrag: false,
-                    builder: (context) {
-                      return Padding(
-                          padding: MediaQuery.viewInsetsOf(context),
-                          child: AddAnotherCustomerWidget());
-                    }).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          appointeeUUID = value;
-                        });
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(width: 6,),
-                FlutterFlowIconButton(
-                  borderRadius: 40,
-                  fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                  icon: Icon(
-                    Icons.share_rounded,
-                    color: FlutterFlowTheme.of(context).primary,
-                    size: 24,
-                  ),
-                  onPressed: () async{
+                  onPressed: () async {
                     await showModalBottomSheet(
                         context: context,
                         isScrollControlled: true,
@@ -273,7 +249,27 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     });
                   },
                 ),
-                const SizedBox(width: 15,)
+                const SizedBox(
+                  width: 6,
+                ),
+                FlutterFlowIconButton(
+                  borderRadius: 40,
+                  fillColor: FlutterFlowTheme.of(context).secondaryBackground,
+                  icon: Icon(
+                    Icons.share_rounded,
+                    color: FlutterFlowTheme.of(context).primary,
+                    size: 24,
+                  ),
+                  onPressed: () async {
+                    final String placeName = Uri.encodeComponent(businessDetail[
+                    'name']);
+                    final String googleMapsUrl = "${businessDetail['name']}\nhttps://www.google.com/maps/search/?api=1&query=$placeName";
+                    Share.share(googleMapsUrl);
+                  },
+                ),
+                const SizedBox(
+                  width: 15,
+                )
               ],
             ),
           ],
@@ -308,20 +304,20 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     18, 35, 18, 20),
-                                child: Column( children:[
-
+                                child: Column(children: [
                                   Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
-                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
                                     children: [
-
-                                      Text(formatAppointmentDate,
+                                      Text(
+                                        formatAppointmentDate,
                                         style: TextStyle(
-                                          fontFamily: 'Inter',
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          color: FlutterFlowTheme.of(context).secondaryBackground
-                                        ),
+                                            fontFamily: 'Inter',
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w500,
+                                            color: FlutterFlowTheme.of(context)
+                                                .secondaryBackground),
                                       ),
                                       const SizedBox(
                                         height: 5,
@@ -332,99 +328,98 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     height: 8,
                                   ),
                                   Material(
-                                  color: Colors.transparent,
-                                  elevation: 2,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(12),
-                                  ),
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryBackground,
-                                      borderRadius: const BorderRadius.only(
-                                        bottomLeft: Radius.circular(12),
-                                        bottomRight: Radius.circular(12),
-                                        topLeft: Radius.circular(12),
-                                        topRight: Radius.circular(12),
-                                      ),
+                                    color: Colors.transparent,
+                                    elevation: 2,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12),
                                     ),
-                                    child:
-                                        Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    14, 12, 12, 12),
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.max,
-                                              children: [
-                                                 Row(
-                                                   crossAxisAlignment: CrossAxisAlignment.start,
-                                                  mainAxisSize:
-                                                      MainAxisSize.max,
-                                                  children: [
-                                                   Expanded(child:  Padding(
-                                                      padding:
-                                                          EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                                  0, 0, 0, 0),
-                                                      child: Column(
-                                                        mainAxisSize:
-                                                            MainAxisSize.max,
-                                                        crossAxisAlignment:
-                                                            CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          Text(
-                                                            businessDetail[
-                                                                    'name'] ??
-                                                                '',
-                                                            maxLines: 1,
-                                                            style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  fontSize: 22,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
-                                                                ),
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                        color: FlutterFlowTheme.of(context)
+                                            .primaryBackground,
+                                        borderRadius: const BorderRadius.only(
+                                          bottomLeft: Radius.circular(12),
+                                          bottomRight: Radius.circular(12),
+                                          topLeft: Radius.circular(12),
+                                          topRight: Radius.circular(12),
+                                        ),
+                                      ),
+                                      child: Padding(
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  14, 12, 12, 12),
+                                          child: Column(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.max,
+                                                children: [
+                                                  Expanded(
+                                                      child: Padding(
+                                                    padding:
+                                                        EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                                0, 0, 0, 0),
+                                                    child: Column(
+                                                      mainAxisSize:
+                                                          MainAxisSize.max,
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          businessDetail[
+                                                                  'name'] ??
+                                                              '',
+                                                          maxLines: 1,
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Inter',
+                                                                fontSize: 22,
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                              ),
+                                                        ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0, 2, 5, 0),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Expanded(
+                                                                  child: Text(
+                                                                '${businessDetail['distance_time'] ?? ''}'
+                                                                '${(businessDetail['distance_time'] != null && businessDetail['distance'] != null) ? ' - ' : ''}'
+                                                                '${businessDetail['distance'] ?? ''}'
+                                                                '${(businessDetail['address'] != null) ? ' • ${businessDetail['address']?['street_1'] ?? ''}, ${businessDetail['address']?['city'] ?? ''}' : ''}',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Inter',
+                                                                      fontSize:
+                                                                          14,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                    ),
+                                                              )),
+                                                            ],
                                                           ),
-                                                          Padding(
-                                                            padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 2, 5, 0),
-                                                            child:  Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [
-                                                               Expanded(child: Text(
-                                                                 '${businessDetail['distance_time'] ?? ''}'
-                                                                     '${(businessDetail['distance_time'] != null && businessDetail['distance'] != null) ? ' - ' : ''}'
-                                                                     '${businessDetail['distance'] ?? ''}'
-                                                                     '${(businessDetail['address'] != null)
-                                                                     ? ' • ${businessDetail['address']?['street_1'] ?? ''}, ${businessDetail['address']?['city'] ?? ''}'
-                                                                     : ''}',
-                                                                  style: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                        fontFamily:
-                                                                            'Inter',
-                                                                        fontSize:
-                                                                            14,
-                                                                        letterSpacing:
-                                                                            0.0,
-                                                                      ),
-                                                               )),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                         /* Padding(
+                                                        ),
+                                                        /* Padding(
                                                             padding:
                                                                 const EdgeInsetsDirectional
                                                                     .fromSTEB(
@@ -452,234 +447,269 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               ],
                                                             ),
                                                           ),*/
-                                                        ],
-                                                      ),
-                                                    )),
-                                                   const SizedBox(width: 6,),
-                                                    Column(children: [
-                                                      Container(
-                                                        decoration: const BoxDecoration(
-                                                          color: Color(0xFF279D33),
-                                                          borderRadius: BorderRadius.only(
-                                                            bottomLeft:
-                                                            Radius.circular(10),
-                                                            bottomRight:
-                                                            Radius.circular(0),
-                                                            topLeft: Radius.circular(0),
-                                                            topRight: Radius.circular(8),
-                                                          ),
-                                                        ),
-                                                        child: Padding(
-                                                          padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(8, 4, 5, 4),
-                                                          child: Row(
-                                                            mainAxisSize:
-                                                            MainAxisSize.min,
-                                                            children: [
-                                                              Text(
-                                                                (ratingData['average_rating'] == 0.0)? 'New' : ratingData['average_rating'],
-                                                                style: FlutterFlowTheme
-                                                                    .of(context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                  fontFamily: 'Inter',
-                                                                  color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                      .secondaryBackground,
-                                                                  fontSize: 14,
-                                                                  letterSpacing: 0.0,
-                                                                  fontWeight:
-                                                                  FontWeight.w500,
-                                                                ),
-                                                              ),
-                                                              Padding(
-                                                                padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    2, 0, 0, 0),
-                                                                child: Icon(
-                                                                  (((ratingData!= null)? ratingData['average_rating']: 0)> 0)? Icons.star_sharp : Icons.star_border_rounded,
-                                                                  color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                      .primaryBackground,
-                                                                  size: 16,
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(
-                                                        height: 2,
-                                                      ),
-                                                       Text(
-                                                        '${ratingData['total_ratings']} ratings',
-                                                        style: const TextStyle(
-                                                            color: Colors.black45,
-                                                            fontFamily: 'Inter',
-                                                            fontSize: 10,
-                                                            fontWeight: FontWeight.w500),
-                                                      )
-                                                    ]),
-                                                  ],
-                                                ),
-                                                const 
-                                                SizedBox(
-                                                  height: 15,
-                                                ),
-                                                Align(
-                                                    alignment: Alignment.centerLeft,
-                                                    child: 
-                                                Wrap(
-                                                  runSpacing: 8,
-                                                  children: [
-                                                    GestureDetector(
-                                                        onTap: (){
-                                                          showModalBottomSheet(context: context,
-                                                              isScrollControlled: true,
-                                                              builder: (context){
-                                                                return Padding(padding: MediaQuery.viewInsetsOf(context),
-                                                                    child: BusinessInfoWidget(
-                                                                      data: scheduleData,
-                                                                    ));
-                                                              });
-                                                        },
-                                                        child:
+                                                      ],
+                                                    ),
+                                                  )),
+                                                  const SizedBox(
+                                                    width: 6,
+                                                  ),
+                                                  Column(children: [
                                                     Container(
-                                                      height: 35,
-                                                      decoration: BoxDecoration(
+                                                      decoration:
+                                                          const BoxDecoration(
+                                                        color:
+                                                            Color(0xFF279D33),
                                                         borderRadius:
-                                                            BorderRadius
-                                                                .circular(6),
-                                                        color: Colors.grey[200],
+                                                            BorderRadius.only(
+                                                          bottomLeft:
+                                                              Radius.circular(
+                                                                  10),
+                                                          bottomRight:
+                                                              Radius.circular(
+                                                                  0),
+                                                          topLeft:
+                                                              Radius.circular(
+                                                                  0),
+                                                          topRight:
+                                                              Radius.circular(
+                                                                  8),
+                                                        ),
                                                       ),
-                                                      child:  Padding(
+                                                      child: Padding(
                                                         padding:
-                                                            EdgeInsets.fromLTRB(
-                                                                10, 0, 8, 0),
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                8, 4, 5, 4),
                                                         child: Row(
-                                                            mainAxisSize:
-                                                            MainAxisSize
-                                                                .min,
-                                                            children: [
-                                                              Text('${businessDetail['status']}',
-                                                                  style: FlutterFlowTheme.of(
-                                                                      context)
-                                                                      .bodyMedium
-                                                                      .override(
-                                                                    fontSize:
-                                                                    12,
-                                                                    fontWeight:
-                                                                    FontWeight.w500,
-                                                                    color: (businessDetail[
-                                                                    'status'] != 'Closed')? Colors.green :
-                                                                    Colors.redAccent,
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Text(
+                                                              (ratingData['average_rating'] ==
+                                                                      0.0)
+                                                                  ? 'New'
+                                                                  : ratingData[
+                                                                      'average_rating'],
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
                                                                     fontFamily:
-                                                                    'Inter',
-                                                                    letterSpacing:
-                                                                    0.0,
-                                                                  )),
-                                                              Text(' • ${businessDetail[
-                                                              'status_message']}',
-                                                                  style: FlutterFlowTheme.of(
-                                                                      context)
-                                                                      .bodyMedium
-                                                                      .override(
+                                                                        'Inter',
+                                                                    color: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .secondaryBackground,
                                                                     fontSize:
-                                                                    12,
-                                                                    fontWeight:
-                                                                    FontWeight.w400,
-                                                                    color:
-                                                                    Colors.black45,
-                                                                    fontFamily:
-                                                                    'Inter',
+                                                                        14,
                                                                     letterSpacing:
-                                                                    0.0,
-                                                                  )),
-                                                              Icon(Icons.keyboard_arrow_down_rounded, size: 14,)
-                                                              ]),
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w500,
+                                                                  ),
+                                                            ),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      2,
+                                                                      0,
+                                                                      0,
+                                                                      0),
+                                                              child: Icon(
+                                                                (((ratingData !=
+                                                                                null)
+                                                                            ? ratingData[
+                                                                                'average_rating']
+                                                                            : 0) >
+                                                                        0)
+                                                                    ? Icons
+                                                                        .star_sharp
+                                                                    : Icons
+                                                                        .star_border_rounded,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryBackground,
+                                                                size: 16,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
                                                       ),
-                                                    )),
-                                                    const SizedBox(
-                                                      width: 8,
                                                     ),
-                                                    InkWell(
-                                                        onTap: () {
-                                                          openGoogleMapSearch(
-                                                            businessAddress
-                                                          );
-                                                        },
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .grey[200],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    4),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .directions_rounded,
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryText,
-                                                              size: 22,
-                                                            ),
-                                                          ),
-                                                        )),
-                                                    const SizedBox(
-                                                      width: 8,
+                                                    SizedBox(
+                                                      height: 2,
                                                     ),
-                                                    InkWell(
-                                                        onTap: () {
-                                                          dialNumber(
-                                                              businessDetail[
-                                                                  'phone_number']);
-                                                        },
-                                                        child: Container(
-                                                          height: 35,
-                                                          width: 35,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: Colors
-                                                                .grey[200],
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        6),
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    4),
-                                                            child: Icon(
-                                                              Icons
-                                                                  .wifi_calling_3_rounded,
-                                                              color: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .primaryText,
-                                                              size: 22,
+                                                    Text(
+                                                      '${ratingData['total_ratings']} ratings',
+                                                      style: const TextStyle(
+                                                          color: Colors.black45,
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    )
+                                                  ]),
+                                                ],
+                                              ),
+                                              const SizedBox(
+                                                height: 15,
+                                              ),
+                                              Align(
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Wrap(
+                                                    runSpacing: 8,
+                                                    children: [
+                                                      GestureDetector(
+                                                          onTap: () {
+                                                            showModalBottomSheet(
+                                                                context:
+                                                                    context,
+                                                                isScrollControlled:
+                                                                    true,
+                                                                builder:
+                                                                    (context) {
+                                                                  return Padding(
+                                                                      padding: MediaQuery
+                                                                          .viewInsetsOf(
+                                                                              context),
+                                                                      child:
+                                                                          BusinessInfoWidget(
+                                                                        data:
+                                                                            scheduleData,
+                                                                      ));
+                                                                });
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                              color: Colors
+                                                                  .grey[200],
                                                             ),
-                                                          ),
-                                                        )),
-                                                  ],
-                                                )),
-                                              ],
-                                            )),
-
-
-
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .fromLTRB(
+                                                                          10,
+                                                                          0,
+                                                                          8,
+                                                                          0),
+                                                              child: Row(
+                                                                  mainAxisSize:
+                                                                      MainAxisSize
+                                                                          .min,
+                                                                  children: [
+                                                                    Text(
+                                                                        '${businessDetail['status']}',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.w500,
+                                                                              color: (businessDetail['status'] != 'Closed') ? Colors.green : Colors.redAccent,
+                                                                              fontFamily: 'Inter',
+                                                                              letterSpacing: 0.0,
+                                                                            )),
+                                                                    Text(
+                                                                        ' • ${businessDetail['status_message']}',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontSize: 12,
+                                                                              fontWeight: FontWeight.w400,
+                                                                              color: Colors.black45,
+                                                                              fontFamily: 'Inter',
+                                                                              letterSpacing: 0.0,
+                                                                            )),
+                                                                    Icon(
+                                                                      Icons
+                                                                          .keyboard_arrow_down_rounded,
+                                                                      size: 14,
+                                                                    )
+                                                                  ]),
+                                                            ),
+                                                          )),
+                                                      const SizedBox(
+                                                        width: 8,
+                                                      ),
+                                                      InkWell(
+                                                          onTap: () {
+                                                            openGoogleMapSearch(
+                                                                businessAddress);
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .grey[200],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(4),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .directions_rounded,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
+                                                                size: 22,
+                                                              ),
+                                                            ),
+                                                          )),
+                                                      const SizedBox(
+                                                        width: 8,
+                                                      ),
+                                                      InkWell(
+                                                          onTap: () {
+                                                            dialNumber(
+                                                                businessDetail[
+                                                                    'phone_number']);
+                                                          },
+                                                          child: Container(
+                                                            height: 35,
+                                                            width: 35,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors
+                                                                  .grey[200],
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          6),
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  EdgeInsets
+                                                                      .all(4),
+                                                              child: Icon(
+                                                                Icons
+                                                                    .wifi_calling_3_rounded,
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryText,
+                                                                size: 22,
+                                                              ),
+                                                            ),
+                                                          )),
+                                                    ],
+                                                  )),
+                                            ],
+                                          )),
+                                    ),
                                   ),
-                                ),
                                 ]),
                               )),
                           Padding(
@@ -769,12 +799,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                   .width /
                                                               3) -
                                                           20,
-                                                      constraints: BoxConstraints(
+                                                      constraints:
+                                                          BoxConstraints(
                                                         minHeight: (MediaQuery.of(
-                                                            context)
-                                                            .size
-                                                            .width /
-                                                            3) -
+                                                                        context)
+                                                                    .size
+                                                                    .width /
+                                                                3) -
                                                             20,
                                                       ),
                                                       decoration: BoxDecoration(
@@ -898,7 +929,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             ),
                           ),
                           const Divider(
-                            indent: 20, endIndent: 20,
+                            indent: 20,
+                            endIndent: 20,
                           ),
                           Padding(
                             padding:
@@ -927,70 +959,82 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               padding: EdgeInsets.fromLTRB(20, 12, 20, 20),
                               child: Column(children: [
                                 GestureDetector(
-                                    onTap: (){
-                                      openGoogleMapSearch(
-                                          businessAddress
-                                      );
+                                    onTap: () {
+                                      openGoogleMapSearch(businessAddress);
                                     },
                                     child: Container(
-                                    width: double.infinity,
-                                    height: 150,
-                                    child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(10),
-                                    child: Image.network(
-                                      mapURL,
-                                      fit: BoxFit.cover,
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) {
-                                          // Finished loading, show the image
-                                          return child;
-                                        }
-                                        // While loading, show a circular progress indicator
-                                        return Center(
-                                          child: CircularProgressIndicator(
-                                            value: loadingProgress.expectedTotalBytes != null
-                                                ? loadingProgress.cumulativeBytesLoaded /
-                                                loadingProgress.expectedTotalBytes!
-                                                : null,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Container(
-                                          color: Colors.grey[200],
-                                          width: double.infinity,
-                                          height: 150,
-                                          alignment: Alignment.center,
-                                          child: const Column(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(Icons.location_on, color: Colors.red, size: 40),
-                                              SizedBox(height: 8),
-                                              Text(
-                                                'Failed to load map',
-                                                style: TextStyle(fontSize: 12, color: Colors.black54),
-                                              ),
-                                            ],
-                                          ),
-                                        );
-                                      },
-                                    )))),
+                                        width: double.infinity,
+                                        height: 150,
+                                        child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(10),
+                                            child: Image.network(
+                                              mapURL,
+                                              fit: BoxFit.cover,
+                                              loadingBuilder: (context, child,
+                                                  loadingProgress) {
+                                                if (loadingProgress == null) {
+                                                  // Finished loading, show the image
+                                                  return child;
+                                                }
+                                                // While loading, show a circular progress indicator
+                                                return Center(
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                    value: loadingProgress
+                                                                .expectedTotalBytes !=
+                                                            null
+                                                        ? loadingProgress
+                                                                .cumulativeBytesLoaded /
+                                                            loadingProgress
+                                                                .expectedTotalBytes!
+                                                        : null,
+                                                  ),
+                                                );
+                                              },
+                                              errorBuilder:
+                                                  (context, error, stackTrace) {
+                                                return Container(
+                                                  color: Colors.grey[200],
+                                                  width: double.infinity,
+                                                  height: 150,
+                                                  alignment: Alignment.center,
+                                                  child: const Column(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
+                                                    children: [
+                                                      Icon(Icons.location_on,
+                                                          color: Colors.red,
+                                                          size: 40),
+                                                      SizedBox(height: 8),
+                                                      Text(
+                                                        'Failed to load map',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black54),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            )))),
                                 const SizedBox(
                                   height: 10,
                                 ),
                                 Row(
                                   children: [
                                     Expanded(
-                                        child: Text((businessDetail['distance']??'') +
-                                            ' • $businessAddress')),
+                                        child: Text(
+                                            (businessDetail['distance'] ?? '') +
+                                                ' • $businessAddress')),
                                     const SizedBox(
                                       width: 8,
                                     ),
                                     InkWell(
                                         onTap: () {
-                                          openGoogleMapSearch(
-                                            businessAddress
-                                          );
+                                          openGoogleMapSearch(businessAddress);
                                         },
                                         child: Container(
                                           decoration: BoxDecoration(
@@ -1012,13 +1056,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   ],
                                 )
                               ])),
-
                           const Divider(
-                            indent: 20, endIndent: 20,
+                            indent: 20,
+                            endIndent: 20,
                           ),
                           Padding(
                             padding:
-                            EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+                                EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -1027,21 +1071,21 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
-                                    fontFamily: 'Inter',
-                                    fontSize: 16,
-                                    letterSpacing: 0.0,
-                                    fontWeight: FontWeight.w500,
-                                    fontStyle: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .fontStyle,
-                                  ),
+                                        fontFamily: 'Inter',
+                                        fontSize: 16,
+                                        letterSpacing: 0.0,
+                                        fontWeight: FontWeight.w500,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
+                                      ),
                                 ),
                               ],
                             ),
                           ),
-
                           Padding(
-                            padding: EdgeInsetsDirectional.fromSTEB(5, 10, 0, 20),
+                            padding:
+                                EdgeInsetsDirectional.fromSTEB(5, 10, 0, 20),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1051,38 +1095,49 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
                                     InkWell(
-                                        onTap: (){
-                                          dialNumber(widget.businessDetail[
-                                          'phone_number']);
+                                        onTap: () {
+                                          dialNumber(widget
+                                              .businessDetail['phone_number']);
                                         },
                                         child: Container(
                                             height: 40,
                                             width: 40,
                                             decoration: BoxDecoration(
-                                                borderRadius: BorderRadius.circular(5),
-                                                color: FlutterFlowTheme.of(context).primaryText
-                                            ),
-                                            child: Padding(padding: EdgeInsets.all(8), child: Icon(
-                                              Icons.call_rounded,
-                                              color: FlutterFlowTheme.of(context).secondaryBackground,
-                                              size: 24,
-                                            )))),
+                                                borderRadius:
+                                                    BorderRadius.circular(5),
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primaryText),
+                                            child: Padding(
+                                                padding: EdgeInsets.all(8),
+                                                child: Icon(
+                                                  Icons.call_rounded,
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .secondaryBackground,
+                                                  size: 24,
+                                                )))),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(0, 7, 0, 0),
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 7, 0, 0),
                                       child: Text(
                                         'Call',
                                         textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 10,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontStyle,
-                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 10,
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
                                       ),
                                     ),
                                   ],
@@ -1092,25 +1147,31 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   children: [
                                     FaIcon(
                                       FontAwesomeIcons.whatsappSquare,
-                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                       size: 46,
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 5, 0, 0),
                                       child: Text(
                                         'WhatsApp',
                                         textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 10,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontStyle,
-                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 10,
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
                                       ),
                                     ),
                                   ],
@@ -1120,25 +1181,31 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   children: [
                                     FaIcon(
                                       FontAwesomeIcons.instagramSquare,
-                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                       size: 46,
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 5, 0, 0),
                                       child: Text(
                                         'Instagram',
                                         textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 10,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontStyle,
-                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 10,
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
                                       ),
                                     ),
                                   ],
@@ -1148,25 +1215,31 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   children: [
                                     FaIcon(
                                       FontAwesomeIcons.facebookSquare,
-                                      color: FlutterFlowTheme.of(context).primaryText,
+                                      color: FlutterFlowTheme.of(context)
+                                          .primaryText,
                                       size: 46,
                                     ),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          0, 5, 0, 0),
                                       child: Text(
                                         'Facebook',
                                         textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 10,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontWeight,
-                                          fontStyle: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .fontStyle,
-                                        ),
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Inter',
+                                              fontSize: 10,
+                                              letterSpacing: 0.0,
+                                              fontWeight:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontWeight,
+                                              fontStyle:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .fontStyle,
+                                            ),
                                       ),
                                     ),
                                   ],
@@ -1180,43 +1253,43 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                         ],
                       ),
                     )),
-                    if(selectedServiceData.isNotEmpty)
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
-                      child: FFButtonWidget(
-                          onPressed: () {
-                            String date;
-                            if (widget.date == null) {
-                              // Fallback to today's date
-                              final now = DateTime.now();
-                              date = DateFormat('yyyy-MM-dd').format(now);
-                            } else {
-                              final selectDateJson = jsonDecode(widget.date);
-                              date =
-                                  '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
-                            }
-                            log('date select: $date');
-                            if (selectedServiceData.isNotEmpty) {
-                              log('services: $selectedServiceData');
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          FixAppointmentWidget(
-                                            formatDate: formatAppointmentDate,
-                                            services: selectedServiceData,
-                                            date: date,
-                                            uuid: (appointeeUUID != '')
-                                                ? appointeeUUID
-                                                : FFAppState().userId,
-                                          )));
-                            } else {
-                              Fluttertoast.showToast(msg: 'Select service');
-                            }
-                          },
-                          text: 'Next',
-                          options: buttonStyle(context)),
-                    ),
+                    if (selectedServiceData.isNotEmpty)
+                      Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+                        child: FFButtonWidget(
+                            onPressed: () {
+                              String date;
+                              if (widget.date == null) {
+                                // Fallback to today's date
+                                final now = DateTime.now();
+                                date = DateFormat('yyyy-MM-dd').format(now);
+                              } else {
+                                final selectDateJson = jsonDecode(widget.date);
+                                date =
+                                    '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
+                              }
+                              log('date select: $date');
+                              if (selectedServiceData.isNotEmpty) {
+                                log('services: $selectedServiceData');
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            FixAppointmentWidget(
+                                              formatDate: formatAppointmentDate,
+                                              services: selectedServiceData,
+                                              date: date,
+                                              uuid: (appointeeUUID != '')
+                                                  ? appointeeUUID
+                                                  : FFAppState().userId,
+                                            )));
+                              } else {
+                                Fluttertoast.showToast(msg: 'Select service');
+                              }
+                            },
+                            text: 'Next',
+                            options: buttonStyle(context)),
+                      ),
                   ],
                 ),
             ])),

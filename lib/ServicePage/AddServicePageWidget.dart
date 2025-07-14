@@ -92,8 +92,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       });
       businessAddress =
       '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
+
+      final finalDate = '${jsonDecode(widget.date)['year']}-${getMonthNumber(jsonDecode(widget.date)['month'])}-${jsonDecode(widget.date)['date'].toString().padLeft(2, '0')}';
+
+
       fetchData(
-              'business/${businessDetail['uuid']}/services?page=1&page_size=20',
+              'business/${businessDetail['uuid']}/services?page=1&page_size=20&queue_date=$finalDate',
               context)
           ?.then((value) {
         setState(() {

@@ -187,6 +187,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   late ScrollController _scrollController;
   double _scrollOffset = 0.0;
+  Future<void> _refreshData() async {
+    callAppointments();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -242,7 +245,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        ProfileWidget(
+                                                        const ProfileWidget(
                                                             backButton: true)))
                                             .then((value) {
                                           setState(() {});
@@ -538,7 +541,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                         ],
                       ),
                       Expanded(
-                        child: SingleChildScrollView(
+                        child: RefreshIndicator(
+                          color: FlutterFlowTheme.of(context).primary,
+                      onRefresh: _refreshData,
+                      child: SingleChildScrollView(
                           child: Column(
                             mainAxisSize: MainAxisSize.max,
                             children: [
@@ -1088,7 +1094,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                           ),
                         ),
                       ),
-                    ],
+                      ) ],
                   );
                 },
               ),

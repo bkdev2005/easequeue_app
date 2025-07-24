@@ -229,6 +229,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                             builder: (context) =>
                                 AddServicePageWidget(
                                   businessDetail: businessItem,
+                                  date: null,
                                 ),
                           ),
                         );

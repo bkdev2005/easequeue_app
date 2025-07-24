@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:url_launcher/url_launcher.dart';
 
 import 'package:eqlite/Component/AddAnotherPerson/AddOtherWidget.dart';
 import 'package:eqlite/ServicePage/service_model.dart';
@@ -46,125 +47,129 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
 
     log('selectData: ${widget.date}');
 
-    if (widget.businessDetail == null) {
-      setState(() {
-        isLoading = true;
-      });
+    initBusinessData();
+
+  }
+
+  void initBusinessData() {
+    // if (widget.businessDetail == null) {
+      setState(() => isLoading = true);
       fetchData('business/${widget.businessId}', context)?.then((value) {
         if (value != null) {
-          log('business: ${value}');
-          setState(() {
-            businessDetail = value['data'];
-          });
-          fetchData(
-                  'business/${businessDetail['uuid']}/services?page=1&page_size=20',
-                  context)
-              ?.then((value) {
-            setState(() {
-              serviceList =
-                  getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
-            });
-            setState(() {
-              isLoading = false;
-            });
-            log('Service: $value');
-          });
-          setState(() {
-            isLoading = false;
-          });
+          log('business: $value');
+          businessDetail = value['data'];
+            socialLinks = businessDetail['social_links'];
+          log('social Media: $socialLinks');
+          loadInitialDataFromWidget();
         } else {
-          setState(() {
-            isLoading = false;
-          });
+          setState(() => isLoading = false);
           Fluttertoast.showToast(msg: 'Something went wrong');
         }
-        log('Service: $value');
       });
-    } else {
+    // } else {
+    //   setState(() {
+    //     businessDetail = widget.businessDetail;
+    //     businessAddress =
+    //     '${getJsonField(widget.businessDetail, r'''$.address.unit_number''') != '' ? '${getJsonField(widget.businessDetail, r'''$.address.unit_number''')}, ' : ''}'
+    //         '${getJsonField(widget.businessDetail, r'''$.address.building''')}, '
+    //         '${getJsonField(widget.businessDetail, r'''$.address.street_1''')}, '
+    //         '${getJsonField(widget.businessDetail, r'''$.address.country''')}-'
+    //         '${getJsonField(widget.businessDetail, r'''$.address.postal_code''')}';
+    //     isLoading = true;
+    //   });
+    //   loadInitialDataFromWidget();
+    // }
+  }
+
+  void loadServices(String uuid, {String? date}) {
+    final query = date != null
+        ? 'business/$uuid/services?page=1&page_size=20&queue_date=$date'
+        : 'business/$uuid/services?page=1&page_size=20';
+
+    fetchData(query, context)?.then((value) {
       setState(() {
-        businessDetail = widget.businessDetail;
+        serviceList = getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
       });
-    }
 
-    if (widget.businessDetail != null) {
-      setState(() {
-        isLoading = true;
-      });
-      businessAddress =
-          '${((getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() != '') ? (getJsonField(widget.businessDetail, r'''$.address.unit_number''')).toString() + ', ' : ''}${(getJsonField(widget.businessDetail, r'''$.address.building''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.street_1''')).toString()}, ${(getJsonField(widget.businessDetail, r'''$.address.country''')).toString()}-${(getJsonField(widget.businessDetail, r'''$.address.postal_code''')).toString()}';
-
-      final finalDate =
-          '${jsonDecode(widget.date)['year']}-${getMonthNumber(jsonDecode(widget.date)['month'])}-${jsonDecode(widget.date)['date'].toString().padLeft(2, '0')}';
-
-      fetchData(
-              'business/${businessDetail['uuid']}/services?page=1&page_size=20&queue_date=$finalDate',
-              context)
-          ?.then((value) {
-        setState(() {
-          serviceList =
-              getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
-        });
-        if (selectedServiceIndex.isEmpty) {
-          for (final service in serviceList) {
-            if (!service['is_disabled']) {
-              setState(() {
-                selectedServiceIndex.add(service['service_id']);
-                selectedServiceData.add(service);
-              });
-              break;
-            }
+      if (selectedServiceIndex.isEmpty) {
+        for (final service in serviceList) {
+          if (!service['is_disabled']) {
+            setState(() {
+              selectedServiceIndex.add(service['service_id']);
+              selectedServiceData.add(service);
+            });
+            break;
           }
         }
-        setState(() {
-          isLoading = false;
-        });
-        log('Service: $value');
-      });
-
-      fetchData(
-              'business_schedule?entity_type=${widget.businessDetail['address']['entity_type']}&entity_id=${widget.businessDetail['address']['entity_id']}',
-              context)
-          ?.then((response) {
-        log('response schedule: ${response['data']}');
-        setState(() {
-          scheduleData = response['data'];
-        });
-      });
-      if (widget.date != null) {
-        log('date: ${widget.date}');
-        appointmentDate = jsonDecode(widget.date);
-        formatAppointmentDate =
-            '${appointmentDate['day']}, ${appointmentDate['date'].toString().padLeft(2, '0')} ${(appointmentDate['month'])}';
-      } else {
-        DateTime now = DateTime.now();
-
-        String formattedDate = '${DateFormat('EEE').format(now)}, '
-            '${now.day.toString().padLeft(2, '0')} '
-            '${DateFormat('MMM').format(now)}';
-        formatAppointmentDate = formattedDate;
       }
 
-      fetchData('reviews/summary?business_id=${widget.businessDetail['uuid']}',
-              context)
-          ?.then((response) {
-        log('response: $response');
-        setState(() {
-          ratingData = response['data'];
-        });
-      });
-
-      isAddedFav = widget.businessDetail['is_favourite'] ?? false;
-      mapURL = 'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/'
-          'pin-s+ff0000(${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))})/' // note: Mapbox uses LONG,LAT
-          '${(getJsonField(widget.businessDetail, r'''$.address.longitude'''))},${(getJsonField(widget.businessDetail, r'''$.address.latitude'''))},14/800x200'
-          '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
-    }
+      setState(() => isLoading = false);
+      log('Service: $value');
+    });
   }
+
+  void loadInitialDataFromWidget() {
+    String finalDate;
+    if (widget.date != null) {
+      final decodedDate = jsonDecode(widget.date);
+      finalDate =
+      '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
+      appointmentDate = decodedDate;
+      formatAppointmentDate =
+      '${decodedDate['day']}, ${decodedDate['date'].toString().padLeft(2, '0')} ${decodedDate['month']}';
+    } else {
+      DateTime now = DateTime.now();
+      finalDate = todayDate(); // assuming todayDate() returns `yyyy-MM-dd`
+      formatAppointmentDate = '${DateFormat('EEE').format(now)}, '
+          '${now.day.toString().padLeft(2, '0')} '
+          '${DateFormat('MMM').format(now)}';
+    }
+
+    loadServices(businessDetail['uuid'], date: finalDate);
+    loadSchedule();
+    loadReviews();
+    setMapData();
+    isAddedFav = businessDetail['is_favourite'] ?? false;
+  }
+
+  void loadSchedule() {
+    fetchData(
+      'business_schedule?entity_type=${businessDetail['address']['entity_type']}&entity_id=${businessDetail['address']['entity_id']}',
+      context,
+    )?.then((response) {
+      log('response schedule: ${response['data']}');
+      setState(() {
+        scheduleData = response['data'];
+      });
+    });
+  }
+
+  void loadReviews() {
+    fetchData(
+      'reviews/summary?business_id=${businessDetail['uuid']}',
+      context,
+    )?.then((response) {
+      log('response: $response');
+      setState(() {
+        ratingData = response['data'];
+      });
+    });
+  }
+
+  void setMapData() {
+    final lng = getJsonField(businessDetail, r'''$.address.longitude''');
+    final lat = getJsonField(businessDetail, r'''$.address.latitude''');
+    mapURL =
+    'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000($lng,$lat)/$lng,$lat,14/800x200'
+        '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
+  }
+
 
   dynamic ratingData;
   String mapURL = '';
   bool isAddedFav = false;
   List<dynamic> scheduleData = [];
+  List<dynamic> socialLinks = [];
   dynamic appointmentDate;
   String formatAppointmentDate = '';
   List<dynamic> serviceList = [];
@@ -606,7 +611,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                           .min,
                                                                   children: [
                                                                     Text(
-                                                                        '${businessDetail['status']}',
+                                                                          '${businessDetail['status']}',
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
@@ -1056,10 +1061,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   ],
                                 )
                               ])),
+                          if(socialLinks.isNotEmpty)
                           const Divider(
                             indent: 20,
                             endIndent: 20,
                           ),
+                          if(socialLinks.isNotEmpty)
                           Padding(
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
@@ -1083,6 +1090,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               ],
                             ),
                           ),
+                         
                           Padding(
                             padding:
                                 EdgeInsetsDirectional.fromSTEB(5, 10, 0, 20),
@@ -1145,12 +1153,17 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    FaIcon(
+                                    InkWell(
+                                      onTap: () {
+                                        sendWhatsAppMessage(widget
+                                            .businessDetail['phone_number']);
+                                      },
+                                      child: FaIcon(
                                       FontAwesomeIcons.whatsappSquare,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       size: 46,
-                                    ),
+                                    )),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0, 5, 0, 0),
@@ -1176,15 +1189,20 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     ),
                                   ],
                                 ),
+                                if(socialLinks.isNotEmpty)
                                 Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    FaIcon(
+                                  InkWell(
+                                      onTap: () async{
+                                        launchInstagram(socialLinks[0]['url']);
+                                      },
+                                      child:  FaIcon(
                                       FontAwesomeIcons.instagramSquare,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       size: 46,
-                                    ),
+                                    )),
                                     Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           0, 5, 0, 0),
@@ -1210,17 +1228,22 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     ),
                                   ],
                                 ),
+                                if(socialLinks.length == 2)
                                 Column(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
-                                    FaIcon(
+                                    InkWell(
+                                    onTap: () async{
+                                      await launchInstagram(socialLinks[1]['url']);
+                                    },
+                                    child: FaIcon(
                                       FontAwesomeIcons.facebookSquare,
                                       color: FlutterFlowTheme.of(context)
                                           .primaryText,
                                       size: 46,
-                                    ),
+                                    )),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                      padding: const EdgeInsetsDirectional.fromSTEB(
                                           0, 5, 0, 0),
                                       child: Text(
                                         'Facebook',

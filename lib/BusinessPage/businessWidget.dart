@@ -57,18 +57,20 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
       selectDay = next7Days.first;
     });
 
-    if (widget.longitude == null && widget.latitude == null) {
-      getLocation().then((value) {
-        log('location: ${value?[1]}, ${value?[2]}');
-        latitude = value?[1].toString();
-        longitude = value?[2].toString();
-        callBusinessApi();
-      });
-    } else {
-      latitude = widget.latitude;
-      longitude = widget.longitude;
-      callBusinessApi();
-    }
+    // if (widget.longitude == null && widget.latitude == null) {
+    //   getLocation().then((value) {
+    //     log('location: ${value?[1]}, ${value?[2]}');
+    //     latitude = value?[1].toString();
+    //     longitude = value?[2].toString();
+    //     callBusinessApi();
+    //   });
+    // } else {
+    //   latitude = widget.latitude;
+    //   longitude = widget.longitude;
+    //   callBusinessApi();
+    // }
+
+    callBusinessApi();
 
     fetchData('services/${widget.categoryId}', context)?.then((value) {
       log('value: $value');
@@ -117,7 +119,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
             hasMore = true;
             page++;
           }
-          isMainLoading = false;
+          setState(()=> isMainLoading = false );
+
         });
       } else {
         setState(() {
@@ -438,6 +441,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                       builder: (context) =>
                                           AddServicePageWidget(
                                         businessDetail: businessListItem,
+                                        businessId: businessListItem['uuid'],
                                         date: selectDay,
                                       ),
                                     ),
@@ -541,7 +545,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                       ),
                                                     const SizedBox(height: 3),
 
-                                                       Row(
+                                                       Row( crossAxisAlignment: CrossAxisAlignment.start,
                                                               mainAxisSize:
                                                                   MainAxisSize
                                                                       .max,

@@ -560,11 +560,22 @@ Future<void> openGoogleMapSearch(String query) async {
   final Uri url = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}");
 
   if (await canLaunchUrl(url)) {
-    await launchUrl(url, mode: LaunchMode.externalApplication);
+    await launchUrl(url,);
   } else {
     throw 'Could not launch $url';
   }
 }
+
+Future<void> launchInstagram(String url) async {
+  final Uri instagramUri = Uri.parse(url);
+
+  if (await canLaunchUrl(instagramUri)) {
+    await launchUrl(instagramUri);
+  } else {
+    throw 'Could not launch $url';
+  }
+}
+
 
 String changeFormat(String dateTime) {
   String input = dateTime;

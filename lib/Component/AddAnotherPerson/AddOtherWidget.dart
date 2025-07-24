@@ -56,7 +56,7 @@ class _AddAnotherCustomerWidgetState extends State<AddAnotherCustomerWidget> {
     return Container(
       decoration: BoxDecoration(
         color: FlutterFlowTheme.of(context).secondaryBackground,
-        borderRadius: BorderRadius.only(
+        borderRadius: const BorderRadius.only(
           bottomLeft: Radius.circular(0),
           bottomRight: Radius.circular(0),
           topLeft: Radius.circular(12),
@@ -94,7 +94,7 @@ class _AddAnotherCustomerWidgetState extends State<AddAnotherCustomerWidget> {
             ],
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 20, 20, 0),
             child: TextFormField(
               controller: _model.textController1,
               focusNode: _model.textFieldFocusNode1,
@@ -130,7 +130,7 @@ class _AddAnotherCustomerWidgetState extends State<AddAnotherCustomerWidget> {
             ),
           ),
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20, 25, 20, 20),
+            padding: const EdgeInsetsDirectional.fromSTEB(20, 25, 20, 20),
             child: FFButtonWidget(
               onPressed: () {
                 final name = _model.textController1.text.trim();

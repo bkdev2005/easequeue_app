@@ -550,8 +550,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                   MainAxisSize
                                                                       .max,
                                                               children: [
-                                                                Text('${businessListItem[
-                                                                'status']}',
+                                                                Text((businessListItem[
+                                                                'status'].toString().toLowerCase() == 'closed')? 'Closed' : 'Open',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .bodyMedium
@@ -561,7 +561,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                           fontWeight:
                                                                               FontWeight.w500,
                                                                           color: (businessListItem[
-                                                                          'status'] != 'Closed')? Colors.green : 
+                                                                          'status'].toString().toLowerCase() != 'closed')? Colors.green :
                                                                               Colors.redAccent,
                                                                           fontFamily:
                                                                               'Inter',

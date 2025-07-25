@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:eqlite/BookingDateAndTime/bookingDateAndTimeWidget.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'package:eqlite/Component/AddAnotherPerson/AddOtherWidget.dart';
@@ -554,7 +555,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                         ),
                                                       ),
                                                     ),
-                                                    SizedBox(
+                                                   const SizedBox(
                                                       height: 2,
                                                     ),
                                                     Text(
@@ -611,7 +612,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .fromLTRB(
                                                                           10,
                                                                           0,
@@ -644,7 +645,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
                                                                             )),
-                                                                    Icon(
+                                                                   const Icon(
                                                                       Icons
                                                                           .keyboard_arrow_down_rounded,
                                                                       size: 14,
@@ -674,7 +675,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(4),
                                                               child: Icon(
                                                                 Icons
@@ -709,7 +710,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ),
                                                             child: Padding(
                                                               padding:
-                                                                  EdgeInsets
+                                                                  const EdgeInsets
                                                                       .all(4),
                                                               child: Icon(
                                                                 Icons
@@ -1293,34 +1294,36 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                         padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                         child: FFButtonWidget(
                             onPressed: () {
-                              String date;
-                              if (widget.date == null) {
-                                // Fallback to today's date
-                                final now = DateTime.now();
-                                date = DateFormat('yyyy-MM-dd').format(now);
-                              } else {
-                                final selectDateJson = jsonDecode(widget.date);
-                                date =
-                                    '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
-                              }
-                              log('date select: $date');
-                              if (selectedServiceData.isNotEmpty) {
-                                log('services: $selectedServiceData');
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            FixAppointmentWidget(
-                                              formatDate: formatAppointmentDate,
-                                              services: selectedServiceData,
-                                              date: date,
-                                              uuid: (appointeeUUID != '')
-                                                  ? appointeeUUID
-                                                  : FFAppState().userId,
-                                            )));
-                              } else {
-                                Fluttertoast.showToast(msg: 'Select service');
-                              }
+
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> BookTablePage()));
+                              // String date;
+                              // if (widget.date == null) {
+                              //   // Fallback to today's date
+                              //   final now = DateTime.now();
+                              //   date = DateFormat('yyyy-MM-dd').format(now);
+                              // } else {
+                              //   final selectDateJson = jsonDecode(widget.date);
+                              //   date =
+                              //       '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
+                              // }
+                              // log('date select: $date');
+                              // if (selectedServiceData.isNotEmpty) {
+                              //   log('services: $selectedServiceData');
+                              //   Navigator.push(
+                              //       context,
+                              //       MaterialPageRoute(
+                              //           builder: (context) =>
+                              //               FixAppointmentWidget(
+                              //                 formatDate: formatAppointmentDate,
+                              //                 services: selectedServiceData,
+                              //                 date: date,
+                              //                 uuid: (appointeeUUID != '')
+                              //                     ? appointeeUUID
+                              //                     : FFAppState().userId,
+                              //               )));
+                              // } else {
+                              //   Fluttertoast.showToast(msg: 'Select service');
+                              // }
                             },
                             text: 'Next',
                             options: buttonStyle(context)),

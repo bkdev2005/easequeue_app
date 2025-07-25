@@ -54,12 +54,23 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   void initBusinessData() {
     // if (widget.businessDetail == null) {
       setState(() => isLoading = true);
-      fetchData('business/${widget.businessId}', context)?.then((value) {
+      fetchData('business/${widget.businessId}?user_location=23.0678751&user_location=72.5449294', context)?.then((value) {
         if (value != null) {
           log('business: $value');
-          businessDetail = value['data'];
+          setState(() {
+            businessDetail = value['data'];
             socialLinks = businessDetail['social_links'];
+          });
           log('social Media: $socialLinks');
+          setState(() {
+                businessAddress =
+                '${getJsonField(businessDetail, r'''$.address.unit_number''') != '' ? '${getJsonField(businessDetail, r'''$.address.unit_number''')}, ' : ''}'
+                    '${getJsonField(businessDetail, r'''$.address.building''')}, '
+                    '${getJsonField(businessDetail, r'''$.address.street_1''')}, '
+                    '${getJsonField(businessDetail, r'''$.address.country''')}-'
+                    '${getJsonField(businessDetail, r'''$.address.postal_code''')}';
+                isLoading = true;
+              });
           loadInitialDataFromWidget();
         } else {
           setState(() => isLoading = false);
@@ -424,7 +435,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ],
                                                           ),
                                                         ),
-                                                        /* Padding(
+                                                         Padding(
                                                             padding:
                                                                 const EdgeInsetsDirectional
                                                                     .fromSTEB(
@@ -435,7 +446,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                       .max,
                                                               children: [
                                                                 Text(
-                                                                  'Service available in ₹100 to ₹500',
+                                                                  businessDetail['price_range'],
                                                                   style: FlutterFlowTheme.of(context).bodyMedium.override(
                                                                       fontFamily:
                                                                           'Inter',
@@ -451,13 +462,14 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 ),
                                                               ],
                                                             ),
-                                                          ),*/
+                                                          ),
                                                       ],
                                                     ),
                                                   )),
                                                   const SizedBox(
                                                     width: 6,
                                                   ),
+                                                  if(ratingData != null)
                                                   Column(children: [
                                                     Container(
                                                       decoration:

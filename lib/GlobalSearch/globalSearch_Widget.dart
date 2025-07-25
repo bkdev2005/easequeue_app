@@ -326,47 +326,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                                                     0.0,
                                                   ),
                                                 ),
-                                              Row(
-                                                  mainAxisSize:
-                                                  MainAxisSize
-                                                      .max,
-                                                  children: [
-                                                    Text('${businessItem[
-                                                    'status']}',
-                                                        style: FlutterFlowTheme.of(
-                                                            context)
-                                                            .bodyMedium
-                                                            .override(
-                                                          fontSize:
-                                                          12,
-                                                          fontWeight:
-                                                          FontWeight.w500,
-                                                          color: (businessItem[
-                                                          'status'] != 'Closed')? Colors.green :
-                                                          Colors.redAccent,
-                                                          fontFamily:
-                                                          'Inter',
-                                                          letterSpacing:
-                                                          0.0,
-                                                        )),
-                                                    Expanded(child: Text(' • ${businessItem[
-                                                    'status_message']}',
-                                                        style: FlutterFlowTheme.of(
-                                                            context)
-                                                            .bodyMedium
-                                                            .override(
-                                                          fontSize:
-                                                          12,
-                                                          fontWeight:
-                                                          FontWeight.w400,
-                                                          color:
-                                                          Colors.black45,
-                                                          fontFamily:
-                                                          'Inter',
-                                                          letterSpacing:
-                                                          0.0,
-                                                        )),
-                                                    )]),
+
                                             ],
                                           ),
                                         )),
@@ -378,70 +338,6 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                                   ])),
                         ),
                       ));
-                  Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 0),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: FlutterFlowTheme
-                            .of(context)
-                            .secondaryBackground,
-                      ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              'https://picsum.photos/seed/577/600',
-                              width: 60,
-                              height: 60,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                              EdgeInsetsDirectional.fromSTEB(10, 0, 0, 0),
-                              child: Column(
-                                mainAxisSize: MainAxisSize.max,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Service name',
-                                    style: FlutterFlowTheme
-                                        .of(context)
-                                        .bodyMedium
-                                        .override(
-                                      fontFamily: 'Inter',
-                                      fontSize: 16,
-                                      letterSpacing: 0.0,
-                                      fontWeight: FontWeight.w500,
-                                    ),
-                                  ),
-                                  Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
-                                        0, 3, 0, 0),
-                                    child: Text(
-                                      'See all business',
-                                      style: FlutterFlowTheme
-                                          .of(context)
-                                          .bodyMedium
-                                          .override(
-                                        fontFamily: 'Inter',
-                                        fontSize: 12,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.normal,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
                 }))
             ],
           ),

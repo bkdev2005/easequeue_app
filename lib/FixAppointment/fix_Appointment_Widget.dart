@@ -2,8 +2,10 @@ import 'dart:async';
 import 'dart:developer';
 import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
 import 'package:eqlite/function.dart';
+import 'package:screenshot/screenshot.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import '../Component/AppointmentType/appointment_type_widget.dart';
+import '../Component/Congratulate/confirm_ui_widget.dart';
 import '../apiFunction.dart';
 import '../websocket.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -23,10 +25,12 @@ class FixAppointmentWidget extends StatefulWidget {
       {super.key,
       required this.services,
       required this.date,
+      required this.businessName,
       required this.formatDate,
       required this.uuid});
   final List<dynamic> services;
   final String date;
+  final String businessName;
   final String formatDate;
   final String uuid;
   @override
@@ -316,7 +320,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               ),
                                             ),
                                             Padding(
-                                              padding: EdgeInsetsDirectional
+                                              padding: const EdgeInsetsDirectional
                                                   .fromSTEB(0, 0, 10, 0),
                                               child: Column(
                                                 mainAxisSize: MainAxisSize.max,
@@ -337,7 +341,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   ),
                                                   Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
                                                                 0, 0, 0, 0),
                                                     child: Text(
@@ -451,7 +455,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               ),
                                             ),
                                             child: Padding(
-                                              padding: EdgeInsets.fromLTRB(
+                                              padding: const EdgeInsets.fromLTRB(
                                                   10, 8, 15, 8),
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.max,
@@ -461,7 +465,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                     height: 50,
                                                     clipBehavior:
                                                         Clip.antiAlias,
-                                                    decoration: BoxDecoration(
+                                                    decoration: const BoxDecoration(
                                                       shape: BoxShape.circle,
                                                     ),
                                                     child: Image.network(
@@ -472,7 +476,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   Expanded(
                                                     child: Padding(
                                                       padding:
-                                                          EdgeInsetsDirectional
+                                                          const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                                   10, 0, 0, 0),
                                                       child: Column(
@@ -691,19 +695,20 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           }
                         }
                       }
-                      showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          builder: (context) {
-                            return Padding(
-                                padding: MediaQuery.viewInsetsOf(context),
-                                child: AppointmentTypeWidget(
-                                  userId: widget.uuid,
-                                  queueId: selectedQueueId!,
-                                  queueDate: widget.date,
-                                  queueServices: services,
-                                ));
-                          });
+
+                      showPremiumAppointmentDialog(
+                        context,
+                        userName: FFAppState().user['full_name']??'',
+                        businessName: widget.businessName,
+                        date: "July 28, 2025",
+                        time: messageList['estimated_appointment_time'].toString().substring(11),
+                        staffName: selectQueue['employee_name'],
+                        serviceName: getJsonField(serviceSelectQueue, r'''$..business_service_name'''),
+                        userId: widget.uuid,
+                        queueId: selectedQueueId!,
+                        queueDate: widget.date,
+                        queueServices: services,
+                      );
 
 
                     },
@@ -730,6 +735,202 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           )),
     );
   }
+
+  bool? showPremiumAppointmentDialog(
+      BuildContext context, {
+        required String userName,
+        required String businessName,
+        required String date,
+        required String time,
+        required String staffName,
+        required String serviceName,
+        required String userId,
+        required String queueId,
+        required String queueDate,
+        required List<dynamic> queueServices
+      }) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          backgroundColor: Colors.white,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+            Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: 60, left: 20, right: 20, bottom: 10),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      "Appointment Confirmation",
+                      style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: FlutterFlowTheme.of(context).primary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 10),
+                    Text(
+                      "Hi $userName 👋\nYou're booking with",
+                      style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                      textAlign: TextAlign.center,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      businessName,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: FlutterFlowTheme.of(context).primary,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    // Details
+                    _infoTile(Icons.calendar_today_rounded, 'Date', widget.date),
+                    _infoTile(Icons.access_time_rounded, 'Time', time),
+                    _infoTile(Icons.cut_rounded, 'Service', serviceName),
+                    _infoTile(Icons.person_rounded, 'Staff', staffName),
+
+                  ],
+                ),
+              ),
+               Align(
+                  alignment: Alignment.center,
+                  child: Text(
+                    "Note: Time is approximate and may vary slightly.",
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontStyle: FontStyle.normal,
+                      color: Colors.grey[600],
+                    ),
+                  ),
+                ),
+
+              Padding(padding: EdgeInsets.all(20), child:
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Expanded(
+                    child: SizedBox(
+                        height: 45,
+                        child: OutlinedButton(
+                          style: OutlinedButton.styleFrom(
+                            foregroundColor: FlutterFlowTheme.of(context).primary,
+                            side: BorderSide(color: FlutterFlowTheme.of(context).primary),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                          ),
+                          onPressed: () => Navigator.pop(context, false),
+                          child: Text("Cancel", style: FlutterFlowTheme.of(context).titleMedium.override(
+                            fontFamily: 'Inter Tight',
+                            color: FlutterFlowTheme.of(context).primary,
+                            fontSize: 16,
+                            letterSpacing: 0.0,
+                            fontWeight: FontWeight.w500,
+                          ),),
+                        )),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(child:
+                  FFButtonWidget(text: 'Confirm',
+                      onPressed: () async{
+                        final apiCall = await sendData({
+                          "user_id": userId,
+                          "priority": false,
+                          "queue_id": queueId,
+                          "queue_date": queueDate,
+                          "token_number": "string",
+                          "turn_time": 0,
+                          "queue_services": queueServices
+                        }, 'queue_user')
+                            .then((value) {
+                          log('response: $value');
+                          if (value != null) {
+                            return Navigator.push(context, MaterialPageRoute(builder: (context)=> ConfirmUiWidget(
+                              response: value,
+                            )));
+                          }
+                        });
+                      },
+                      options: FFButtonOptions(
+                    width: double.infinity,
+                    height: 45,
+                    padding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                    color: FlutterFlowTheme.of(context).primary,
+                    textStyle: FlutterFlowTheme.of(context).titleMedium.override(
+                      fontFamily: 'Inter Tight',
+                      color: Colors.white,
+                      fontSize: 16,
+                      letterSpacing: 0.0,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    elevation: 2,
+                    borderSide: const BorderSide(
+                      color: Colors.transparent,
+                      width: 1,
+                    ),
+                    borderRadius: BorderRadius.circular(30),
+                  )))
+                ],
+              )),
+            ]),
+
+              // Avatar / Icon
+              Positioned(
+                top: -40,
+                child: CircleAvatar(
+                  radius: 40,
+                  backgroundColor: FlutterFlowTheme.of(context).primary,
+                  child: Text(
+                    businessName.isNotEmpty ? businessName[0] : 'B',
+                    style: const TextStyle(fontSize: 32, color: Colors.white),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    ).then((value){
+    });
+  }
+
+  Widget _infoTile(IconData icon, String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          Icon(icon, color: FlutterFlowTheme.of(context).primary),
+          const SizedBox(width: 12),
+          Text(
+            "$label:",
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          ),
+          const SizedBox(width: 6),
+          Expanded(
+            child: Text(
+              value,
+              style: TextStyle(color: Colors.grey[800], fontSize: 16),
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+
+
 
   String totalPrice(List<dynamic> dataList) {
     double total = 0;

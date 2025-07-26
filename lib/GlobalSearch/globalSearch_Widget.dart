@@ -18,8 +18,9 @@ import 'globaSearch_model.dart';
 
 
 class GlobalSearchWidget extends StatefulWidget {
-  const GlobalSearchWidget({super.key});
-
+  const GlobalSearchWidget({super.key, this.lat, this.long});
+  final String? lat;
+  final String? long;
   static String routeName = 'globalSearch';
   static String routePath = '/globalSearch';
 
@@ -137,14 +138,14 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                         letterSpacing: 0.0,
                       ),
                       enabledBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0x00000000),
                           width: 1,
                         ),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       focusedBorder: OutlineInputBorder(
-                        borderSide: BorderSide(
+                        borderSide: const BorderSide(
                           color: Color(0x00000000),
                           width: 1,
                         ),
@@ -221,7 +222,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                 scrollDirection: Axis.vertical,
                 itemBuilder: (context, index) {
                   final businessItem = businessList[index];
-                  return  GestureDetector(
+                  return GestureDetector(
                       onTap: () {
                         Navigator.push(
                           context,
@@ -229,7 +230,9 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                             builder: (context) =>
                                 AddServicePageWidget(
                                   businessDetail: businessItem,
-                                  date: null,
+                                  businessId: businessItem['uuid'],
+                                  lat: widget.lat,
+                                  long: widget.long,
                                 ),
                           ),
                         );

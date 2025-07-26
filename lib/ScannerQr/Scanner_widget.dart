@@ -14,7 +14,9 @@ import 'dart:developer';
 import 'dart:io';
 
 class ScannerQr extends StatefulWidget {
-  const ScannerQr({super.key});
+  const ScannerQr({super.key, this.lat, this.long});
+  final String? lat;
+  final String? long;
 
   @override
   State<ScannerQr> createState() => _ScannerQrState();
@@ -139,7 +141,8 @@ class _ScannerQrState extends State<ScannerQr> {
                   MaterialPageRoute(
                       builder: (context) => AddServicePageWidget(
                             businessDetail: data,
-                            date: null,
+                            lat: widget.lat,
+                            long: widget.long,
                           ))).then((value) {
                 setState(() {
                   result = null;

@@ -238,7 +238,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             borderRadius: BorderRadius.circular(30),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: Color(0x00000000),
                               width: 1,
                             ),
@@ -257,17 +257,18 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                               callBusinessApi();
                             },
                           ),
-                          fillColor: Color(0xFFF4F4F4),
-                          prefixIcon: Icon(
+                          fillColor: const Color(0xFFF4F4F4),
+                          prefixIcon: const Icon(
                             Icons.search_rounded,
                           ),
                         )))
                 : Text(
                     widget.categoryName,
                     style: const TextStyle(
+                        fontSize: 24,
                         fontFamily: 'Inter',
                         color: Colors.white,
-                        fontWeight: FontWeight.w400),
+                        fontWeight: FontWeight.w500),
                   ),
             centerTitle: false,
             elevation: 2,
@@ -277,81 +278,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
             child: Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                SizedBox(
-                    height: 85,
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: List.generate(next7Days.length, (index) {
-                        final day = jsonDecode(next7Days[index]);
-                        return Material(
-                            borderRadius: BorderRadius.circular(5),
-                            elevation: 2,
-                            color: Colors.white,
-                            child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    selectDay = next7Days[index];
-                                    page = 1;
-                                  });
-                                  callBusinessApi();
-                                  log('day: $selectDay');
-                                },
-                                child: Container(
-                                    color: (next7Days[index] == selectDay)
-                                        ? FlutterFlowTheme.of(context).primary
-                                        : Colors.transparent,
-                                    child: Padding(
-                                        padding: const EdgeInsets.only(
-                                            left: 18,
-                                            right: 18,
-                                            top: 5,
-                                            bottom: 5),
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              day['day'],
-                                              style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w400,
-                                                  color: (next7Days[index] ==
-                                                          selectDay)
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                            ),
-                                            Text(
-                                              day['date'],
-                                              style: TextStyle(
-                                                  fontSize: 20,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: (next7Days[index] ==
-                                                          selectDay)
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                            ),
-                                            Text(
-                                              day['month'],
-                                              style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.w300,
-                                                  color: (next7Days[index] ==
-                                                          selectDay)
-                                                      ? Colors.white
-                                                      : Colors.black),
-                                            )
-                                          ],
-                                        )))));
-                      }),
-                    )),
-                const Divider(
-                  thickness: 1,
-                  height: 0,
-                ),
                 Padding(
-                    padding: EdgeInsets.only(top: 10, left: 5, bottom: 3),
+                    padding: EdgeInsets.only(top: 15, left: 10, bottom: 3),
                     child: Row(
                       children: List.generate(services.length, (index) {
                         final service = services[index];
@@ -360,7 +288,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                             child: GestureDetector(
                                 onTap: () {
                                   final uuid =
-                                      getJsonField(service, r'''$.uuid''');
+                                  getJsonField(service, r'''$.uuid''');
                                   setState(() {
                                     if (selectServiceId.contains(uuid)) {
                                       selectServiceId.remove(uuid);
@@ -374,13 +302,13 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   decoration: BoxDecoration(
                                       border: Border.all(
                                           color: (selectServiceId.contains(
-                                                  getJsonField(
-                                                      service, r'''$.uuid''')))
-                                              ? Colors.transparent
-                                              : Colors.black12),
-                                      color: (selectServiceId.contains(
                                               getJsonField(
                                                   service, r'''$.uuid''')))
+                                              ? Colors.transparent
+                                              : Colors.black26),
+                                      color: (selectServiceId.contains(
+                                          getJsonField(
+                                              service, r'''$.uuid''')))
                                           ? FlutterFlowTheme.of(context).primary
                                           : Colors.transparent,
                                       borderRadius: BorderRadius.circular(30)),
@@ -391,8 +319,8 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                       style: TextStyle(
                                         fontSize: 14,
                                         color: (selectServiceId.contains(
-                                                getJsonField(
-                                                    service, r'''$.uuid''')))
+                                            getJsonField(
+                                                service, r'''$.uuid''')))
                                             ? Colors.white
                                             : Colors.black,
                                       ),
@@ -401,7 +329,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                 )));
                       }),
                     )),
-                Divider(),
                 Expanded(
                   child: Padding(
                     padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
@@ -441,8 +368,9 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                       builder: (context) =>
                                           AddServicePageWidget(
                                         businessDetail: businessListItem,
+                                        lat: widget.latitude,
+                                        long: widget.longitude,
                                         businessId: businessListItem['uuid'],
-                                        date: selectDay,
                                       ),
                                     ),
                                   ).then((value){
@@ -452,19 +380,28 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   });
                                 },
                                 child: Padding(
-                                  padding: EdgeInsets.only(top: 12),
+                                  padding: const EdgeInsets.only(top: 15),
                                   child: Material(
-                                    elevation: 2,
+                                    elevation: 1,
                                     borderRadius: BorderRadius.circular(12),
                                     color: Colors.white,
                                     child: Container(
                                         margin: const EdgeInsets.symmetric(
-                                            horizontal: 0, vertical: 6),
+                                            horizontal: 0, vertical: 0),
                                         padding: const EdgeInsets.fromLTRB(
-                                            15, 8, 0, 8),
+                                            15, 10, 0, 10),
                                         decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
+                                          gradient: LinearGradient(
+                                            begin: Alignment.topCenter,
+                                            end: Alignment.bottomCenter,
+                                            colors: [
+                                              Colors.transparent,
+                                              Colors.transparent,
+                                              Colors.green.withOpacity(0.09), // Or any color for the bottom glow
+                                            ],
+                                          ),
+                                          border: Border.all(color: Colors.green.shade50),
+                                          borderRadius: BorderRadius.circular(12),
                                         ),
                                         child: Row(
                                             crossAxisAlignment:
@@ -472,10 +409,10 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                             children: [
                                               Padding(
                                                   padding:
-                                                      EdgeInsets.only(top: 5),
+                                                      const EdgeInsets.only(top: 5),
                                                   child: Container(
-                                                      width: 35,
-                                                      height: 35,
+                                                      width: 40,
+                                                      height: 40,
                                                       decoration: BoxDecoration(
                                                           border: Border.all(
                                                             color:
@@ -493,7 +430,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                             )
                                                           : Padding(
                                                               padding:
-                                                                  EdgeInsets
+                                                                 const EdgeInsets
                                                                       .all(8),
                                                               child: Image.asset(
                                                                   'assets/images/images.png')))),

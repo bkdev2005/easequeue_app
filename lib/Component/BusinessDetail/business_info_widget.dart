@@ -38,7 +38,13 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
   @override
   void initState() {
     super.initState();
-    scheduleData = widget.data;
+    for(int i = 0; i<=widget.data.length; i++){
+    for(final data in widget.data){
+      if(data['day_of_week'] == i){
+        scheduleData.add(data);
+      }
+    }
+    }
     int todayIndex = DateTime.now().weekday;
     todayData = scheduleData.firstWhere(
       (d) =>
@@ -117,39 +123,6 @@ class _BusinessInfoWidgetState extends State<BusinessInfoWidget> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  /* Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(10, 0, 20, 0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          days[todayData['day_of_week']],
-                          style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                          ),
-                        ),
-                        Text(
-                          (todayData['is_open'])
-                              ? formatTimeRange(
-                              todayData['opening_time'],
-                              todayData['closing_time'])
-                              : 'Closed',
-                          style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            letterSpacing: 0.0,
-                            fontWeight: FlutterFlowTheme.of(context).bodyMedium.fontWeight,
-                            fontStyle: FlutterFlowTheme.of(context).bodyMedium.fontStyle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),*/
 
                   Expanded(
                       child: Column(

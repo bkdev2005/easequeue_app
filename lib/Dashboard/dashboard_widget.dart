@@ -193,7 +193,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final double maxScrollExtent = 100; // Adjust as per your requirement
+    const double maxScrollExtent = 100; // Adjust as per your requirement
     final double opacity = (_scrollOffset / maxScrollExtent).clamp(0.0, 1.0);
 
     return WillPopScope(
@@ -201,7 +201,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
           showDialog(
               context: context,
               builder: (context) {
-                return Center(child: ExitWidget());
+                return const Center(child: ExitWidget());
               }).then((value) {
             if (value) {
               return value;
@@ -283,7 +283,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       )),
                                   Expanded(
                                       child: Padding(
-                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                    padding: const EdgeInsetsDirectional.fromSTEB(
                                         12, 0, 0, 0),
                                     child: Column(
                                       mainAxisSize: MainAxisSize.max,
@@ -353,7 +353,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  ScannerQr()));
+                                                  ScannerQr(
+                                                    lat: latitude,
+                                                    long: longitude,
+                                                  )));
                                     },
                                   ),
                                   FlutterFlowIconButton(
@@ -453,7 +456,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                 context,
                                                 MaterialPageRoute(
                                                     builder: (context) =>
-                                                        GlobalSearchWidget()));
+                                                        GlobalSearchWidget(
+                                                          lat: latitude,
+                                                          long: longitude,
+                                                        )));
                                           },
                                           readOnly: true,
                                           autofocus: false,
@@ -902,8 +908,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                               ),
                               Padding(
                                   padding: EdgeInsetsDirectional.fromSTEB(
-                                      5, 20, 5, 10),
-                                  child: Wrap(
+                                      15, 20, 15, 10),
+                                  child: Align( alignment: Alignment.centerLeft, child: Wrap(
                                       runSpacing: 10,
                                       spacing: 10,
                                       children: List.generate(
@@ -939,23 +945,23 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           3) -
                                                       20,
                                                   decoration: BoxDecoration(
-                                                    color: FlutterFlowTheme.of(
-                                                            context)
-                                                        .primaryBackground,
-                                                    boxShadow: [
-                                                      BoxShadow(
-                                                        color: Colors
-                                                            .grey.shade400,
-                                                        blurRadius: 2.2,
-                                                      ),
-                                                    ],
+                                                    gradient: LinearGradient(
+                                                      begin: Alignment.topCenter,
+                                                      end: Alignment.bottomCenter,
+                                                      colors: [
+                                                        Colors.transparent,
+                                                        Colors.transparent,
+                                                        Colors.green.withOpacity(0.08), // Or any color for the bottom glow
+                                                      ],
+                                                    ),
+                                                    border: Border.all(color: Colors.green.shade100, width: 1),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
                                                   ),
                                                   child: Padding(
                                                     padding:
-                                                        EdgeInsets.fromLTRB(
+                                                        const EdgeInsets.fromLTRB(
                                                             12, 15, 12, 10),
                                                     child: Column(
                                                       mainAxisSize:
@@ -983,7 +989,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           ),
                                                           child: Padding(
                                                             padding:
-                                                                EdgeInsets.all(
+                                                                const EdgeInsets.all(
                                                                     6),
                                                             child: ClipRRect(
                                                               borderRadius:
@@ -1003,7 +1009,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                         ),
                                                         Padding(
                                                           padding:
-                                                              EdgeInsetsDirectional
+                                                              const EdgeInsetsDirectional
                                                                   .fromSTEB(0,
                                                                       10, 0, 0),
                                                           child: Text(
@@ -1022,8 +1028,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                       'Inter',
                                                                   color: FlutterFlowTheme.of(
                                                                           context)
-                                                                      .primaryText,
-                                                                  fontSize: 16,
+                                                                      .primary,
+                                                                  fontSize: 14,
+                                                                  fontWeight: FontWeight.w600,
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
@@ -1033,7 +1040,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                     ),
                                                   )));
                                         },
-                                      ))),
+                                      )))),
                               Padding(
                                 padding: EdgeInsetsDirectional.fromSTEB(
                                     0, 200, 0, 0),

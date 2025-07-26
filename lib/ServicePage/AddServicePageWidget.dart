@@ -26,10 +26,11 @@ import 'package:provider/provider.dart';
 
 class AddServicePageWidget extends StatefulWidget {
   const AddServicePageWidget(
-      {super.key, this.businessDetail, this.date, this.businessId});
+      {super.key, this.businessDetail, this.businessId, this.lat, this.long});
   final dynamic businessDetail;
+  final String? lat;
+  final String? long;
   final String? businessId;
-  final dynamic date;
   @override
   State<AddServicePageWidget> createState() => _AddServicePageWidgetState();
 }
@@ -40,57 +41,66 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
   dynamic businessDetail;
   String businessAddress = '';
+  int selectedDateIndex = 0;
+  dynamic selectDay;
+  String? lat;
+  String? long;
+  String finalDate = '';
+  List<dynamic> next7Days = [];
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => AddServicePageModel());
-
-    log('selectData: ${widget.date}');
-
-    initBusinessData();
-
+    next7Days = getNext7DaysAsMap();
+    setState(() {
+      selectDay = jsonDecode(next7Days.first);
+    });
+    changeDate();
+    if (widget.lat != null && widget.long != null) {
+      setState(() {
+        lat = widget.lat;
+        long = widget.long;
+      });
+      initBusinessData();
+    }else{
+      getLocation().then((value) {
+        log('location: ${value?[1]}, ${value?[2]}');
+        lat = value?[1].toString();
+        long = value?[2].toString();
+      });
+      initBusinessData();
+    }
   }
 
   void initBusinessData() {
-    // if (widget.businessDetail == null) {
-      setState(() => isLoading = true);
-      fetchData('business/${widget.businessId}?user_location=23.0678751&user_location=72.5449294', context)?.then((value) {
-        if (value != null) {
-          log('business: $value');
-          setState(() {
-            businessDetail = value['data'];
-            socialLinks = businessDetail['social_links'];
-          });
-          log('social Media: $socialLinks');
-          setState(() {
-                businessAddress =
-                '${getJsonField(businessDetail, r'''$.address.unit_number''') != '' ? '${getJsonField(businessDetail, r'''$.address.unit_number''')}, ' : ''}'
-                    '${getJsonField(businessDetail, r'''$.address.building''')}, '
-                    '${getJsonField(businessDetail, r'''$.address.street_1''')}, '
-                    '${getJsonField(businessDetail, r'''$.address.country''')}-'
-                    '${getJsonField(businessDetail, r'''$.address.postal_code''')}';
-                isLoading = true;
-              });
-          loadInitialDataFromWidget();
-        } else {
-          setState(() => isLoading = false);
-          Fluttertoast.showToast(msg: 'Something went wrong');
-        }
-      });
-    // } else {
-    //   setState(() {
-    //     businessDetail = widget.businessDetail;
-    //     businessAddress =
-    //     '${getJsonField(widget.businessDetail, r'''$.address.unit_number''') != '' ? '${getJsonField(widget.businessDetail, r'''$.address.unit_number''')}, ' : ''}'
-    //         '${getJsonField(widget.businessDetail, r'''$.address.building''')}, '
-    //         '${getJsonField(widget.businessDetail, r'''$.address.street_1''')}, '
-    //         '${getJsonField(widget.businessDetail, r'''$.address.country''')}-'
-    //         '${getJsonField(widget.businessDetail, r'''$.address.postal_code''')}';
-    //     isLoading = true;
-    //   });
-    //   loadInitialDataFromWidget();
-    // }
+    setState(() => isLoading = true);
+    fetchData(
+            'business/${widget.businessId}?user_location=$lat&user_location=$long?filter_date=$finalDate',
+            context)
+        ?.then((value) {
+      if (value != null) {
+        log('business: $value');
+        setState(() {
+          businessDetail = value['data'];
+          socialLinks = businessDetail['social_links'];
+        });
+        log('social Media: $socialLinks');
+        setState(() {
+          businessAddress =
+              '${getJsonField(businessDetail, r'''$.address.unit_number''') != '' ? '${getJsonField(businessDetail, r'''$.address.unit_number''')}, ' : ''}'
+              '${getJsonField(businessDetail, r'''$.address.building''')}, '
+              '${getJsonField(businessDetail, r'''$.address.street_1''')}, '
+              '${getJsonField(businessDetail, r'''$.address.country''')}-'
+              '${getJsonField(businessDetail, r'''$.address.postal_code''')}';
+          isLoading = true;
+        });
+        loadInitialDataFromWidget();
+      } else {
+        setState(() => isLoading = false);
+        Fluttertoast.showToast(msg: 'Something went wrong');
+      }
+    });
   }
 
   void loadServices(String uuid, {String? date}) {
@@ -100,7 +110,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
 
     fetchData(query, context)?.then((value) {
       setState(() {
-        serviceList = getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
+        serviceList =
+            getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
       });
 
       if (selectedServiceIndex.isEmpty) {
@@ -114,29 +125,23 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
           }
         }
       }
-
       setState(() => isLoading = false);
       log('Service: $value');
     });
   }
 
-  void loadInitialDataFromWidget() {
-    String finalDate;
-    if (widget.date != null) {
-      final decodedDate = jsonDecode(widget.date);
-      finalDate =
-      '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
-      appointmentDate = decodedDate;
-      formatAppointmentDate =
-      '${decodedDate['day']}, ${decodedDate['date'].toString().padLeft(2, '0')} ${decodedDate['month']}';
-    } else {
-      DateTime now = DateTime.now();
-      finalDate = todayDate(); // assuming todayDate() returns `yyyy-MM-dd`
-      formatAppointmentDate = '${DateFormat('EEE').format(now)}, '
-          '${now.day.toString().padLeft(2, '0')} '
-          '${DateFormat('MMM').format(now)}';
-    }
+  void changeDate(){
+    final decodedDate = (selectDay);
+    setState(() {
+    finalDate =
+    '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
+    appointmentDate = decodedDate;
+    formatAppointmentDate =
+    '${decodedDate['day']}, ${decodedDate['date'].toString().padLeft(2, '0')} ${decodedDate['month']}';
+    });
+  }
 
+  void loadInitialDataFromWidget() {
     loadServices(businessDetail['uuid'], date: finalDate);
     loadSchedule();
     loadReviews();
@@ -172,10 +177,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     final lng = getJsonField(businessDetail, r'''$.address.longitude''');
     final lat = getJsonField(businessDetail, r'''$.address.latitude''');
     mapURL =
-    'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000($lng,$lat)/$lng,$lat,14/800x200'
+        'https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-s+ff0000($lng,$lat)/$lng,$lat,14/800x200'
         '?access_token=pk.eyJ1IjoibWtzdXRoYXI5MDE2IiwiYSI6ImNtOWs0dXk0ZzA5cDAya3Bod2I2b2FsZXAifQ.F4-QtkZ1sOj2LpjXuMNJeA';
   }
-
 
   dynamic ratingData;
   String mapURL = '';
@@ -278,9 +282,10 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     size: 24,
                   ),
                   onPressed: () async {
-                    final String placeName = Uri.encodeComponent(businessDetail[
-                    'name']);
-                    final String googleMapsUrl = "${businessDetail['name']}\nhttps://www.google.com/maps/search/?api=1&query=$placeName";
+                    final String placeName =
+                        Uri.encodeComponent(businessDetail['name']);
+                    final String googleMapsUrl =
+                        "${businessDetail['name']}\nhttps://www.google.com/maps/search/?api=1&query=$placeName";
                     Share.share(googleMapsUrl);
                   },
                 ),
@@ -322,21 +327,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     18, 35, 18, 20),
                                 child: Column(children: [
-                                  Row(
+                                  const Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                      Text(
-                                        formatAppointmentDate,
-                                        style: TextStyle(
-                                            fontFamily: 'Inter',
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            color: FlutterFlowTheme.of(context)
-                                                .secondaryBackground),
-                                      ),
-                                      const SizedBox(
+                                       SizedBox(
                                         height: 5,
                                       ),
                                     ],
@@ -436,138 +432,142 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ],
                                                           ),
                                                         ),
-                                                         Padding(
-                                                            padding:
-                                                                const EdgeInsetsDirectional
-                                                                    .fromSTEB(
-                                                                    0, 3, 0, 0),
-                                                            child: Row(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [
-                                                                Text(
-                                                                  businessDetail['price_range'],
-                                                                  style: FlutterFlowTheme.of(context).bodyMedium.override(
-                                                                      fontFamily:
-                                                                          'Inter',
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w300,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      color: Colors
-                                                                          .black45),
-                                                                ),
-                                                              ],
-                                                            ),
+                                                        Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  0, 3, 0, 0),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Text(
+                                                                businessDetail[
+                                                                        'price_range'] ??
+                                                                    '',
+                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                    fontFamily:
+                                                                        'Inter',
+                                                                    fontSize:
+                                                                        12,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w300,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    color: Colors
+                                                                        .black45),
+                                                              ),
+                                                            ],
                                                           ),
+                                                        ),
                                                       ],
                                                     ),
                                                   )),
                                                   const SizedBox(
                                                     width: 6,
                                                   ),
-                                                  if(ratingData != null)
-                                                  Column(children: [
-                                                    Container(
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                        color:
-                                                            Color(0xFF279D33),
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          bottomLeft:
-                                                              Radius.circular(
-                                                                  10),
-                                                          bottomRight:
-                                                              Radius.circular(
-                                                                  0),
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  0),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  8),
+                                                  if (ratingData != null)
+                                                    Column(children: [
+                                                      Container(
+                                                        decoration:
+                                                            const BoxDecoration(
+                                                          color:
+                                                              Color(0xFF279D33),
+                                                          borderRadius:
+                                                              BorderRadius.only(
+                                                            bottomLeft:
+                                                                Radius.circular(
+                                                                    10),
+                                                            bottomRight:
+                                                                Radius.circular(
+                                                                    0),
+                                                            topLeft:
+                                                                Radius.circular(
+                                                                    0),
+                                                            topRight:
+                                                                Radius.circular(
+                                                                    8),
+                                                          ),
                                                         ),
-                                                      ),
-                                                      child: Padding(
-                                                        padding:
-                                                            const EdgeInsetsDirectional
-                                                                .fromSTEB(
-                                                                8, 4, 5, 4),
-                                                        child: Row(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Text(
-                                                              (ratingData['average_rating'] ==
-                                                                      0.0)
-                                                                  ? 'New'
-                                                                  : ratingData[
-                                                                      'average_rating'],
-                                                              style: FlutterFlowTheme
-                                                                      .of(context)
-                                                                  .bodyMedium
-                                                                  .override(
-                                                                    fontFamily:
-                                                                        'Inter',
-                                                                    color: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .secondaryBackground,
-                                                                    fontSize:
-                                                                        14,
-                                                                    letterSpacing:
-                                                                        0.0,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                  ),
-                                                            ),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      2,
-                                                                      0,
-                                                                      0,
-                                                                      0),
-                                                              child: Icon(
-                                                                (((ratingData !=
-                                                                                null)
-                                                                            ? ratingData[
-                                                                                'average_rating']
-                                                                            : 0) >
-                                                                        0)
-                                                                    ? Icons
-                                                                        .star_sharp
-                                                                    : Icons
-                                                                        .star_border_rounded,
-                                                                color: FlutterFlowTheme.of(
+                                                        child: Padding(
+                                                          padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  8, 4, 5, 4),
+                                                          child: Row(
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .min,
+                                                            children: [
+                                                              Text(
+                                                                (ratingData['average_rating'] ==
+                                                                        0.0)
+                                                                    ? 'New'
+                                                                    : ratingData[
+                                                                        'average_rating'],
+                                                                style: FlutterFlowTheme.of(
                                                                         context)
-                                                                    .primaryBackground,
-                                                                size: 16,
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Inter',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .secondaryBackground,
+                                                                      fontSize:
+                                                                          14,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w500,
+                                                                    ),
                                                               ),
-                                                            ),
-                                                          ],
+                                                              Padding(
+                                                                padding:
+                                                                    const EdgeInsetsDirectional
+                                                                        .fromSTEB(
+                                                                        2,
+                                                                        0,
+                                                                        0,
+                                                                        0),
+                                                                child: Icon(
+                                                                  (((ratingData != null)
+                                                                              ? ratingData[
+                                                                                  'average_rating']
+                                                                              : 0) >
+                                                                          0)
+                                                                      ? Icons
+                                                                          .star_sharp
+                                                                      : Icons
+                                                                          .star_border_rounded,
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
+                                                                  size: 16,
+                                                                ),
+                                                              ),
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                   const SizedBox(
-                                                      height: 2,
-                                                    ),
-                                                    Text(
-                                                      '${ratingData['total_ratings']} ratings',
-                                                      style: const TextStyle(
-                                                          color: Colors.black45,
-                                                          fontFamily: 'Inter',
-                                                          fontSize: 10,
-                                                          fontWeight:
-                                                              FontWeight.w500),
-                                                    )
-                                                  ]),
+                                                      const SizedBox(
+                                                        height: 2,
+                                                      ),
+                                                      Text(
+                                                        '${ratingData['total_ratings']} ratings',
+                                                        style: const TextStyle(
+                                                            color:
+                                                                Colors.black45,
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      )
+                                                    ]),
                                                 ],
                                               ),
                                               const SizedBox(
@@ -614,17 +614,17 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               padding:
                                                                   const EdgeInsets
                                                                       .fromLTRB(
-                                                                          10,
-                                                                          0,
-                                                                          8,
-                                                                          0),
+                                                                      10,
+                                                                      0,
+                                                                      8,
+                                                                      0),
                                                               child: Row(
                                                                   mainAxisSize:
                                                                       MainAxisSize
                                                                           .min,
                                                                   children: [
                                                                     Text(
-                                                                          '${businessDetail['status']}',
+                                                                        '${businessDetail['status']}',
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
@@ -645,7 +645,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
                                                                             )),
-                                                                   const Icon(
+                                                                    const Icon(
                                                                       Icons
                                                                           .keyboard_arrow_down_rounded,
                                                                       size: 14,
@@ -730,29 +730,147 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   ),
                                 ]),
                               )),
+                          Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const SizedBox(height: 20),
+                                Padding(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    child: Text(
+                                      "When are you visiting?",
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Inter',
+                                            fontSize: 16,
+                                            letterSpacing: 0.0,
+                                            fontWeight: FontWeight.w600,
+                                            fontStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .fontStyle,
+                                          ),
+                                    )),
+                                const SizedBox(height: 12),
+                                SizedBox(
+                                  height: 90,
+                                  child: ListView(
+                                    padding: const EdgeInsets.only(
+                                        left: 20, right: 20),
+                                    scrollDirection: Axis.horizontal,
+                                    children: List.generate(next7Days.length,
+                                        (index) {
+                                      final day = jsonDecode(next7Days[index]);
+                                      final isSelected =
+                                          selectedDateIndex == index;
+                                      final isToday = index == 0;
+                                      return Padding(
+                                          padding: EdgeInsets.only(
+                                              right:
+                                                  index == next7Days.length - 1
+                                                      ? 0
+                                                      : 12),
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              setState(() {
+                                                selectDay = day;
+                                                selectedDateIndex = index;
+                                              });
+                                              changeDate();
+                                              initBusinessData();
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 10,
+                                                      vertical: 10),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  color: isSelected
+                                                      ? FlutterFlowTheme.of(
+                                                              context)
+                                                          .primary
+                                                      : Colors.grey[400]!,
+                                                  width: isSelected ? 2 : 1,
+                                                ),
+                                                borderRadius:
+                                                    BorderRadius.circular(12),
+                                              ),
+                                              child: Column(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    day['day'],
+                                                    style: const TextStyle(
+                                                        fontSize: 12),
+                                                  ),
+                                                  Text(
+                                                    day['date'],
+                                                    style: const TextStyle(
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                        fontSize: 16),
+                                                  ),
+                                                  const SizedBox(
+                                                    height: 2,
+                                                  ),
+                                                  Container(
+                                                    width: 40,
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 5,
+                                                        vertical: 2),
+                                                    decoration: BoxDecoration(
+                                                      color: Colors.green,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                    ),
+                                                    child: Center(
+                                                        child: Text(
+                                                      day['month'],
+                                                      style: const TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 12),
+                                                    )),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ));
+                                    }),
+                                  ),
+                                )
+                              ]),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 20, 0, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 20, 0, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  'Select service',
+                                  "Which service do you want?",
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
                                         fontFamily: 'Inter',
-                                        fontSize: 18,
+                                        fontSize: 16,
                                         letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
+                                        fontStyle: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .fontStyle,
                                       ),
-                                ),
+                                )
                               ],
                             ),
                           ),
                           Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 20, 20, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                20, 18, 20, 20),
                             child: Builder(
                               builder: (context) {
                                 final services =
@@ -832,7 +950,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             .primaryBackground,
                                                         borderRadius:
                                                             BorderRadius
-                                                                .circular(10),
+                                                                .circular(16),
                                                         border: Border.all(
                                                             width:
                                                                 selectedServiceIndex
@@ -866,7 +984,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                               clipBehavior: Clip
                                                                   .antiAlias,
                                                               decoration:
-                                                                  BoxDecoration(
+                                                                  const BoxDecoration(
                                                                 shape: BoxShape
                                                                     .circle,
                                                               ),
@@ -879,12 +997,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                             ),
                                                             Padding(
                                                               padding:
-                                                                  EdgeInsetsDirectional
+                                                                  const EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          0,
-                                                                          9,
-                                                                          0,
-                                                                          0),
+                                                                      0,
+                                                                      9,
+                                                                      0,
+                                                                      0),
                                                               child: Text(
                                                                 serviceListItem[
                                                                     'service_name'],
@@ -913,12 +1031,12 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 null)
                                                               Padding(
                                                                 padding:
-                                                                    EdgeInsetsDirectional
+                                                                    const EdgeInsetsDirectional
                                                                         .fromSTEB(
-                                                                            0,
-                                                                            0,
-                                                                            0,
-                                                                            0),
+                                                                        0,
+                                                                        0,
+                                                                        0,
+                                                                        0),
                                                                 child: Text(
                                                                   '₹ ${serviceListItem['max_price']}',
                                                                   textAlign:
@@ -946,13 +1064,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               },
                             ),
                           ),
-                          const Divider(
-                            indent: 20,
-                            endIndent: 20,
-                          ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+                                EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -964,7 +1078,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         fontFamily: 'Inter',
                                         fontSize: 16,
                                         letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
                                         fontStyle: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .fontStyle,
@@ -974,7 +1088,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             ),
                           ),
                           Padding(
-                              padding: EdgeInsets.fromLTRB(20, 12, 20, 20),
+                              padding:
+                                  const EdgeInsets.fromLTRB(20, 16, 20, 20),
                               child: Column(children: [
                                 GestureDetector(
                                     onTap: () {
@@ -1074,27 +1189,21 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   ],
                                 )
                               ])),
-                          if(socialLinks.isNotEmpty)
-                          const Divider(
-                            indent: 20,
-                            endIndent: 20,
-                          ),
-                          if(socialLinks.isNotEmpty)
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
+                                EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
                                 Text(
-                                  'Contact',
+                                  'Social Media',
                                   style: FlutterFlowTheme.of(context)
                                       .bodyMedium
                                       .override(
                                         fontFamily: 'Inter',
                                         fontSize: 16,
                                         letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
+                                        fontWeight: FontWeight.w600,
                                         fontStyle: FlutterFlowTheme.of(context)
                                             .bodyMedium
                                             .fontStyle,
@@ -1103,10 +1212,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               ],
                             ),
                           ),
-                         
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(5, 10, 0, 20),
+                                EdgeInsetsDirectional.fromSTEB(5, 15, 0, 20),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1117,69 +1225,17 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   children: [
                                     InkWell(
                                         onTap: () {
-                                          dialNumber(widget
+                                          sendWhatsAppMessage(widget
                                               .businessDetail['phone_number']);
                                         },
-                                        child: Container(
-                                            height: 40,
-                                            width: 40,
-                                            decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(5),
-                                                color:
-                                                    FlutterFlowTheme.of(context)
-                                                        .primaryText),
-                                            child: Padding(
-                                                padding: EdgeInsets.all(8),
-                                                child: Icon(
-                                                  Icons.call_rounded,
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .secondaryBackground,
-                                                  size: 24,
-                                                )))),
+                                        child: Image.asset(
+                                          'assets/images/whatsapp.png',
+                                          height: 50,
+                                        )),
                                     Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 7, 0, 0),
-                                      child: Text(
-                                        'Call',
-                                        textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Inter',
-                                              fontSize: 10,
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    InkWell(
-                                      onTap: () {
-                                        sendWhatsAppMessage(widget
-                                            .businessDetail['phone_number']);
-                                      },
-                                      child: FaIcon(
-                                      FontAwesomeIcons.whatsappSquare,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      size: 46,
-                                    )),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
+                                      padding:
+                                          const EdgeInsetsDirectional.fromSTEB(
+                                              0, 6, 0, 0),
                                       child: Text(
                                         'WhatsApp',
                                         textAlign: TextAlign.center,
@@ -1187,7 +1243,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                             .bodyMedium
                                             .override(
                                               fontFamily: 'Inter',
-                                              fontSize: 10,
+                                              fontSize: 12,
                                               letterSpacing: 0.0,
                                               fontWeight:
                                                   FlutterFlowTheme.of(context)
@@ -1202,84 +1258,82 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     ),
                                   ],
                                 ),
-                                if(socialLinks.isNotEmpty)
-                                Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                  InkWell(
-                                      onTap: () async{
-                                        launchInstagram(socialLinks[0]['url']);
-                                      },
-                                      child:  FaIcon(
-                                      FontAwesomeIcons.instagramSquare,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      size: 46,
-                                    )),
-                                    Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Text(
-                                        'Instagram',
-                                        textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Inter',
-                                              fontSize: 10,
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
+                                if (socialLinks.isNotEmpty)
+                                  Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      InkWell(
+                                          onTap: () async {
+                                            launchInstagram(
+                                                socialLinks[0]['url']);
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/instagram.png',
+                                            height: 50,
+                                          )),
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0, 6, 0, 0),
+                                        child: Text(
+                                          'Instagram',
+                                          textAlign: TextAlign.center,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                fontSize: 12,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                if(socialLinks.length == 2)
-                                Column(
-                                  mainAxisSize: MainAxisSize.max,
-                                  children: [
-                                    InkWell(
-                                    onTap: () async{
-                                      await launchInstagram(socialLinks[1]['url']);
-                                    },
-                                    child: FaIcon(
-                                      FontAwesomeIcons.facebookSquare,
-                                      color: FlutterFlowTheme.of(context)
-                                          .primaryText,
-                                      size: 46,
-                                    )),
-                                    Padding(
-                                      padding: const EdgeInsetsDirectional.fromSTEB(
-                                          0, 5, 0, 0),
-                                      child: Text(
-                                        'Facebook',
-                                        textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Inter',
-                                              fontSize: 10,
-                                              letterSpacing: 0.0,
-                                              fontWeight:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontWeight,
-                                              fontStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .fontStyle,
-                                            ),
+                                    ],
+                                  ),
+                                if (socialLinks.length == 2)
+                                  Column(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      InkWell(
+                                          onTap: () async {
+                                            await launchInstagram(
+                                                socialLinks[1]['url']);
+                                          },
+                                          child: Image.asset(
+                                            'assets/images/facebook.png',
+                                            height: 50,
+                                          )),
+                                      Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(0, 6, 0, 0),
+                                        child: Text(
+                                          'Facebook',
+                                          textAlign: TextAlign.center,
+                                          style: FlutterFlowTheme.of(context)
+                                              .bodyMedium
+                                              .override(
+                                                fontFamily: 'Inter',
+                                                fontSize: 12,
+                                                letterSpacing: 0.0,
+                                                fontWeight:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontWeight,
+                                                fontStyle:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .fontStyle,
+                                              ),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                    ],
+                                  ),
                               ]
                                   .divide(SizedBox(width: 20))
                                   .addToStart(SizedBox(width: 15))
@@ -1294,36 +1348,30 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                         padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
                         child: FFButtonWidget(
                             onPressed: () {
+                              String date;
 
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=> BookTablePage()));
-                              // String date;
-                              // if (widget.date == null) {
-                              //   // Fallback to today's date
-                              //   final now = DateTime.now();
-                              //   date = DateFormat('yyyy-MM-dd').format(now);
-                              // } else {
-                              //   final selectDateJson = jsonDecode(widget.date);
-                              //   date =
-                              //       '${selectDateJson['year']}-${getMonthNumber(selectDateJson['month'])}-${selectDateJson['date'].toString().padLeft(2, '0')}';
-                              // }
-                              // log('date select: $date');
-                              // if (selectedServiceData.isNotEmpty) {
-                              //   log('services: $selectedServiceData');
-                              //   Navigator.push(
-                              //       context,
-                              //       MaterialPageRoute(
-                              //           builder: (context) =>
-                              //               FixAppointmentWidget(
-                              //                 formatDate: formatAppointmentDate,
-                              //                 services: selectedServiceData,
-                              //                 date: date,
-                              //                 uuid: (appointeeUUID != '')
-                              //                     ? appointeeUUID
-                              //                     : FFAppState().userId,
-                              //               )));
-                              // } else {
-                              //   Fluttertoast.showToast(msg: 'Select service');
-                              // }
+                              date =
+                                  '${selectDay['year']}-${getMonthNumber(selectDay['month'])}-${selectDay['date'].toString().padLeft(2, '0')}';
+
+                              log('date select: $date');
+                              if (selectedServiceData.isNotEmpty) {
+                                log('services: $selectedServiceData');
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            FixAppointmentWidget(
+                                              businessName: businessDetail['name'],
+                                              formatDate: formatAppointmentDate,
+                                              services: selectedServiceData,
+                                              date: date,
+                                              uuid: (appointeeUUID != '')
+                                                  ? appointeeUUID
+                                                  : FFAppState().userId,
+                                            )));
+                              } else {
+                                Fluttertoast.showToast(msg: 'Select service');
+                              }
                             },
                             text: 'Next',
                             options: buttonStyle(context)),

@@ -221,23 +221,7 @@ class _AppointmentTypeWidgetState extends State<AppointmentTypeWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
             child: FFButtonWidget(
               onPressed: () async {
-                final apiCall = await sendData({
-                  "user_id": widget.userId,
-                  "priority": false,
-                  "queue_id": widget.queueId,
-                  "queue_date": widget.queueDate,
-                  "token_number": "string",
-                  "turn_time": 0,
-                  "queue_services": widget.queueServices
-                }, 'queue_user')
-                    .then((value) {
-                  log('response: $value');
-                  if (value != null) {
-                    return Navigator.push(context, MaterialPageRoute(builder: (context)=> ConfirmUiWidget(
-                      response: value,
-                    )));
-                  }
-                });
+
               },
               text: 'Save',
               options: FFButtonOptions(

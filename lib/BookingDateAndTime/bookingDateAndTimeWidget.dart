@@ -29,7 +29,7 @@ class _BookTablePageState extends State<BookTablePage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Pizzaiolo - The wood Fired Pizza", style: TextStyle(fontSize: 16)),
+            const Text("Pizzaiolo - The wood Fired Pizza", style: TextStyle(fontSize: 16)),
             const SizedBox(height: 20),
             const Text("Number of guest(s)", style: TextStyle(fontWeight: FontWeight.bold)),
             const SizedBox(height: 10),

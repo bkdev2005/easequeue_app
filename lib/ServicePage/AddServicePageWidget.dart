@@ -743,7 +743,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                           .bodyMedium
                                           .override(
                                             fontFamily: 'Inter',
-                                            fontSize: 16,
+                                            fontSize: 14,
                                             letterSpacing: 0.0,
                                             fontWeight: FontWeight.w600,
                                             fontStyle:
@@ -857,7 +857,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                       .bodyMedium
                                       .override(
                                         fontFamily: 'Inter',
-                                        fontSize: 16,
+                                        fontSize: 14,
                                         letterSpacing: 0.0,
                                         fontWeight: FontWeight.w600,
                                         fontStyle: FlutterFlowTheme.of(context)

@@ -238,7 +238,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                         );
                       },
                       child: Padding(
-                        padding: EdgeInsets.only(top: 12),
+                        padding: const EdgeInsets.only(top: 12),
                         child: Material(
                           elevation: 2,
                           borderRadius: BorderRadius.circular(12),

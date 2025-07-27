@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
+import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sliding_action_button/sliding_action_button.dart';
@@ -398,109 +399,181 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Text("Number of guest(s)",
-                                style: TextStyle(fontWeight: FontWeight.w600,
-                                  fontSize: 14,
-                                  fontFamily: 'Inter',)),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: List.generate(7, (index) {
-                                int guestCount = index;
-                                return GestureDetector(
-                                  onTap: () => setState(
-                                      () => selectedGuests = guestCount),
-                                  child: Container(
-                                    width: 40,
-                                    height: 40,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: selectedGuests == guestCount
-                                              ? FlutterFlowTheme.of(context)
-                                                  .primary
-                                              : Colors.grey[400]!),
-                                      borderRadius: BorderRadius.circular(8),
-                                      color: selectedGuests == guestCount
-                                          ? Colors.teal.withOpacity(0.1)
-                                          : Colors.white,
-                                    ),
-                                    alignment: Alignment.center,
-                                    child: Text('$guestCount'),
-                                  ),
-                                );
-                              }),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 6),
-                      const Padding(padding: EdgeInsets.only(left: 16, right: 16) ,child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [ Text("Book with slot",
-                          style: TextStyle(fontWeight: FontWeight.w600,
-                            fontSize: 14,
-                            fontFamily: 'Inter',))])),
-                      Padding(
-                          padding: const EdgeInsets.all(16),
-                          child: Container(
-                            padding: const EdgeInsets.all(12),
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                const Row(
-                                  children: [
-                                    Icon(Icons.wb_sunny_outlined),
-                                    SizedBox(width: 8),
-                                    Text("Lunch (12:00 PM to 05:00 PM)"),
-                                  ],
-                                ),
-                                const SizedBox(height: 15),
-                                Wrap(
-                                  spacing: 10,
-                                  runSpacing: 10,
-                                  children:
-                                      List.generate(times.length, (index) {
-                                    return GestureDetector(
-                                      onTap: () => setState(
-                                          () => selectedLunchTimeIndex = index),
-                                      child: Container(
-                                        width: 80,
-                                        padding:
-                                            EdgeInsets.symmetric(vertical: 8),
-                                        decoration: BoxDecoration(
-                                          border: Border.all(
-                                              color: selectedLunchTimeIndex ==
-                                                      index
-                                                  ? FlutterFlowTheme.of(context)
-                                                      .primary
-                                                  : Colors.grey[400]!),
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        alignment: Alignment.center,
+                          padding: const EdgeInsets.only(left: 15, right: 15),
+                          child: Row(
+                            spacing: 10,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Expanded(
+                                  child: TextButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                          shape: RoundedRectangleBorder(
+                                              borderRadius:
+                                                  BorderRadius.circular(20)),
+                                          backgroundColor:
+                                              FlutterFlowTheme.of(context)
+                                                  .primaryBackground,
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(16),
+                                            child: Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                const Text("Number of guest(s)",
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 14,
+                                                      fontFamily: 'Inter',
+                                                    )),
+                                                const SizedBox(height: 16),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children:
+                                                      List.generate(7, (index) {
+                                                    int guestCount = index;
+                                                    return GestureDetector(
+                                                      onTap: () {
+                                                        setState(
+                                                                () =>
+                                                            selectedGuests =
+                                                                guestCount);
+                                                        context.pop();
+                                                      },
+                                                      child: Container(
+                                                        width: 40,
+                                                        height: 40,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          border: Border.all(
+                                                              color: selectedGuests ==
+                                                                      guestCount
+                                                                  ? FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primary
+                                                                  : Colors.grey[
+                                                                      400]!),
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(8),
+                                                          color: selectedGuests ==
+                                                                  guestCount
+                                                              ? Colors.teal
+                                                                  .withOpacity(
+                                                                      0.1)
+                                                              : Colors.white,
+                                                        ),
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child:
+                                                            Text('$guestCount'),
+                                                      ),
+                                                    );
+                                                  }),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      });
+                                },
+                                icon:
+                                     Icon(Icons.person_add, color: FlutterFlowTheme.of(context).primary),
+                                label: Text("Add Person",
+                                    style: TextStyle(color: FlutterFlowTheme.of(context).primary)),
+                              )),
+                              Expanded(
+                                  child: TextButton.icon(
+                                onPressed: () {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return Dialog(
+                                            shape: RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(20)),
+                                            backgroundColor:
+                                                FlutterFlowTheme.of(context)
+                                                    .primaryBackground,
+                                            child: Padding(
+                                        padding: EdgeInsets.all(16),
                                         child: Column(
-                                          children: [
-                                            Text( times[index] ),
-                                            const Text("25% off",
-                                                style: TextStyle(fontSize: 10)),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }),
-                                ),
-                              ],
-                            ),
+                                            mainAxisSize: MainAxisSize.min,
+                                            children: [
+                                              const Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment.start,
+                                                    children: [
+                                                      Text("Book with slot",
+                                                          style: TextStyle(
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            fontSize: 14,
+                                                            fontFamily: 'Inter',
+                                                          ))
+                                                    ]),
+                                                SizedBox(height: 10,),
+                                                 Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Align( alignment: Alignment.centerLeft, child: Wrap(
+                                                          spacing: 10,
+                                                          runSpacing: 10,
+                                                          children:
+                                                          List.generate(times.length, (index) {
+                                                            return GestureDetector(
+                                                              onTap: () { setState(
+                                                                      () => selectedLunchTimeIndex = index);
+                                                                context.pop();
+                                                              },
+                                                              child: Container(
+                                                                width: 80,
+                                                                padding:
+                                                                EdgeInsets.symmetric(vertical: 8),
+                                                                decoration: BoxDecoration(
+                                                                  border: Border.all(
+                                                                    width: selectedLunchTimeIndex ==
+                                                                        index
+                                                                        ? 2
+                                                                        : 1,
+                                                                      color: selectedLunchTimeIndex ==
+                                                                          index
+                                                                          ? FlutterFlowTheme.of(context)
+                                                                          .primary
+                                                                          : Colors.grey[400]!),
+                                                                  borderRadius:
+                                                                  BorderRadius.circular(8),
+                                                                ),
+                                                                alignment: Alignment.center,
+                                                                child: Column(
+                                                                  children: [
+                                                                    Text(times[index], textAlign: TextAlign.center,),
+                                                                  ],
+                                                                ),
+                                                              ),
+                                                            );
+                                                          }),
+                                                        ),
+                                                        )],
+                                                    ),
+                                            ])));
+                                      });
+                                },
+                                icon:
+                                     Icon(Icons.access_time, color: FlutterFlowTheme.of(context).primary),
+                                label: Text("Select Time Slot",
+                                    style: TextStyle(color: FlutterFlowTheme.of(context).primary)),
+                              )),
+                            ],
                           )),
+
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(15, 6, 0, 0),
                         child: Row(
@@ -513,7 +586,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                   .override(
                                     fontFamily: 'Inter',
                                     letterSpacing: 0.0,
-                                    fontSize: 14,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.w600,
                                   ),
                             ),
@@ -549,11 +622,11 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     connect(queue['queue_id']);
                                   },
                                   child: Container(
-                                    height: 70,
+                                    height: 74,
                                     decoration: BoxDecoration(
                                       color: FlutterFlowTheme.of(context)
                                           .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(10),
+                                      borderRadius: BorderRadius.circular(15),
                                       border: Border.all(
                                         width: (selectedQueueId !=
                                                 queue['queue_id'])
@@ -568,7 +641,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     ),
                                     child: Padding(
                                       padding: const EdgeInsets.fromLTRB(
-                                          10, 8, 15, 8),
+                                          12, 8, 15, 8),
                                       child: Row(
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
@@ -650,16 +723,17 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           }),
                         ),
                       ),
-                      SizedBox(
+                      const SizedBox(
                         height: 5,
                       ),
+                      Padding(padding: EdgeInsets.only(left: 15, right: 15), child:
                       Container(
                         decoration: BoxDecoration(
                           color: Colors.transparent,
                           border: Border.all(color: Colors.black26),
                           borderRadius: const BorderRadius.only(
-                            bottomLeft: Radius.circular(0),
-                            bottomRight: Radius.circular(0),
+                            bottomLeft: Radius.circular(15),
+                            bottomRight: Radius.circular(15),
                             topLeft: Radius.circular(15),
                             topRight: Radius.circular(15),
                           ),
@@ -667,6 +741,26 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 10, 0, 0),
                           child: Column(children: [
+                             Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 10),
+                            child:  Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                const Text('22 Mins', style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 16, fontWeight: FontWeight.w600
+                              ),),
+                                Text('${serviceSelectQueue.length} Service', style: const TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 12, fontWeight: FontWeight.w400
+                                ))
+                            ],)),
+                            Divider(
+                              indent: 0,
+                              endIndent: 0,
+                              height: 1,
+                              color: Colors.grey[100],
+                            ),
                             Column(
                                 mainAxisSize: MainAxisSize.max,
                                 children: List.generate(
@@ -675,7 +769,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                   return Padding(
                                     padding:
                                         const EdgeInsetsDirectional.fromSTEB(
-                                            20, 6, 20, 6),
+                                            16, 8, 16, 6),
                                     child: Row(
                                       mainAxisSize: MainAxisSize.max,
                                       mainAxisAlignment:
@@ -707,7 +801,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                       .bodyMedium
                                                       .override(
                                                         fontFamily: 'Inter',
-                                                        fontSize: 12,
+                                                        fontSize: 10,
                                                         letterSpacing: 0.0,
                                                         fontWeight:
                                                             FontWeight.w400,
@@ -722,7 +816,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               .bodyMedium
                                               .override(
                                                 fontFamily: 'Inter',
-                                                fontSize: 18,
+                                                fontSize: 16,
                                                 letterSpacing: 0.0,
                                                 fontWeight: FontWeight.w600,
                                               ),
@@ -731,55 +825,73 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     ),
                                   );
                                 })),
-                            Divider(
-                              thickness: 1,
-                              color: FlutterFlowTheme.of(context).secondaryText,
-                            ),
-                            Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  20, 5, 20, 10),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                            Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
                                 children: [
-                                  Text(
-                                    'Total Price:',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 18,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                  Text(
-                                    (totalPrice(serviceSelectQueue) != '')
-                                        ? '₹ ${totalPrice(serviceSelectQueue)}/-'
-                                        : '-/-',
-                                    style: FlutterFlowTheme.of(context)
-                                        .bodyMedium
-                                        .override(
-                                          fontFamily: 'Inter',
-                                          fontSize: 18,
-                                          letterSpacing: 0.0,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                  ),
-                                ],
+                            Padding(padding: EdgeInsets.all(10),
+                            child: GestureDetector(
+                                onTap: (){
+                                  context.pop();
+                                },
+                                child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10),
+                                border: Border.all(
+                                  color: Colors.black26
+                                )
                               ),
-                            )
+                              child: const Padding(padding: EdgeInsets.all(8), child: Text('+ Add more service', style: TextStyle(
+                                fontSize: 12,
+                                color: Colors.black45,
+                                fontWeight: FontWeight.w500
+                              ),)),
+                            )),
+                            )])
+
+                            // Padding(
+                            //   padding: const EdgeInsetsDirectional.fromSTEB(
+                            //       20, 5, 20, 10),
+                            //   child: Row(
+                            //     mainAxisSize: MainAxisSize.max,
+                            //     mainAxisAlignment:
+                            //         MainAxisAlignment.spaceBetween,
+                            //     children: [
+                            //       Text(
+                            //         'Total Price:',
+                            //         style: FlutterFlowTheme.of(context)
+                            //             .bodyMedium
+                            //             .override(
+                            //               fontFamily: 'Inter',
+                            //               fontSize: 18,
+                            //               letterSpacing: 0.0,
+                            //               fontWeight: FontWeight.w600,
+                            //             ),
+                            //       ),
+                            //       Text(
+                            //         (totalPrice(serviceSelectQueue) != '')
+                            //             ? '₹ ${totalPrice(serviceSelectQueue)}/-'
+                            //             : '-/-',
+                            //         style: FlutterFlowTheme.of(context)
+                            //             .bodyMedium
+                            //             .override(
+                            //               fontFamily: 'Inter',
+                            //               fontSize: 18,
+                            //               letterSpacing: 0.0,
+                            //               fontWeight: FontWeight.w600,
+                            //             ),
+                            //       ),
+                            //     ],
+                            //   ),
+                            // )
                           ]),
                         ),
-                      )
+                      ))
                     ],
                   ),
                 )),
                 const SizedBox(
                   height: 15,
                 ),
-
                 Material(
                     borderRadius: BorderRadius.circular(30),
                     elevation: 2,

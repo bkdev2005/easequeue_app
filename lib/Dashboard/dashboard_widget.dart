@@ -786,7 +786,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                                     style: FlutterFlowTheme.of(context).bodyMedium?.override(
                                                                                                           fontFamily: 'Inter',
                                                                                                           fontSize: 12,
-                                                                                                          color: (message['is_queue_running'] == false) ? const Color(0xCABD4747) : Color(0xC0196906),
+                                                                                                          color: (message['is_queue_running'] == true) ? Color(0xC0196906) : const Color(0xCABD4747),
                                                                                                           fontWeight: FontWeight.w300,
                                                                                                         )),
                                                                                               ],

@@ -8,6 +8,7 @@ import 'package:eqlite/ScannerQr/Scanner_widget.dart';
 import 'package:eqlite/SettingPage/setting_widget.dart';
 import 'package:eqlite/YourAppointments/YourAppointments_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
+import 'package:eqlite/function.dart';
 
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -51,37 +52,7 @@ class _SettingWidgetState extends State<SettingWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
-          automaticallyImplyLeading: false,
-          leading: FlutterFlowIconButton(
-            borderColor: Colors.transparent,
-            borderRadius: 30,
-            borderWidth: 1,
-            buttonSize: 60,
-            icon: Icon(
-              Icons.keyboard_backspace_rounded,
-              color: FlutterFlowTheme.of(context).secondaryBackground,
-              size: 30,
-            ),
-            onPressed: () {
-              context.pop();
-            },
-          ),
-          title: Text(
-            'Setting',
-            style: FlutterFlowTheme.of(context).bodyLarge.override(
-              fontFamily: 'Inter',
-              color: FlutterFlowTheme.of(context).secondaryBackground,
-              fontSize: 22,
-              letterSpacing: 0.0,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-          actions: [],
-          centerTitle: false,
-          elevation: 0,
-        ),
+        appBar: appBarWidget(context, 'Setting'),
         body: SafeArea(
           top: true,
           child: SingleChildScrollView(

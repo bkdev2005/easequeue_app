@@ -158,7 +158,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           appBar: AppBar(
             toolbarHeight: 70,
-            backgroundColor: FlutterFlowTheme.of(context).primary,
+            backgroundColor: Color(0xFF37625A),
             automaticallyImplyLeading: false,
             leading: (!searchBar) ? backIcon(context) : null,
             actions: [

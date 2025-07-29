@@ -154,7 +154,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           key: scaffoldKey,
           backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
           appBar: AppBar(
-            backgroundColor: FlutterFlowTheme.of(context).primary,
+            backgroundColor: Color(0xFF37625A),
             automaticallyImplyLeading: false,
             leading: backIcon(context),
             actions: [
@@ -187,7 +187,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       children: [
                         Material(
                           color: Colors.transparent,
-                          elevation: 2,
+                          elevation: 0,
                           shape: const RoundedRectangleBorder(
                             borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(15),
@@ -198,8 +198,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           ),
                           child: Container(
                               width: MediaQuery.of(context).size.width,
-                              decoration: BoxDecoration(
-                                color: FlutterFlowTheme.of(context).primary,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFF3a615f),
                                 borderRadius: const BorderRadius.only(
                                   bottomLeft: Radius.circular(15),
                                   bottomRight: Radius.circular(15),
@@ -269,7 +269,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               MainAxisAlignment.spaceAround,
                                           mainAxisSize: MainAxisSize.max,
                                           children: [
-                                            Padding(
+                                            Expanded(
+                                                child: Padding(
                                               padding:
                                                   const EdgeInsetsDirectional
                                                       .fromSTEB(10, 0, 0, 0),
@@ -278,7 +279,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                       MainAxisSize.min,
                                                   children: [
                                                     Text(
-                                                      'Waiting time',
+                                                      'Appointment time',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -287,7 +288,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                             color: FlutterFlowTheme
                                                                     .of(context)
                                                                 .primaryBackground,
-                                                            fontSize: 16,
+                                                            fontSize: 14,
                                                             letterSpacing: 0.0,
                                                           ),
                                                     ),
@@ -300,8 +301,18 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                         data != null
                                                             ? (data['formatted_wait_time'] !=
                                                                     null)
-                                                                ? data['formatted_wait_time']
-                                                                    .toString()
+                                                                ? (messageList['estimated_appointment_time']
+                                                                            .toString()
+                                                                            .length >
+                                                                        5)
+                                                                    ? messageList[
+                                                                            'estimated_appointment_time']
+                                                                        .toString()
+                                                                        .substring(
+                                                                            11)
+                                                                    : messageList[
+                                                                            'estimated_appointment_time']
+                                                                        .toString()
                                                                 : '0'
                                                             : '00',
                                                         style:
@@ -324,7 +335,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                       ),
                                                     ),
                                                   ]),
-                                            ),
+                                            )),
                                             SizedBox(
                                               height: 90,
                                               child: VerticalDivider(
@@ -334,7 +345,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                         .primaryBackground,
                                               ),
                                             ),
-                                            Padding(
+                                            Expanded(
+                                                child: Padding(
                                               padding:
                                                   const EdgeInsetsDirectional
                                                       .fromSTEB(0, 0, 10, 0),
@@ -351,7 +363,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                           color: FlutterFlowTheme
                                                                   .of(context)
                                                               .primaryBackground,
-                                                          fontSize: 16,
+                                                          fontSize: 14,
                                                           letterSpacing: 0.0,
                                                         ),
                                                   ),
@@ -385,7 +397,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   ),
                                                 ],
                                               ),
-                                            ),
+                                            )),
                                           ],
                                         ),
                                       ],
@@ -427,7 +439,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                const Text("Number of guest(s)",
+                                                const Text("Number of Person(s)",
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -489,7 +501,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                 icon: Icon(Icons.person_add,
                                     color:
                                         FlutterFlowTheme.of(context).primary),
-                                label: Text("Add Guest",
+                                label: Text("Add Person",
                                     style: TextStyle(
                                         color: FlutterFlowTheme.of(context)
                                             .primary)),
@@ -530,7 +542,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                       'Inter',
                                                                 ))
                                                           ]),
-                                                      SizedBox(
+                                                      const SizedBox(
                                                         height: 10,
                                                       ),
                                                       Column(
@@ -560,10 +572,10 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                   child:
                                                                       Container(
                                                                     width: 80,
-                                                                    padding: EdgeInsets
+                                                                    padding: const EdgeInsets
                                                                         .symmetric(
-                                                                            vertical:
-                                                                                8),
+                                                                        vertical:
+                                                                            8),
                                                                     decoration:
                                                                         BoxDecoration(
                                                                       border: Border.all(
@@ -788,7 +800,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                           MainAxisAlignment.spaceBetween,
                                       children: [
                                         Text(
-                                          '${(double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins',
+                                          '${(double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins/Person',
                                           style: const TextStyle(
                                               fontFamily: 'Inter',
                                               fontSize: 16,
@@ -816,7 +828,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                           serviceSelectQueue[index];
                                       return Padding(
                                         padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 8, 16, 6),
+                                            .fromSTEB(16, 8, 0, 6),
                                         child: Row(
                                           mainAxisSize: MainAxisSize.max,
                                           mainAxisAlignment:
@@ -944,6 +956,29 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                             FontWeight.w600,
                                                       ),
                                             )),
+                                            IconButton(
+                                                onPressed: () {
+                                                  if (serviceSelectQueue
+                                                          .length >
+                                                      1) {
+                                                    setState(() {
+                                                      serviceSelectQueue
+                                                          .removeAt(index);
+                                                    });
+                                                  } else {
+                                                    setState(() {
+                                                      serviceSelectQueue
+                                                          .removeAt(index);
+                                                    });
+                                                    context.pop();
+                                                  }
+                                                },
+                                                icon: Icon(
+                                                  Icons
+                                                      .remove_circle_outline_rounded,
+                                                  color: Colors.red[200],
+                                                  size: 22,
+                                                ))
                                           ],
                                         ),
                                       );
@@ -982,7 +1017,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       if (selectQueue != null)
                         Padding(
                             padding: const EdgeInsets.only(
-                                left: 15, right: 15, top: 15, bottom: 15),
+                                left: 15, right: 15, top: 15, bottom: 0),
                             child: Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
@@ -1011,7 +1046,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         const Row(
                                           children: [
                                             Text(
-                                              'Appointment Details',
+                                              'Bill Details',
                                               style: TextStyle(
                                                   fontFamily: 'Inter',
                                                   fontSize: 16,
@@ -1031,38 +1066,38 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         const SizedBox(
                                           height: 2,
                                         ),
-                                        detail('Business name',
-                                            widget.businessName),
-                                        detail('Counter',
-                                            selectQueue['queue_name'] ?? ''),
-                                        detail('Staff name',
-                                            selectQueue['employee_name'] ?? ''),
+                                        // detail('Business name',
+                                        //     widget.businessName),
+                                        // detail('Counter',
+                                        //     selectQueue['queue_name'] ?? ''),
+                                        // detail('Staff name',
+                                        //     selectQueue['employee_name'] ?? ''),
                                         detail('Guest count',
                                             selectedGuests.toString()),
-                                        detail(
-                                            'Services',
-                                            getJsonField(serviceSelectQueue,
-                                                    r'''$..business_service_name''')
-                                                .toString()
-                                                .replaceAll('[', '')
-                                                .replaceAll(']', '')),
-                                        detail('Date', widget.date),
-                                        if (messageList != null)
-                                          detail(
-                                              'Time',
-                                              (messageList['estimated_appointment_time']
-                                                          .toString()
-                                                          .length >
-                                                      5)
-                                                  ? messageList[
-                                                          'estimated_appointment_time']
-                                                      .toString()
-                                                      .substring(11)
-                                                  : messageList[
-                                                          'estimated_appointment_time']
-                                                      .toString()),
+                                        // detail(
+                                        //     'Services',
+                                        //     getJsonField(serviceSelectQueue,
+                                        //             r'''$..business_service_name''')
+                                        //         .toString()
+                                        //         .replaceAll('[', '')
+                                        //         .replaceAll(']', '')),
+                                        // detail('Date', widget.date),
+                                        // if (messageList != null)
+                                        //   detail(
+                                        //       'Time',
+                                        //       (messageList['estimated_appointment_time']
+                                        //                   .toString()
+                                        //                   .length >
+                                        //               5)
+                                        //           ? messageList[
+                                        //                   'estimated_appointment_time']
+                                        //               .toString()
+                                        //               .substring(11)
+                                        //           : messageList[
+                                        //                   'estimated_appointment_time']
+                                        //               .toString()),
                                         detail('Total time',
-                                            '${ ( (selectedGuests != 0)?  double.parse(totalPrice(serviceSelectQueue, 'avg_service_time'))* selectedGuests/60 :  double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
+                                            '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
                                         const SizedBox(
                                           height: 10,
                                         ),
@@ -1092,7 +1127,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   (totalPrice(serviceSelectQueue,
                                                               'service_fee') !=
                                                           '')
-                                                      ? '₹ ${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * selectedGuests : (totalPrice(serviceSelectQueue, 'service_fee'))}/-'
+                                                      ? '₹ ${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}/-'
                                                       : '-/-',
                                                   style: const TextStyle(
                                                       fontFamily: 'Inter',
@@ -1103,7 +1138,22 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               ],
                                             )),
                                       ],
-                                    ))))
+                                    )))),
+                      Padding(
+                          padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
+                          child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(14)),
+                              child: const  Padding(
+                                padding: EdgeInsets.all(14),
+                                child: Row(children: [
+                                Expanded(child:  Text(
+                                    'Note: Appointment time is approximate and may vary slightly',
+                                    style: TextStyle(fontSize: 14),
+                                  )
+                                )])),
+                              )),
                     ],
                   ),
                 )),
@@ -1124,7 +1174,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       initialSlidingActionLabel: (totalPrice(
                                   serviceSelectQueue, 'service_fee') !=
                               '')
-                          ? 'Slide to Fix Appointment | ₹${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * selectedGuests : (totalPrice(serviceSelectQueue, 'service_fee'))}'
+                          ? 'Slide to Fix Appointment | ₹${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}'
                           : 'Slide to Fix Appointment',
                       initialSlidingActionLabelTextStyle:
                           const TextStyle(fontSize: 16, color: Colors.white),

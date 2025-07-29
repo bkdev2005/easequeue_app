@@ -104,17 +104,10 @@ class _MyAppState extends State<MyApp> {
         scrollbarTheme: ScrollbarThemeData(),
         primarySwatch: Colors.orange,
         textSelectionTheme: const TextSelectionThemeData(
-            selectionHandleColor: Color.fromARGB(255, 0, 94, 81),
+            selectionHandleColor: Color(0xFF37625a),
             selectionColor: Color.fromARGB(255, 233, 232, 232)),
       ),
-      darkTheme: ThemeData(
-        brightness: Brightness.dark,
-        scrollbarTheme: ScrollbarThemeData(),
-        textSelectionTheme: const TextSelectionThemeData(
-            selectionHandleColor: Color.fromARGB(255, 0, 94, 81),
-            selectionColor: Color.fromARGB(255, 233, 232, 232)),
-        primarySwatch: Colors.orange,
-      ),
+
       themeMode: _themeMode,
       routerConfig: _router,
     );

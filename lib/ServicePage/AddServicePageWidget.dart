@@ -211,7 +211,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         appBar: AppBar(
-          backgroundColor: FlutterFlowTheme.of(context).primary,
+          backgroundColor: Color(0xFF37625A),
           automaticallyImplyLeading: false,
           leading: backIcon(context),
           actions: [
@@ -296,7 +296,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             ),
           ],
           centerTitle: false,
-          elevation: 0,
+          elevation: 2,
         ),
         body: SafeArea(
             top: true,

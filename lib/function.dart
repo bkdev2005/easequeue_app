@@ -352,14 +352,14 @@ Future<File?> compressImage(File file) async {
 
 AppBar appBarWidget(BuildContext context, String name){
   return AppBar(
-    backgroundColor: FlutterFlowTheme.of(context).primary,
+    backgroundColor: const Color(0xFF37625A),
     automaticallyImplyLeading: false,
     leading: FlutterFlowIconButton(
       borderColor: Colors.transparent,
       borderRadius: 30,
       borderWidth: 1,
       buttonSize: 60,
-      icon: Icon(
+      icon: const Icon(
         Icons.keyboard_backspace_rounded,
         color: Colors.white,
         size: 30,

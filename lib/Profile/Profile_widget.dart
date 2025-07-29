@@ -78,16 +78,16 @@ class _ProfileWidgetState extends State<ProfileWidget> {
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       appBar: AppBar(
         centerTitle: !widget.backButton,
-        backgroundColor: FlutterFlowTheme.of(context).primary,
+        backgroundColor: Color(0xFF37625A),
         automaticallyImplyLeading: true,
         leading: (widget.backButton) ? backIcon(context) : Container(),
         title: Text(
           (widget.backButton) ? 'Profile' : 'New Register',
-          style: FlutterFlowTheme.of(context).headlineMedium.override(
-                fontFamily: 'Inter Tight',
-                color: Colors.white,
-                fontSize: 22,
-                letterSpacing: 0.0,
+          style: FlutterFlowTheme.of(context).headlineSmall.override(
+            fontFamily: 'Inter Tight',
+            color: FlutterFlowTheme.of(context).primaryBackground,
+            fontSize: 22,
+            letterSpacing: 0.0,
               ),
         ),
         actions: [],

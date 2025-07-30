@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:eqlite/Component/BusinessDetail/business_info_widget.dart';
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:screenshot/screenshot.dart';
 import '../function.dart';
@@ -43,12 +44,19 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   List<dynamic> services = [];
   List<String> selectServiceId = [];
   String? latitude;
+  late ScrollController _scrollController;
   String? longitude;
 
   @override
   void initState() {
     super.initState();
     _model = createModel(context, () => BusinessPageModel());
+    _scrollController = ScrollController()
+      ..addListener(() {
+        setState(() {
+          _scrollOffset = _scrollController.offset;
+        });
+      });
     setState(() {
       isMainLoading = true;
     });
@@ -56,19 +64,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
     setState(() {
       selectDay = next7Days.first;
     });
-
-    // if (widget.longitude == null && widget.latitude == null) {
-    //   getLocation().then((value) {
-    //     log('location: ${value?[1]}, ${value?[2]}');
-    //     latitude = value?[1].toString();
-    //     longitude = value?[2].toString();
-    //     callBusinessApi();
-    //   });
-    // } else {
-    //   latitude = widget.latitude;
-    //   longitude = widget.longitude;
-    //   callBusinessApi();
-    // }
 
     callBusinessApi();
 
@@ -119,8 +114,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
             hasMore = true;
             page++;
           }
-          setState(()=> isMainLoading = false );
-
+          setState(() => isMainLoading = false);
         });
       } else {
         setState(() {
@@ -139,6 +133,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
   int limit = 10;
   String selectDay = '';
   List<dynamic> next7Days = [];
+  double _scrollOffset = 0.0;
 
   @override
   void dispose() {
@@ -148,329 +143,352 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
   @override
   Widget build(BuildContext context) {
+    const double maxScrollExtent = 5; // Adjust as per your requirement
+    final double opacity = (_scrollOffset / maxScrollExtent).clamp(0.0, 1.0);
+
     return GestureDetector(
         onTap: () {
           FocusScope.of(context).unfocus();
           FocusManager.instance.primaryFocus?.unfocus();
         },
         child: Scaffold(
-          key: scaffoldKey,
-          backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-          appBar: AppBar(
-            toolbarHeight: 70,
-            backgroundColor: Color(0xFF37625A),
-            automaticallyImplyLeading: false,
-            leading: (!searchBar) ? backIcon(context) : null,
-            actions: [
-              if (!searchBar)
-                IconButton(
-                    onPressed: () {
-                      setState(() {
-                        searchBar = true;
-                      });
-                      log('button pressed');
-                    },
-                    icon: const Icon(
-                      Icons.search,
-                      color: Colors.white,
-                    ))
-            ],
-            title: (searchBar)
-                ? Padding(
-                    padding: const EdgeInsets.only(
-                        left: 0, right: 0, top: 0, bottom: 0),
-                    child: TextFormField(
-                        controller: _model.textController,
-                        focusNode: _model.textFieldFocusNode,
-                        onChanged: (_) {
-                          setState(() {
-                            data.clear();
-                          });
-                          fetchData(
-                                  'business_list?category_id=${widget.categoryId}&search=$_'
-                                  '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
-                                  context)
-                              ?.then((value) {
-                            log('value: $value');
-                            if (value != null) {
+            key: scaffoldKey,
+            backgroundColor: FlutterFlowTheme.of(context).primary,
+            body: SafeArea(
+              child: NestedScrollView(
+                controller: _scrollController,
+                floatHeaderSlivers: true,
+                headerSliverBuilder: (context, _) => [
+                  SliverAppBar(
+                    pinned: false,
+                    floating: true,
+                    snap: false,
+                    backgroundColor: FlutterFlowTheme.of(context).primary,
+                    automaticallyImplyLeading: false,
+                    leading: backIcon(context),
+                    title: Text(
+                      widget.categoryName,
+                      style: const TextStyle(
+                          fontSize: 24,
+                          fontFamily: 'Inter',
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500),
+                    ),
+                    actions: [
+                      // if (!searchBar)
+                      //   IconButton(
+                      //       onPressed: () {
+                      //         setState(() {
+                      //           searchBar = true;
+                      //         });
+                      //         log('button pressed');
+                      //       },
+                      //       icon: const Icon(
+                      //         Icons.search,
+                      //         color: Colors.white,
+                      //       ))
+                    ],
+                    centerTitle: false,
+                    elevation: 0,
+                  )
+                ],
+                body: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    Padding(
+                        padding: const EdgeInsets.only(
+                            left: 20, right: 20, top: 6, bottom: 0),
+                        child: TextFormField(
+                          cursorColor: FlutterFlowTheme.of(context).primary,
+                            controller: _model.textController,
+                            focusNode: _model.textFieldFocusNode,
+                            onChanged: (_) {
                               setState(() {
-                                data = getJsonField(
-                                            value, r'''$.data.data[:]''', true)
+                                data.clear();
+                              });
+                              fetchData(
+                                  'business_list?category_id=${widget.categoryId}&search=$_'
+                                      '&filter_date=${jsonDecode(selectDay)['year']}-${getMonthNumber(jsonDecode(selectDay)['month'])}-${jsonDecode(selectDay)['date']}',
+                                  context)
+                                  ?.then((value) {
+                                log('value: $value');
+                                if (value != null) {
+                                  setState(() {
+                                    data = getJsonField(
+                                        value, r'''$.data.data[:]''', true)
                                         ?.toList() ??
-                                    [];
-                                if (value.length < limit) {
-                                  hasMore = false;
+                                        [];
+                                    if (value.length < limit) {
+                                      hasMore = false;
+                                    } else {
+                                      hasMore = true;
+                                      page++;
+                                    }
+                                  });
+                                  setState(() {
+                                    isMainLoading = false;
+                                  });
                                 } else {
-                                  hasMore = true;
-                                  page++;
+                                  setState(() {
+                                    isMainLoading = false;
+                                  });
                                 }
                               });
-                              setState(() {
-                                isMainLoading = false;
-                              });
-                            } else {
-                              setState(() {
-                                isMainLoading = false;
-                              });
-                            }
-                          });
-                        },
-                        autofocus: false,
-                        obscureText: false,
-                        decoration: InputDecoration(
-                          isDense: true,
-                          labelStyle:
-                              FlutterFlowTheme.of(context).labelMedium.override(
-                                    fontFamily: 'Inter',
-                                    letterSpacing: 0.0,
-                                  ),
-                          hintText: 'Search business',
-                          hintStyle:
-                              FlutterFlowTheme.of(context).labelMedium.override(
-                                    fontFamily: 'Inter',
-                                    letterSpacing: 0.0,
-                                  ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0x00000000),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderSide: const BorderSide(
-                              color: Color(0x00000000),
-                              width: 1,
-                            ),
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          contentPadding: EdgeInsets.all(0),
-                          filled: true,
-                          suffixIcon: IconButton(
-                            icon: Icon(Icons.close),
-                            iconSize: 24,
-                            onPressed: () {
-                              setState(() {
-                                searchBar = false;
-                                page = 1;
-                              });
-                              callBusinessApi();
                             },
-                          ),
-                          fillColor: const Color(0xFFF4F4F4),
-                          prefixIcon: const Icon(
-                            Icons.search_rounded,
-                          ),
-                        )))
-                : Text(
-                    widget.categoryName,
-                    style: const TextStyle(
-                        fontSize: 24,
-                        fontFamily: 'Inter',
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500),
-                  ),
-            centerTitle: false,
-            elevation: 2,
-          ),
-          body: SafeArea(
-            top: true,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(top: 15, left: 10, bottom: 3),
-                    child: Row(
-                      children: List.generate(services.length, (index) {
-                        final service = services[index];
-                        return Padding(
-                            padding: EdgeInsets.only(left: 10),
-                            child: GestureDetector(
-                                onTap: () {
-                                  final uuid =
-                                  getJsonField(service, r'''$.uuid''');
+                            autofocus: false,
+                            obscureText: false,
+                            decoration: InputDecoration(
+                              isDense: true,
+                              labelStyle:
+                              FlutterFlowTheme.of(context).labelMedium.override(
+                                fontFamily: 'Inter',
+                                letterSpacing: 0.0,
+                              ),
+                              hintText: 'Search business',
+                              hintStyle:
+                              FlutterFlowTheme.of(context).labelMedium.override(
+                                fontFamily: 'Inter',
+                                letterSpacing: 0.0,
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderSide: const BorderSide(
+                                  color: Color(0x00000000),
+                                  width: 1,
+                                ),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              contentPadding: EdgeInsets.all(0),
+                              filled: true,
+                              suffixIcon: IconButton(
+                                icon: Icon(Icons.close),
+                                iconSize: 24,
+                                onPressed: () {
                                   setState(() {
-                                    if (selectServiceId.contains(uuid)) {
-                                      selectServiceId.remove(uuid);
-                                    } else {
-                                      selectServiceId.add(uuid);
-                                    }
+                                    searchBar = false;
+                                    page = 1;
                                   });
                                   callBusinessApi();
                                 },
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                      border: Border.all(
-                                          color: (selectServiceId.contains(
-                                              getJsonField(
-                                                  service, r'''$.uuid''')))
-                                              ? Colors.transparent
-                                              : Colors.black26),
-                                      color: (selectServiceId.contains(
-                                          getJsonField(
-                                              service, r'''$.uuid''')))
-                                          ? FlutterFlowTheme.of(context).primary
-                                          : Colors.transparent,
-                                      borderRadius: BorderRadius.circular(30)),
-                                  child: Padding(
-                                    padding: EdgeInsets.fromLTRB(15, 6, 15, 6),
-                                    child: Text(
-                                      getJsonField(service, r'''$.name'''),
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: (selectServiceId.contains(
-                                            getJsonField(
-                                                service, r'''$.uuid''')))
-                                            ? Colors.white
-                                            : Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                )));
-                      }),
-                    )),
-                Expanded(
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
-                    child: Builder(
-                      builder: (context) {
-                        final businessList = data.toList() ?? [];
-
-                        if (isMainLoading) {
-                          return Center(
-                            child: loading(context),
-                          );
-                        }
-
-                        if (businessList.isEmpty) {
-                          return Center(
-                            child: emptyList(),
-                          );
-                        }
-                        return ListView.builder(
-                          controller: controller,
-                          padding: const EdgeInsets.only(bottom: 20),
-                          itemCount: businessList.length,
-                          itemBuilder: (context, businessListIndex) {
-                            final businessListItem =
-                                businessList[businessListIndex];
-                            final isFavourite = favBusinessList
-                                .contains(businessListItem['uuid']);
-                            bool temporaryClosed =
-                                (businessListItem['temporary_closed'] ||
-                                    businessListItem['is_closed']);
-
-                            return GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) =>
-                                          AddServicePageWidget(
-                                        businessDetail: businessListItem,
-                                        lat: widget.latitude,
-                                        long: widget.longitude,
-                                        businessId: businessListItem['uuid'],
-                                      ),
-                                    ),
-                                  ).then((value){
-                                    callBusinessApi();
-                                    setState(() {
-                                    });
-                                  });
-                                },
-                                child: Padding(
-                                  padding: const EdgeInsets.only(top: 15),
-                                  child: Material(
-                                    elevation: 1,
-                                    borderRadius: BorderRadius.circular(12),
-                                    color: Colors.white,
+                              ),
+                              fillColor: FlutterFlowTheme.of(context).primaryBackground,
+                              prefixIcon: const Icon(
+                                Icons.search_rounded,
+                              ),
+                            ))),
+                    Padding(
+                        padding: const EdgeInsets.only(top: 12, left: 10, bottom: 10),
+                        child: Row(
+                          children: List.generate(services.length, (index) {
+                            final service = services[index];
+                            return Padding(
+                                padding: EdgeInsets.only(left: 10),
+                                child: GestureDetector(
+                                    onTap: () {
+                                      final uuid =
+                                      getJsonField(service, r'''$.uuid''');
+                                      setState(() {
+                                        if (selectServiceId.contains(uuid)) {
+                                          selectServiceId.remove(uuid);
+                                        } else {
+                                          selectServiceId.add(uuid);
+                                        }
+                                      });
+                                      callBusinessApi();
+                                    },
                                     child: Container(
-                                        margin: const EdgeInsets.symmetric(
-                                            horizontal: 0, vertical: 0),
-                                        padding: const EdgeInsets.fromLTRB(
-                                            15, 10, 0, 10),
-                                        decoration: BoxDecoration(
-                                          gradient: LinearGradient(
-                                            begin: Alignment.topCenter,
-                                            end: Alignment.bottomCenter,
-                                            colors: [
-                                              Colors.transparent,
-                                              Colors.transparent,
-                                              Colors.green.withOpacity(0.09), // Or any color for the bottom glow
-                                            ],
+                                      decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context).primaryBackground,
+                                          borderRadius:
+                                          BorderRadius.circular(8)),
+                                      child: Padding(
+                                        padding:
+                                        const EdgeInsets.fromLTRB(13, 6, 10, 6),
+                                        child: Row( children: [ Text(
+                                          getJsonField(service, r'''$.name'''),
+                                          style: const TextStyle(
+                                            fontSize: 14,
+                                            color: Colors.black,
                                           ),
-                                          border: Border.all(color: Colors.green.shade50),
-                                          borderRadius: BorderRadius.circular(12),
                                         ),
-                                        child: Row(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(top: 5),
-                                                  child: Container(
-                                                      width: 40,
-                                                      height: 40,
-                                                      decoration: BoxDecoration(
-                                                          border: Border.all(
-                                                            color:
-                                                                Colors.black26,
-                                                          ),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(5)),
-                                                      child: (businessListItem[
-                                                                  'profile_picture'] !=
-                                                              null)
-                                                          ? Image.network(
-                                                              'http://43.204.107.110/shared/${businessListItem['profile_picture']}',
-                                                              fit: BoxFit.cover,
-                                                            )
-                                                          : Padding(
-                                                              padding:
-                                                                 const EdgeInsets
-                                                                      .all(8),
-                                                              child: Image.asset(
-                                                                  'assets/images/images.png')))),
-                                              // Business Info
-                                              Expanded(
-                                                  child: Padding(
-                                                padding:
-                                                    EdgeInsets.only(left: 10),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Text(
-                                                      businessListItem[
-                                                              'name'] ??
-                                                          'N/A',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontSize: 18,
-                                                            fontFamily: 'Inter',
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                          ),
-                                                    ),
-                                                    if (businessListItem[
-                                                            'address'] !=
-                                                        null)
-                                                      Text(
-                                                        businessListItem[
-                                                                    'address']
-                                                                ['street_1'] ??
-                                                            '',
-                                                        maxLines: 1,
-                                                        overflow: TextOverflow.ellipsis,
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
+                                          const SizedBox(
+                                            width: 4,
+                                          ),
+                                          if((selectServiceId.contains(
+                                              getJsonField(
+                                                  service, r'''$.uuid'''))))
+                                          const Icon(Icons.close_rounded, size: 18, color: Colors.black54,)
+                                    ])),
+                                    )));
+                          }),
+                        )),
+                    Expanded(
+                      child: Material(
+                      color: FlutterFlowTheme.of(context).primaryBackground,
+                      child:
+                     Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                        child: Builder(
+                          builder: (context) {
+                            final businessList = data.toList() ?? [];
+
+                            if (isMainLoading) {
+                              return Center(
+                                child: loading(context),
+                              );
+                            }
+
+                            if (businessList.isEmpty) {
+                              return Center(
+                                child: emptyList(),
+                              );
+                            }
+                            return ListView.builder(
+                              controller: controller,
+                              padding: const EdgeInsets.only(bottom: 20),
+                              itemCount: businessList.length,
+                              itemBuilder: (context, businessListIndex) {
+                                final businessListItem =
+                                    businessList[businessListIndex];
+                                final isFavourite = favBusinessList
+                                    .contains(businessListItem['uuid']);
+                                bool temporaryClosed =
+                                    (businessListItem['temporary_closed'] ||
+                                        businessListItem['is_closed']);
+
+                                return GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) =>
+                                              AddServicePageWidget(
+                                            businessDetail: businessListItem,
+                                            lat: widget.latitude,
+                                            long: widget.longitude,
+                                            businessId:
+                                                businessListItem['uuid'],
+                                          ),
+                                        ),
+                                      ).then((value) {
+                                        callBusinessApi();
+                                        setState(() {});
+                                      });
+                                    },
+                                    child: Padding(
+                                      padding: const EdgeInsets.only(top: 15),
+                                      child: Material(
+                                        elevation: 1,
+                                        borderRadius: BorderRadius.circular(12),
+                                        color: Colors.white,
+                                        child: Container(
+                                            margin: const EdgeInsets.symmetric(
+                                                horizontal: 0, vertical: 0),
+                                            padding: const EdgeInsets.fromLTRB(
+                                                15, 10, 0, 10),
+                                            decoration: BoxDecoration(
+                                              gradient: LinearGradient(
+                                                begin: Alignment.topCenter,
+                                                end: Alignment.bottomCenter,
+                                                colors: [
+                                                  Colors.transparent,
+                                                  Colors.transparent,
+                                                  Colors.green.withOpacity(
+                                                      0.09), // Or any color for the bottom glow
+                                                ],
+                                              ),
+                                              border: Border.all(
+                                                  color: Colors.green.shade50),
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                            ),
+                                            child: Row(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Padding(
+                                                      padding:
+                                                          const EdgeInsets.only(
+                                                              top: 5),
+                                                      child: Container(
+                                                          width: 40,
+                                                          height: 40,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                                  border: Border
+                                                                      .all(
+                                                                    color: Colors
+                                                                        .black26,
+                                                                  ),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              5)),
+                                                          child: (businessListItem[
+                                                                      'profile_picture'] !=
+                                                                  null)
+                                                              ? Image.network(
+                                                                  'http://43.204.107.110/shared/${businessListItem['profile_picture']}',
+                                                                  fit: BoxFit
+                                                                      .cover,
+                                                                )
+                                                              : Padding(
+                                                                  padding:
+                                                                      const EdgeInsets
+                                                                          .all(
+                                                                          8),
+                                                                  child: Image
+                                                                      .asset(
+                                                                          'assets/images/images.png')))),
+                                                  // Business Info
+                                                  Expanded(
+                                                      child: Padding(
+                                                    padding: EdgeInsets.only(
+                                                        left: 10),
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          businessListItem[
+                                                                  'name'] ??
+                                                              'N/A',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontSize: 18,
+                                                                fontFamily:
+                                                                    'Inter',
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                        ),
+                                                        if (businessListItem[
+                                                                'address'] !=
+                                                            null)
+                                                          Text(
+                                                            businessListItem[
+                                                                        'address']
+                                                                    [
+                                                                    'street_1'] ??
+                                                                '',
+                                                            maxLines: 1,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
                                                                 .bodyMedium
                                                                 .override(
                                                                   fontSize: 14,
@@ -479,16 +497,44 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                   letterSpacing:
                                                                       0.0,
                                                                 ),
-                                                      ),
-                                                    const SizedBox(height: 3),
-
-                                                       Row( crossAxisAlignment: CrossAxisAlignment.start,
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .max,
-                                                              children: [
-                                                                Text((businessListItem[
-                                                                'status'].toString().toLowerCase() == 'closed')? 'Closed' : 'Open',
+                                                          ),
+                                                        const SizedBox(
+                                                            height: 3),
+                                                        Row(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            mainAxisSize:
+                                                                MainAxisSize
+                                                                    .max,
+                                                            children: [
+                                                              Text(
+                                                                  (businessListItem['status']
+                                                                              .toString()
+                                                                              .toLowerCase() ==
+                                                                          'closed')
+                                                                      ? 'Closed'
+                                                                      : 'Open',
+                                                                  style: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .bodyMedium
+                                                                      .override(
+                                                                        fontSize:
+                                                                            12,
+                                                                        fontWeight:
+                                                                            FontWeight.w500,
+                                                                        color: (businessListItem['status'].toString().toLowerCase() !=
+                                                                                'closed')
+                                                                            ? Colors.green
+                                                                            : Colors.redAccent,
+                                                                        fontFamily:
+                                                                            'Inter',
+                                                                        letterSpacing:
+                                                                            0.0,
+                                                                      )),
+                                                              Expanded(
+                                                                child: Text(
+                                                                    ' • ${businessListItem['status_message']}',
                                                                     style: FlutterFlowTheme.of(
                                                                             context)
                                                                         .bodyMedium
@@ -496,91 +542,75 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                                                           fontSize:
                                                                               12,
                                                                           fontWeight:
-                                                                              FontWeight.w500,
-                                                                          color: (businessListItem[
-                                                                          'status'].toString().toLowerCase() != 'closed')? Colors.green :
-                                                                              Colors.redAccent,
+                                                                              FontWeight.w400,
+                                                                          color:
+                                                                              Colors.black45,
                                                                           fontFamily:
                                                                               'Inter',
                                                                           letterSpacing:
                                                                               0.0,
                                                                         )),
-                                                                Expanded(child: Text(' • ${businessListItem[
-                                                                'status_message']}',
-                                                                    style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                      fontSize:
-                                                                      12,
-                                                                      fontWeight:
-                                                                      FontWeight.w400,
-                                                                      color:
-                                                                      Colors.black45,
-                                                                      fontFamily:
-                                                                      'Inter',
-                                                                      letterSpacing:
-                                                                      0.0,
-                                                                    )),
-                                                                )]),
+                                                              )
+                                                            ]),
                                                       ],
-                                                ),
-                                              )),
+                                                    ),
+                                                  )),
 
-                                              const SizedBox(width: 12),
+                                                  const SizedBox(width: 12),
 
-                                              // Info Icon
-                                              // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
-                                              Column(
-                                                children: [
-                                                  IconButton(
-                                                    onPressed: () {
-                                                      // setState(() {
-                                                      //   page = 1;
-                                                      //   // data.clear();
-                                                      // });
-                                                      sendData({
-                                                        "user_id":
-                                                            FFAppState().userId,
-                                                        "business_id":
+                                                  // Info Icon
+                                                  // const Icon(Icons.info_outline_rounded, color: Colors.black54, size: 20,),
+                                                  Column(
+                                                    children: [
+                                                      IconButton(
+                                                        onPressed: () {
+                                                          // setState(() {
+                                                          //   page = 1;
+                                                          //   // data.clear();
+                                                          // });
+                                                          sendData({
+                                                            "user_id":
+                                                                FFAppState()
+                                                                    .userId,
+                                                            "business_id":
+                                                                businessListItem[
+                                                                    'uuid']
+                                                          }, 'favourite')
+                                                              .then((value) {
+                                                            log('value: $value');
+                                                            callBusinessApi();
+                                                          });
+                                                        },
+                                                        icon: Icon(
                                                             businessListItem[
-                                                                'uuid']
-                                                      }, 'favourite')
-                                                          .then((value) {
-                                                        log('value: $value');
-                                                        callBusinessApi();
-                                                      });
-                                                    },
-                                                    icon: Icon(
-                                                        businessListItem[
-                                                                'is_favourite']
-                                                            ? Icons
-                                                                .favorite_rounded
-                                                            : Icons
-                                                                .favorite_border_rounded,
-                                                        size: 24,
-                                                        color: isFavourite
-                                                            ? FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primary
-                                                            : FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primary),
+                                                                    'is_favourite']
+                                                                ? Icons
+                                                                    .favorite_rounded
+                                                                : Icons
+                                                                    .favorite_border_rounded,
+                                                            size: 24,
+                                                            color: isFavourite
+                                                                ? FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primary
+                                                                : FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primary),
+                                                      ),
+                                                    ],
                                                   ),
-                                                ],
-                                              ),
-                                            ])),
-                                  ),
-                                ));
+                                                ])),
+                                      ),
+                                    ));
+                              },
+                            );
                           },
-                        );
-                      },
-                    ),
-                  ),
+                        ),
+                      ),
+                    ),)
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ));
+              ),
+            )));
   }
 }

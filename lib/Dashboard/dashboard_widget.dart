@@ -405,9 +405,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     FlutterFlowTheme.of(context).primary,
                                     FlutterFlowTheme.of(context).primary
                                   ],
-                                  stops: [0, 1],
-                                  begin: AlignmentDirectional(0, -1),
-                                  end: AlignmentDirectional(0, 1),
+                                  stops: const [0, 1],
+                                  begin: const AlignmentDirectional(0, -1),
+                                  end: const AlignmentDirectional(0, 1),
                                 ),
                               ),
                               child: Padding(
@@ -421,7 +421,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       children: [
                                         Padding(
                                             padding:
-                                                EdgeInsetsDirectional.fromSTEB(
+                                                const EdgeInsetsDirectional.fromSTEB(
                                                     20, 5, 0, 0),
                                             child: Opacity(
                                               opacity: 1.0 -

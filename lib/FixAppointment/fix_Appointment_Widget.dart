@@ -1072,8 +1072,11 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         //     selectQueue['queue_name'] ?? ''),
                                         // detail('Staff name',
                                         //     selectQueue['employee_name'] ?? ''),
-                                        detail('Guest count',
-                                            selectedGuests.toString()),
+                                        detail('Per Person Fees',
+                                            '₹${totalPrice(serviceSelectQueue, 'service_fee')}'),
+                                        detail('Total Person',
+                                            '${(selectedGuests + 1)}'),
+
                                         // detail(
                                         //     'Services',
                                         //     getJsonField(serviceSelectQueue,
@@ -1096,8 +1099,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         //           : messageList[
                                         //                   'estimated_appointment_time']
                                         //               .toString()),
-                                        detail('Total time',
-                                            '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
+                                        // detail('Total time',
+                                        //     '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
                                         const SizedBox(
                                           height: 10,
                                         ),

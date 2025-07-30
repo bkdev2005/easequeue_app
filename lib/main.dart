@@ -44,6 +44,7 @@ void main() async {
   getFcmToken();
   final appState = FFAppState(); // Initialize FFAppState
   await appState.initializePersistedState();
+
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Color(0xFF37625A),

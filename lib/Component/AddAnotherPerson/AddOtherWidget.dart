@@ -89,7 +89,7 @@ class _AddAnotherCustomerWidgetState extends State<AddAnotherCustomerWidget> {
             children: [
               Padding(
                 padding: EdgeInsetsDirectional.fromSTEB(20, 15, 0, 0),
-                child: Text('Enter appointee detail', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),)
+                child: Text('Enter guest user detail', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),)
               ),
             ],
           ),
@@ -147,7 +147,7 @@ class _AddAnotherCustomerWidgetState extends State<AddAnotherCustomerWidget> {
                   if(value != null){
                     log('value: $value');
                     final uuid = value['uuid'];
-                    context.pop(uuid);
+                    context.pop(value);
                   }else{
                     Fluttertoast.showToast(msg: 'Something went wrong');
                   }

@@ -6,6 +6,7 @@ import 'package:eqlite/function.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sliding_action_button/sliding_action_button.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
+import '../Component/AddAnotherPerson/AddOtherWidget.dart';
 import '../Component/AppointmentType/appointment_type_widget.dart';
 import '../Component/Congratulate/confirm_ui_widget.dart';
 import '../apiFunction.dart';
@@ -51,7 +52,10 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   // final webSocketClient = WebSocketClient();
   WebSocketChannel? webSocketChannel;
   int selectedLunchTimeIndex = -1;
+  String? selectedTimeSlot;
   WebSocketService? _webSocketService;
+  String appointeeUUID = '';
+  String appointeeName = '';
   String? _token; // Token to be passed
   int selectedGuests = 0;
   bool isLoading = false;
@@ -115,6 +119,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   @override
   void initState() {
     super.initState();
+    appointeeUUID = widget.uuid;
     List<String> allQueueServiceUuids =
         getAllQueueServiceUuids(widget.services);
     addIdInUrl(allQueueServiceUuids);
@@ -157,18 +162,30 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
             backgroundColor: Color(0xFF37625A),
             automaticallyImplyLeading: false,
             leading: backIcon(context),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.businessName,
+                  style: FlutterFlowTheme.of(context).headlineSmall.override(
+                    fontFamily: 'Inter Tight',
+                    color: FlutterFlowTheme.of(context).primaryBackground,
+                    fontSize: 18,
+                    letterSpacing: 0.0,
+                  ),
+                ),
+                Text(
+                  widget.formatDate,
+                  style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w400,
+                      color: FlutterFlowTheme.of(context).secondaryBackground),
+                ),
+              ],
+            ),
             actions: [
-              Text(
-                widget.formatDate,
-                style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    color: FlutterFlowTheme.of(context).secondaryBackground),
-              ),
-              const SizedBox(
-                width: 20,
-              )
+              toggleButton()
             ],
             centerTitle: false,
             elevation: 2,
@@ -221,8 +238,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                       children: [
                                         Padding(
                                           padding:
-                                              const EdgeInsetsDirectional.all(
-                                                  0),
+                                              const EdgeInsets.only(top: 10),
                                           child: Text(
                                             'Current serving number',
                                             style: FlutterFlowTheme.of(context)
@@ -232,14 +248,14 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   color: FlutterFlowTheme.of(
                                                           context)
                                                       .primaryBackground,
-                                                  fontSize: 16,
+                                                  fontSize: 14,
                                                   letterSpacing: 0.0,
                                                 ),
                                           ),
                                         ),
                                         Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   0, 2, 0, 15),
                                           child: Text(
                                             data != null
@@ -274,12 +290,121 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               padding:
                                                   const EdgeInsetsDirectional
                                                       .fromSTEB(10, 0, 0, 0),
-                                              child: Column(
+                                              child: InkWell(
+                                                onTap: (){
+                                                  showDialog(
+                                                      context: context,
+                                                      builder: (context) {
+                                                        return Dialog(
+                                                            shape: RoundedRectangleBorder(
+                                                                borderRadius:
+                                                                BorderRadius.circular(20)),
+                                                            backgroundColor:
+                                                            FlutterFlowTheme.of(context)
+                                                                .primaryBackground,
+                                                            child: Padding(
+                                                                padding: EdgeInsets.all(16),
+                                                                child: Column(
+                                                                    mainAxisSize:
+                                                                    MainAxisSize.min,
+                                                                    children: [
+                                                                      const Row(
+                                                                          mainAxisAlignment:
+                                                                          MainAxisAlignment
+                                                                              .start,
+                                                                          children: [
+                                                                            Text(
+                                                                                "Book with slot",
+                                                                                style:
+                                                                                TextStyle(
+                                                                                  fontWeight:
+                                                                                  FontWeight
+                                                                                      .w600,
+                                                                                  fontSize: 16,
+                                                                                  fontFamily:
+                                                                                  'Inter',
+                                                                                ))
+                                                                          ]),
+                                                                      const SizedBox(
+                                                                        height: 10,
+                                                                      ),
+                                                                      Column(
+                                                                        crossAxisAlignment:
+                                                                        CrossAxisAlignment
+                                                                            .start,
+                                                                        children: [
+                                                                          Align(
+                                                                            alignment: Alignment
+                                                                                .centerLeft,
+                                                                            child: Wrap(
+                                                                              spacing: 10,
+                                                                              runSpacing: 10,
+                                                                              children:
+                                                                              List.generate(
+                                                                                  times
+                                                                                      .length,
+                                                                                      (index) {
+                                                                                    return GestureDetector(
+                                                                                      onTap: () {
+                                                                                        setState(() {
+                                                                                        selectedLunchTimeIndex =
+                                                                                            index;
+                                                                                        selectedTimeSlot = times[index];
+                                                                                        });
+                                                                                        context
+                                                                                            .pop();
+                                                                                      },
+                                                                                      child:
+                                                                                      Container(
+                                                                                        width: 80,
+                                                                                        padding: const EdgeInsets
+                                                                                            .symmetric(
+                                                                                            vertical:
+                                                                                            8),
+                                                                                        decoration:
+                                                                                        BoxDecoration(
+                                                                                          border: Border.all(
+                                                                                              width: selectedLunchTimeIndex == index
+                                                                                                  ? 2
+                                                                                                  : 1,
+                                                                                              color: selectedLunchTimeIndex == index
+                                                                                                  ? FlutterFlowTheme.of(context).primary
+                                                                                                  : Colors.grey[400]!),
+                                                                                          borderRadius:
+                                                                                          BorderRadius.circular(
+                                                                                              8),
+                                                                                        ),
+                                                                                        alignment:
+                                                                                        Alignment
+                                                                                            .center,
+                                                                                        child:
+                                                                                        Column(
+                                                                                          children: [
+                                                                                            Text(
+                                                                                              times[
+                                                                                              index],
+                                                                                              textAlign:
+                                                                                              TextAlign.center,
+                                                                                            ),
+                                                                                          ],
+                                                                                        ),
+                                                                                      ),
+                                                                                    );
+                                                                                  }),
+                                                                            ),
+                                                                          )
+                                                                        ],
+                                                                      ),
+                                                                    ])));
+                                                      });
+                                                },
+                                                child: Column(
                                                   mainAxisSize:
                                                       MainAxisSize.min,
                                                   children: [
+                                                    Row( mainAxisAlignment: MainAxisAlignment.center, children: [
                                                     Text(
-                                                      'Appointment time',
+                                                      'Estimated time',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -292,12 +417,18 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                             letterSpacing: 0.0,
                                                           ),
                                                     ),
+                                                     const SizedBox(
+                                                       width: 5,
+                                                     ),
+                                                     const Icon(Icons.edit_calendar_rounded, color: Colors.white, size: 16,)
+                                                    ]),
                                                     Padding(
                                                       padding:
                                                           const EdgeInsetsDirectional
                                                               .fromSTEB(
                                                               0, 0, 0, 0),
                                                       child: Text(
+                                                          (selectedTimeSlot != null)? selectedTimeSlot??'' :
                                                         data != null
                                                             ? (data['formatted_wait_time'] !=
                                                                     null)
@@ -335,7 +466,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                       ),
                                                     ),
                                                   ]),
-                                            )),
+                                            ))),
                                             SizedBox(
                                               height: 90,
                                               child: VerticalDivider(
@@ -413,7 +544,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-                      Padding(
+
+                      /*Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),
                           child: Row(
                             spacing: 10,
@@ -439,7 +571,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                   CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                const Text("Number of Person(s)",
+                                                const Text(
+                                                    "Number of Person(s)",
                                                     style: TextStyle(
                                                       fontWeight:
                                                           FontWeight.w600,
@@ -622,9 +755,30 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                             .primary)),
                               )),
                             ],
-                          )),
+                          )),*/
+
+                      if(appointeeUUID != widget.uuid)
                       Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(15, 6, 0, 0),
+                          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
+                          child: Container(
+                            decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(14)),
+                            child: Padding(
+                                padding: EdgeInsets.all(14),
+                                child: Row(children: [
+                                  Icon(Icons.task_alt_rounded, color: FlutterFlowTheme.of(context).primary,),
+                                  const SizedBox(width: 8,),
+                                   Expanded(
+                                      child: Text(
+                                        'Appointment will be add as guest user $appointeeName',
+                                        style: const TextStyle(fontSize: 14),
+                                      ))
+                                ])),
+                          )),
+
+                      Padding(
+                        padding: const EdgeInsetsDirectional.fromSTEB(15, 16, 0, 0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -642,6 +796,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           ],
                         ),
                       ),
+
                       Padding(
                         padding:
                             const EdgeInsetsDirectional.fromSTEB(0, 6, 0, 0),
@@ -879,7 +1034,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                               ),
                                                         )
                                                     ])),
-                                            if (queueData['fee_type'] ==
+                                            /*if (queueData['fee_type'] ==
                                                 'Hourly Fee')
                                               Material(
                                                   borderRadius:
@@ -935,7 +1090,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                     )))),
                                                           ],
                                                         )),
-                                                  )),
+                                                  )),*/
                                             const SizedBox(
                                               width: 15,
                                             ),
@@ -1033,49 +1188,49 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                   ),
                                   // border: Border.all(color: Colors.black26),
                                   borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(15),
-                                    bottomRight: Radius.circular(15),
-                                    topLeft: Radius.circular(15),
-                                    topRight: Radius.circular(15),
+                                    bottomLeft: Radius.circular(12),
+                                    bottomRight: Radius.circular(12),
+                                    topLeft: Radius.circular(12),
+                                    topRight: Radius.circular(12),
                                   ),
                                 ),
                                 child: Padding(
                                     padding: EdgeInsets.all(14),
                                     child: Column(
                                       children: [
-                                        const Row(
-                                          children: [
-                                            Text(
-                                              'Bill Details',
-                                              style: TextStyle(
-                                                  fontFamily: 'Inter',
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500),
-                                            ),
-                                          ],
-                                        ),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Divider(
-                                          indent: 0,
-                                          endIndent: 0,
-                                          height: 1,
-                                          color: Colors.grey[100],
-                                        ),
-                                        const SizedBox(
-                                          height: 2,
-                                        ),
+                                        // const Row(
+                                        //   children: [
+                                        //     Text(
+                                        //       'Bill Details',
+                                        //       style: TextStyle(
+                                        //           fontFamily: 'Inter',
+                                        //           fontSize: 16,
+                                        //           fontWeight: FontWeight.w500),
+                                        //     ),
+                                        //   ],
+                                        // ),
+                                        // const SizedBox(
+                                        //   height: 10,
+                                        // ),
+                                        // Divider(
+                                        //   indent: 0,
+                                        //   endIndent: 0,
+                                        //   height: 1,
+                                        //   color: Colors.grey[100],
+                                        // ),
+                                        // const SizedBox(
+                                        //   height: 2,
+                                        // ),
                                         // detail('Business name',
                                         //     widget.businessName),
                                         // detail('Counter',
                                         //     selectQueue['queue_name'] ?? ''),
                                         // detail('Staff name',
                                         //     selectQueue['employee_name'] ?? ''),
-                                        detail('Per Person Fees',
-                                            '₹${totalPrice(serviceSelectQueue, 'service_fee')}'),
-                                        detail('Total Person',
-                                            '${(selectedGuests + 1)}'),
+                                        // detail('Per Person Fees',
+                                        //     '₹${totalPrice(serviceSelectQueue, 'service_fee')}'),
+                                        // detail('Total Person',
+                                        //     '${(selectedGuests + 1)}'),
 
                                         // detail(
                                         //     'Services',
@@ -1101,25 +1256,25 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         //               .toString()),
                                         // detail('Total time',
                                         //     '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
-                                        const SizedBox(
-                                          height: 10,
-                                        ),
-                                        Divider(
-                                          indent: 0,
-                                          endIndent: 0,
-                                          height: 1,
-                                          color: Colors.green.shade100,
-                                        ),
+                                        // const SizedBox(
+                                        //   height: 10,
+                                        // ),
+                                        // Divider(
+                                        //   indent: 0,
+                                        //   endIndent: 0,
+                                        //   height: 1,
+                                        //   color: Colors.green.shade100,
+                                        // ),
                                         Padding(
                                             padding:
-                                                const EdgeInsets.only(top: 8),
+                                                const EdgeInsets.only(top: 0),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
                                                 const Text(
-                                                  'Total Fee',
+                                                  'Total Service Fees',
                                                   style: const TextStyle(
                                                       fontFamily: 'Inter',
                                                       fontSize: 16,
@@ -1145,18 +1300,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       Padding(
                           padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
                           child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: const  Padding(
+                            decoration: BoxDecoration(
+                                color: Colors.green.withOpacity(0.08),
+                                borderRadius: BorderRadius.circular(14)),
+                            child: const Padding(
                                 padding: EdgeInsets.all(14),
                                 child: Row(children: [
-                                Expanded(child:  Text(
+                                  Expanded(
+                                      child: Text(
                                     'Note: Appointment time is approximate and may vary slightly',
                                     style: TextStyle(fontSize: 14),
-                                  )
-                                )])),
-                              )),
+                                  ))
+                                ])),
+                          )),
                     ],
                   ),
                 )),
@@ -1217,7 +1373,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                         }
 
                         final apiCall = await sendData({
-                          "user_id": widget.uuid,
+                          "user_id": appointeeUUID,
                           "priority": false,
                           "queue_id": selectedQueueId!,
                           "queue_date": widget.date,
@@ -1468,6 +1624,66 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           ),
         ],
       ),
+    );
+  }
+
+  bool _isIncognito = false;
+  Widget toggleButton() {
+    return
+        Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child:
+              Switch(
+                value: _isIncognito,
+                activeColor: Colors.teal,
+                inactiveTrackColor: Colors.white,
+                trackOutlineWidth: WidgetStateProperty.resolveWith ((Set  states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return 0.1;
+                  }
+                  return null; // Use the default width.
+                }),
+                trackOutlineColor: WidgetStateProperty.resolveWith ((Set  states) {
+                  if (states.contains(WidgetState.disabled)) {
+                    return Colors.teal.withOpacity(.48);
+                  }
+                  return Colors.transparent; // Use the default color.
+                }),
+                inactiveThumbImage: const AssetImage('assets/images/user.png',),
+                activeThumbImage: const AssetImage('assets/images/user.png',),
+                activeTrackColor: Colors.black54,
+                onChanged: (value) async {
+                  if(value == true){
+                  debugPrint('Guest Mode: $_isIncognito');
+                  await showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  enableDrag: false,
+                  builder: (context) {
+                    return Padding(
+                        padding: MediaQuery.viewInsetsOf(context),
+                        child: const AddAnotherCustomerWidget());
+                  }).then((response) {
+                    if (response != null) {
+                      final uuid = response['uuid'];
+                      final name = response['full_name'];
+                      setState(() {
+                        _isIncognito = true;
+                        appointeeUUID = uuid;
+                        appointeeName = name;
+                      });
+                    }
+                  });
+                  }else{
+                    setState(() {
+                      _isIncognito = false;
+                      appointeeUUID = widget.uuid;
+                      appointeeName = '';
+                    });
+                  }
+                },
+              ),
     );
   }
 

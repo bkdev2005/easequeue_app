@@ -247,36 +247,6 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
-                    Icons.person_add_alt_1_rounded,
-                    color: FlutterFlowTheme.of(context).primary,
-                    size: 24,
-                  ),
-                  onPressed: () async {
-                    await showModalBottomSheet(
-                        context: context,
-                        isScrollControlled: true,
-                        backgroundColor: Colors.transparent,
-                        enableDrag: false,
-                        builder: (context) {
-                          return Padding(
-                              padding: MediaQuery.viewInsetsOf(context),
-                              child: AddAnotherCustomerWidget());
-                        }).then((value) {
-                      if (value != null) {
-                        setState(() {
-                          appointeeUUID = value;
-                        });
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FlutterFlowIconButton(
-                  borderRadius: 40,
-                  fillColor: FlutterFlowTheme.of(context).secondaryBackground,
-                  icon: Icon(
                     Icons.share_rounded,
                     color: FlutterFlowTheme.of(context).primary,
                     size: 24,
@@ -317,8 +287,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           Container(
                               decoration: BoxDecoration(
                                   borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(22),
-                                    bottomRight: Radius.circular(22),
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
                                     topLeft: Radius.circular(0),
                                     topRight: Radius.circular(0),
                                   ),
@@ -359,7 +329,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                       ),
                                       child: Padding(
                                           padding:
-                                              EdgeInsetsDirectional.fromSTEB(
+                                              const EdgeInsetsDirectional.fromSTEB(
                                                   14, 12, 12, 12),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
@@ -372,7 +342,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                   Expanded(
                                                       child: Padding(
                                                     padding:
-                                                        EdgeInsetsDirectional
+                                                       const  EdgeInsetsDirectional
                                                             .fromSTEB(
                                                                 0, 0, 0, 0),
                                                     child: Column(
@@ -630,7 +600,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                             .override(
                                                                               fontSize: 12,
                                                                               fontWeight: FontWeight.w500,
-                                                                              color: (businessDetail['status'] != 'Closed') ? Colors.green : Colors.redAccent,
+                                                                              color: (businessDetail['status'].toString().toLowerCase() != 'closed' ) ? Colors.green : Colors.redAccent,
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
                                                                             )),
@@ -776,9 +746,11 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               setState(() {
                                                 selectDay = day;
                                                 selectedDateIndex = index;
+                                                selectedServiceData.clear();
+                                                selectedServiceIndex.clear();
                                               });
                                               changeDate();
-                                              initBusinessData();
+                                              loadServices(widget.businessId!, date: finalDate);
                                             },
                                             child: Container(
                                               padding:
@@ -1365,9 +1337,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               formatDate: formatAppointmentDate,
                                               services: selectedServiceData,
                                               date: date,
-                                              uuid: (appointeeUUID != '')
-                                                  ? appointeeUUID
-                                                  : FFAppState().userId,
+                                              uuid: FFAppState().userId,
                                             )));
                               } else {
                                 Fluttertoast.showToast(msg: 'Select service');

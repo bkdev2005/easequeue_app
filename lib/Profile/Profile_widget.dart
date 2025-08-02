@@ -5,6 +5,8 @@ import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
+import '../Auth/Login/Login_widget.dart';
+import '../Component/Confirmation/permissionConfirmation.dart';
 import '../apiFunction.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
@@ -196,7 +198,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+                  padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 16),
                   child: TextFormField(
                     cursorColor: Colors.black,
                     controller: _model.yourNameTextController1,
@@ -214,7 +216,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+                  padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 16),
                   child: TextFormField(
                     cursorColor: Colors.black,
                     controller: _model.mobileTextController2,
@@ -235,7 +237,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                 ),
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+                  padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 16),
                   child: TextFormField(
                     cursorColor: Colors.black,
                     controller: _model.emailTextController3,
@@ -253,7 +255,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                   ),
                 ),
                 Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 16),
+                    padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 16),
                     child: Align(
                         alignment: Alignment.centerLeft,
                         child: Column(
@@ -263,10 +265,66 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                   style: TextStyle(fontSize: 16)),
                               gender()
                             ]))),
+
+                Padding(
+                    padding: const EdgeInsetsDirectional.fromSTEB(15, 10, 15, 0),
+                    child: GestureDetector( onTap: (){
+                      showDialog(context: context, builder: (context) {
+                        return const ConfirmationWidget(title: 'Delete Account', subtitle: 'Are you sure want to delete this account?',);
+                      }).then((value) async{
+                        if(value){
+                          await deleteData({}, 'user/${FFAppState().userId}').then((value) {
+                            log('response: $value');
+                            log('user_id: ${FFAppState().userId}');
+                            log('token: ${FFAppState().token}');
+                            if(value){
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginWidget()));
+                            }else{
+                              Fluttertoast.showToast(msg: 'Something went wrong');
+                            }
+                          });
+                        }
+                      });
+                    },  child: Container(
+                      decoration: BoxDecoration(
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                      ),
+                      child: Padding(
+                        padding: EdgeInsetsDirectional.fromSTEB(0, 10, 10, 10),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                             Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
+                              child: Icon(
+                                Icons.delete_rounded,
+                                color: Colors.red.shade200,
+                                size: 22,
+                              ),
+                            ),
+                            Padding(
+                              padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+                              child: Text(
+                                'Delete account',
+                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                  fontFamily: 'Inter',
+                                  color: Colors.red.shade200,
+                                  fontSize: 14,
+                                  letterSpacing: 0.0,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    )),
               ],
             ))),
             Padding(
-              padding: EdgeInsetsDirectional.fromSTEB(20, 10, 20, 20),
+              padding: EdgeInsetsDirectional.fromSTEB(15, 10, 15, 20),
               child: FFButtonWidget(
                 onPressed: () async {
                   String name = _model.yourNameTextController1!.text.trim();

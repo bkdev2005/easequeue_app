@@ -32,7 +32,7 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
     super.initState();
   }
 
-  void callApi(){
+  void callApi() {
     setState(() {
       isMainLoading = true;
     });
@@ -91,12 +91,23 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                     final business = businessList[index];
                     return Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(15, 10, 15, 0),
-                      child: Card(
-                        clipBehavior: Clip.antiAliasWithSaveLayer,
-                        color: FlutterFlowTheme.of(context).secondaryBackground,
-                        elevation: 1,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          border:
+                              Border.all(color: Colors.green.withOpacity(0.12)),
+                          gradient: LinearGradient(
+                            begin: Alignment.topCenter,
+                            end: Alignment.bottomCenter,
+                            colors: [
+                              Colors.green.withOpacity(0.04),
+                              Colors.green.withOpacity(
+                                  0.06), // Or any color for the bottom glow
+                              Colors.green.withOpacity(
+                                  0.09), // Or any color for the bottom glow
+                            ],
+                          ),
+                          // border: Border.all(color: Colors.black26),
+                          borderRadius: BorderRadius.circular(12),
                         ),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
@@ -116,7 +127,7 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                                     children: [
                                       Expanded(
                                           child: Text(
-                                            business['business_name']??'N/A',
+                                        business['business_name'] ?? 'N/A',
                                         maxLines: 2,
                                         overflow: TextOverflow.ellipsis,
                                         style: FlutterFlowTheme.of(context)
@@ -134,7 +145,8 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                                     padding: EdgeInsetsDirectional.fromSTEB(
                                         0, 5, 0, 0),
                                     child: Text(
-                                      formatAddress(business['business_address']),
+                                      formatAddress(
+                                          business['business_address']),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: FlutterFlowTheme.of(context)
@@ -149,39 +161,44 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                               ),
                             )),
                             Padding(
-                              padding:
-                                  EdgeInsetsDirectional.fromSTEB(0, 0, 15, 0),
-                              child: IconButton(
-                                onPressed: (){
-                                  showDialog(context: context,
-                                      builder: (context){
-                                    return const Center(child: ConfirmationWidget(title: 'Remove favourite business',
-                                    subtitle: 'Are you sure want remove favourite business?',
-                                    ),);
-                                      }).then((value) {
-                                    if (value) {
-                                      sendData(
-                                          {
-                                            "user_id": FFAppState().userId,
-                                            "business_id": business['business_id']
-                                          }, 'favourite').then((value) {
-                                        log('value: $value');
-                                      }).then((value) {
-                                        setState(() {
-                                          businessList.clear();
+                                padding:
+                                    EdgeInsetsDirectional.fromSTEB(0, 0, 5, 0),
+                                child: IconButton(
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return const Center(
+                                            child: ConfirmationWidget(
+                                              title:
+                                                  'Remove favourite business',
+                                              subtitle:
+                                                  'Are you sure want remove favourite business?',
+                                            ),
+                                          );
+                                        }).then((value) {
+                                      if (value) {
+                                        sendData({
+                                          "user_id": FFAppState().userId,
+                                          "business_id": business['business_id']
+                                        }, 'favourite')
+                                            .then((value) {
+                                          log('value: $value');
+                                        }).then((value) {
+                                          setState(() {
+                                            businessList.clear();
+                                          });
+                                          callApi();
                                         });
-                                        callApi();
-                                      });
-                                    }
-                                  });
-                                },
-                                icon: Icon(
-                                Icons.favorite_rounded,
-                                color:
-                                    FlutterFlowTheme.of(context).primary,
-                                size: 30,
-                              ),
-                            )),
+                                      }
+                                    });
+                                  },
+                                  icon: Icon(
+                                    Icons.favorite_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 24,
+                                  ),
+                                )),
                           ],
                         ),
                       ),

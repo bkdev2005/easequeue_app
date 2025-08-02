@@ -348,6 +348,9 @@ Future<File?> compressImage(File file) async {
   return result;
 }
 
+Color appBarColor = const Color(0xFF37625A);
+
+
 // AppBar
 
 AppBar appBarWidget(BuildContext context, String name){
@@ -434,14 +437,14 @@ InputDecoration searchInputDecoration(BuildContext context, String hintText){
       letterSpacing: 0.0,
     ),
     enabledBorder: OutlineInputBorder(
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         color: Color(0x00000000),
         width: 1,
       ),
       borderRadius: BorderRadius.circular(8),
     ),
     focusedBorder: OutlineInputBorder(
-      borderSide: BorderSide(
+      borderSide: const BorderSide(
         color: Color(0x00000000),
         width: 1,
       ),
@@ -465,8 +468,8 @@ InputDecoration searchInputDecoration(BuildContext context, String hintText){
     suffixIcon: IconButton(icon: Icon(Icons.close), iconSize: 24, onPressed: (){
 
     },),
-    fillColor: Color(0xFFF4F4F4),
-    prefixIcon: Icon(
+    fillColor: const Color(0xFFF4F4F4),
+    prefixIcon: const Icon(
       Icons.search_rounded,
     ),
   );
@@ -576,6 +579,41 @@ Future<void> launchInstagram(String url) async {
   }
 }
 
+String convertToIsoUtc(String date, String time) {
+  // Combine date and time into one string
+  String dateTimeString = "$date $time";
+
+  // Parse the local DateTime (from 12-hour time)
+  DateTime localDateTime = DateFormat('yyyy-MM-dd hh:mm a').parse(dateTimeString);
+
+  // Convert to UTC
+  DateTime utcDateTime = localDateTime.toUtc();
+
+  // Format to ISO 8601 (e.g., 2025-08-02T13:07:16.535Z)
+  String isoUtcString = utcDateTime.toIso8601String();
+
+  return isoUtcString;
+}
+
+String totalPrice(List<dynamic> dataList, parameter) {
+  double total = 0;
+
+  for (final d in dataList) {
+    if (d[parameter] != null) {
+      total += (d[parameter]);
+      log('price: $total');
+    } else {
+      return '';
+    }
+  }
+
+  // Convert to int if no decimal part, else keep it as double.
+  if (total == total.toInt()) {
+    return total.toInt().toString();
+  } else {
+    return total.toString();
+  }
+}
 
 String changeFormat(String dateTime) {
   String input = dateTime;

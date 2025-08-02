@@ -339,6 +339,25 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       ],
                                     ),
                                   )),
+
+                                  FlutterFlowIconButton(
+                                    borderRadius: 8,
+                                    buttonSize: 40,
+                                    fillColor:
+                                    FlutterFlowTheme.of(context).primary,
+                                    icon: Icon(Icons.calendar_month_rounded,
+                                        color:
+                                        FlutterFlowTheme.of(context).info,
+                                        size: 24),
+                                    onPressed: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailAppointmentsWidget(
+                                                  )));
+                                    },
+                                  ),
                                   FlutterFlowIconButton(
                                     borderRadius: 8,
                                     buttonSize: 40,
@@ -491,7 +510,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   BorderRadius.circular(30),
                                             ),
                                             focusedBorder: OutlineInputBorder(
-                                              borderSide: BorderSide(
+                                              borderSide: const BorderSide(
                                                 color: Color(0x00000000),
                                                 width: 1,
                                               ),
@@ -503,7 +522,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             fillColor:
                                                 FlutterFlowTheme.of(context)
                                                     .secondaryBackground,
-                                            prefixIcon: Icon(
+                                            prefixIcon: const Icon(
                                               Icons.search_rounded,
                                             ),
                                             suffixIcon: _model.textController!
@@ -514,7 +533,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           ?.clear();
                                                       safeSetState(() {});
                                                     },
-                                                    child: Icon(
+                                                    child: const Icon(
                                                       Icons.clear,
                                                       size: 22,
                                                     ),
@@ -593,7 +612,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           return Column(
                                             children: [
                                               Padding(
-                                                  padding: EdgeInsets.fromLTRB(
+                                                  padding: const EdgeInsets.fromLTRB(
                                                       20, 20, 20, 0),
                                                   child: Row(
                                                     mainAxisAlignment:
@@ -696,7 +715,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                           Container(
                                                                             decoration:
                                                                                 BoxDecoration(
-                                                                              border: Border.all(width: 2, color: (message['is_queue_running'] == false) ? Colors.redAccent : Colors.transparent),
+                                                                              border: Border.all(width: 2, color: (message['is_queue_running'] == false) ? Colors.red.shade200 : Colors.transparent),
                                                                               borderRadius: BorderRadius.circular(16),
                                                                               color: FlutterFlowTheme.of(context).primaryBackground,
                                                                             ),

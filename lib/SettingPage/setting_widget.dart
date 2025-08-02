@@ -53,7 +53,7 @@ class _SettingPageWidgetState extends State<SettingPageWidget> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+            padding: EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
             child: Row(
               mainAxisSize: MainAxisSize.max,
               children: [
@@ -139,66 +139,7 @@ class _SettingPageWidgetState extends State<SettingPageWidget> {
               contentPadding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
             ),
           ),
-          const Divider(
-            thickness: 1,
-          ),
-          Padding(
-            padding: EdgeInsetsDirectional.fromSTEB(24, 0, 24, 0),
-            child: GestureDetector( onTap: (){
-              showDialog(context: context, builder: (context) {
-                return const ConfirmationWidget(title: 'Delete Account', subtitle: 'Are you sure want to delete this account?',);
-              }).then((value) async{
-                if(value){
-                  await deleteData({}, 'user/${FFAppState().userId}').then((value) {
-                    log('response: $value');
-                    log('user_id: ${FFAppState().userId}');
-                    log('token: ${FFAppState().token}');
-                    if(value){
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=> LoginWidget()));
-                    }else{
-                      Fluttertoast.showToast(msg: 'Something went wrong');
-                    }
-                  });
-                }
-              });
-            },  child: Container(
-              decoration: BoxDecoration(
-                color: FlutterFlowTheme.of(context).primaryBackground,
-              ),
-              child: Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(0, 10, 10, 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(0, 2, 0, 0),
-                      child: Icon(
-                        Icons.delete_rounded,
-                        color: Color(0xFFFF3333),
-                        size: 24,
-                      ),
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
-                      child: Text(
-                        'Delete account',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Inter',
-                          color: Color(0xFFFF1313),
-                          fontSize: 16,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          )),
-          Divider(
-            thickness: 1,
-          ),
+
         ],
       ),
     );

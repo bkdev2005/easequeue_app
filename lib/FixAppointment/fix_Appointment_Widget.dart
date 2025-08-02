@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sliding_action_button/sliding_action_button.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
@@ -56,17 +57,12 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   WebSocketService? _webSocketService;
   String appointeeUUID = '';
   String appointeeName = '';
+  String? appointmentTime;
   String? _token; // Token to be passed
   int selectedGuests = 0;
   bool isLoading = false;
   dynamic selectQueue;
-  List<String> times = [
-    "12:00 PM",
-    "01:00 PM",
-    "02:00 PM",
-    "03:00 PM",
-    "04:00 PM"
-  ];
+  List<dynamic> times = [];
   List<dynamic> serviceSelectQueue = [];
 
   void addIdInUrl(List<String> serviceUUID) {
@@ -78,6 +74,21 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
       } else {
         setState(() {
           url += '&queue_service_ids=${serviceUUID[index]}';
+        });
+      }
+    }
+  }
+
+  Future<void> availableSlots() async {
+    final slotsData = await fetchData(
+        'available_slots?employee_id=${selectQueue['employee_id'][0]}&queue_id=$selectedQueueId&search_date=${widget.date}',
+        context);
+    if (slotsData != null) {
+      if (slotsData['data'].toString() != '[]') {
+        final data = slotsData['data']['slots_formatted'].toList() ?? [];
+        log('Data: $data');
+        setState(() {
+          times = data;
         });
       }
     }
@@ -100,6 +111,9 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           _messageStreamController?.add(message);
           setState(() {
             messageList = getJsonField(jsonDecode(message), r'''$.data''');
+            appointmentTime = (messageList['estimated_appointment_time'].toString().length > 5)
+                ? messageList['estimated_appointment_time'].toString().substring(11)
+                : messageList['estimated_appointment_time'].toString();
           });
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
           log("Received: $message");
@@ -137,6 +151,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
         selectedQueueId = queueList[0]['queue_id'];
         serviceSelectQueue = queueList[0]['services'];
       });
+      availableSlots();
     });
     _model = createModel(context, () => FixAppointmentModel());
   }
@@ -168,11 +183,11 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                 Text(
                   widget.businessName,
                   style: FlutterFlowTheme.of(context).headlineSmall.override(
-                    fontFamily: 'Inter Tight',
-                    color: FlutterFlowTheme.of(context).primaryBackground,
-                    fontSize: 18,
-                    letterSpacing: 0.0,
-                  ),
+                        fontFamily: 'Inter Tight',
+                        color: FlutterFlowTheme.of(context).primaryBackground,
+                        fontSize: 18,
+                        letterSpacing: 0.0,
+                      ),
                 ),
                 Text(
                   widget.formatDate,
@@ -185,8 +200,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
               ],
             ),
             actions: [
-              toggleButton()
-            ],
+              if(selectedTimeSlot != null)
+              IconButton(
+                color: Colors.white,
+                  onPressed: (){
+                  setState(() {
+                    selectedTimeSlot = null;
+                    selectedLunchTimeIndex = -1;
+                  });
+                  Fluttertoast.showToast(msg: 'Time slot reset');
+                  },
+                  icon: const Icon(Icons.refresh_rounded)
+              ),
+              toggleButton()],
             centerTitle: false,
             elevation: 2,
           ),
@@ -254,9 +280,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                           ),
                                         ),
                                         Padding(
-                                          padding:
-                                              const EdgeInsetsDirectional.fromSTEB(
-                                                  0, 2, 0, 15),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 2, 0, 15),
                                           child: Text(
                                             data != null
                                                 ? data['current_token'] ?? '00'
@@ -287,186 +312,104 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                           children: [
                                             Expanded(
                                                 child: Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(10, 0, 0, 0),
-                                              child: InkWell(
-                                                onTap: (){
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (context) {
-                                                        return Dialog(
-                                                            shape: RoundedRectangleBorder(
-                                                                borderRadius:
-                                                                BorderRadius.circular(20)),
-                                                            backgroundColor:
-                                                            FlutterFlowTheme.of(context)
-                                                                .primaryBackground,
-                                                            child: Padding(
-                                                                padding: EdgeInsets.all(16),
-                                                                child: Column(
-                                                                    mainAxisSize:
-                                                                    MainAxisSize.min,
-                                                                    children: [
-                                                                      const Row(
-                                                                          mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .start,
-                                                                          children: [
-                                                                            Text(
-                                                                                "Book with slot",
-                                                                                style:
-                                                                                TextStyle(
-                                                                                  fontWeight:
-                                                                                  FontWeight
-                                                                                      .w600,
-                                                                                  fontSize: 16,
-                                                                                  fontFamily:
-                                                                                  'Inter',
-                                                                                ))
-                                                                          ]),
-                                                                      const SizedBox(
-                                                                        height: 10,
-                                                                      ),
-                                                                      Column(
-                                                                        crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                        children: [
-                                                                          Align(
-                                                                            alignment: Alignment
-                                                                                .centerLeft,
-                                                                            child: Wrap(
-                                                                              spacing: 10,
-                                                                              runSpacing: 10,
-                                                                              children:
-                                                                              List.generate(
-                                                                                  times
-                                                                                      .length,
-                                                                                      (index) {
-                                                                                    return GestureDetector(
-                                                                                      onTap: () {
-                                                                                        setState(() {
-                                                                                        selectedLunchTimeIndex =
-                                                                                            index;
-                                                                                        selectedTimeSlot = times[index];
-                                                                                        });
-                                                                                        context
-                                                                                            .pop();
-                                                                                      },
-                                                                                      child:
-                                                                                      Container(
-                                                                                        width: 80,
-                                                                                        padding: const EdgeInsets
-                                                                                            .symmetric(
-                                                                                            vertical:
-                                                                                            8),
-                                                                                        decoration:
-                                                                                        BoxDecoration(
-                                                                                          border: Border.all(
-                                                                                              width: selectedLunchTimeIndex == index
-                                                                                                  ? 2
-                                                                                                  : 1,
-                                                                                              color: selectedLunchTimeIndex == index
-                                                                                                  ? FlutterFlowTheme.of(context).primary
-                                                                                                  : Colors.grey[400]!),
-                                                                                          borderRadius:
-                                                                                          BorderRadius.circular(
-                                                                                              8),
-                                                                                        ),
-                                                                                        alignment:
-                                                                                        Alignment
-                                                                                            .center,
-                                                                                        child:
-                                                                                        Column(
-                                                                                          children: [
-                                                                                            Text(
-                                                                                              times[
-                                                                                              index],
-                                                                                              textAlign:
-                                                                                              TextAlign.center,
-                                                                                            ),
-                                                                                          ],
-                                                                                        ),
-                                                                                      ),
-                                                                                    );
-                                                                                  }),
-                                                                            ),
-                                                                          )
-                                                                        ],
-                                                                      ),
-                                                                    ])));
-                                                      });
-                                                },
-                                                child: Column(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Row( mainAxisAlignment: MainAxisAlignment.center, children: [
-                                                    Text(
-                                                      'Estimated time',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily: 'Inter',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                            fontSize: 14,
-                                                            letterSpacing: 0.0,
-                                                          ),
-                                                    ),
-                                                     const SizedBox(
-                                                       width: 5,
-                                                     ),
-                                                     const Icon(Icons.edit_calendar_rounded, color: Colors.white, size: 16,)
-                                                    ]),
-                                                    Padding(
-                                                      padding:
-                                                          const EdgeInsetsDirectional
-                                                              .fromSTEB(
-                                                              0, 0, 0, 0),
-                                                      child: Text(
-                                                          (selectedTimeSlot != null)? selectedTimeSlot??'' :
-                                                        data != null
-                                                            ? (data['formatted_wait_time'] !=
-                                                                    null)
-                                                                ? (messageList['estimated_appointment_time']
-                                                                            .toString()
-                                                                            .length >
-                                                                        5)
-                                                                    ? messageList[
-                                                                            'estimated_appointment_time']
-                                                                        .toString()
-                                                                        .substring(
-                                                                            11)
-                                                                    : messageList[
-                                                                            'estimated_appointment_time']
-                                                                        .toString()
-                                                                : '0'
-                                                            : '00',
-                                                        style:
-                                                            FlutterFlowTheme.of(
-                                                                    context)
-                                                                .bodyMedium
-                                                                .override(
-                                                                  fontFamily:
-                                                                      'Inter',
-                                                                  color: FlutterFlowTheme.of(
-                                                                          context)
-                                                                      .primaryBackground,
-                                                                  fontSize: 30,
-                                                                  letterSpacing:
-                                                                      0.0,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                ),
-                                                      ),
-                                                    ),
-                                                  ]),
-                                            ))),
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            10, 0, 0, 0),
+                                                    child: InkWell(
+                                                      onTap: () {
+                                                        if (times.isNotEmpty) {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (context) {
+                                                                return slotTime();
+                                                              });
+                                                        }
+                                                      },
+                                                      child: Column(
+                                                          mainAxisSize:
+                                                              MainAxisSize.min,
+                                                          children: [
+                                                            Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .center,
+                                                                children: [
+                                                                  Text(
+                                                                    'Estimated time',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Inter',
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBackground,
+                                                                          fontSize:
+                                                                              14,
+                                                                          letterSpacing:
+                                                                              0.0,
+                                                                        ),
+                                                                  ),
+                                                                  if (times
+                                                                      .isNotEmpty)
+                                                                    const SizedBox(
+                                                                      width: 5,
+                                                                    ),
+                                                                  if (times
+                                                                      .isNotEmpty)
+                                                                    const Icon(
+                                                                      Icons
+                                                                          .edit_calendar_rounded,
+                                                                      color: Colors
+                                                                          .white,
+                                                                      size: 16,
+                                                                    )
+                                                                ]),
+                                                            Padding(
+                                                              padding:
+                                                                  const EdgeInsetsDirectional
+                                                                      .fromSTEB(
+                                                                      0,
+                                                                      0,
+                                                                      0,
+                                                                      0),
+                                                              child: Text(
+                                                                (selectedTimeSlot !=
+                                                                        null)
+                                                                    ? selectedTimeSlot ??
+                                                                        ''
+                                                                    : data !=
+                                                                            null
+                                                                        ? (data['formatted_wait_time'] !=
+                                                                                null)
+                                                                            ? (messageList['estimated_appointment_time'].toString().length > 5)
+                                                                                ? messageList['estimated_appointment_time'].toString().substring(11)
+                                                                                : messageList['estimated_appointment_time'].toString()
+                                                                            : '0'
+                                                                        : '00',
+                                                                style: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                      fontFamily:
+                                                                          'Inter',
+                                                                      color: FlutterFlowTheme.of(
+                                                                              context)
+                                                                          .primaryBackground,
+                                                                      fontSize:
+                                                                          30,
+                                                                      letterSpacing:
+                                                                          0.0,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w600,
+                                                                    ),
+                                                              ),
+                                                            ),
+                                                          ]),
+                                                    ))),
                                             SizedBox(
                                               height: 90,
                                               child: VerticalDivider(
@@ -504,6 +447,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                             .fromSTEB(
                                                             0, 0, 0, 0),
                                                     child: Text(
+                                                      (selectedTimeSlot != null)? '-/-' :
                                                       data != null
                                                           ? (data['position'] !=
                                                                   null)
@@ -544,7 +488,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     children: [
-
                       /*Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),
                           child: Row(
@@ -757,28 +700,34 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                             ],
                           )),*/
 
-                      if(appointeeUUID != widget.uuid)
+                      if (appointeeUUID != widget.uuid)
+                        Padding(
+                            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                  color: Colors.green.withOpacity(0.08),
+                                  borderRadius: BorderRadius.circular(14)),
+                              child: Padding(
+                                  padding: const EdgeInsets.all(14),
+                                  child: Row(children: [
+                                    Icon(
+                                      Icons.task_alt_rounded,
+                                      color:
+                                          FlutterFlowTheme.of(context).primary,
+                                    ),
+                                    const SizedBox(
+                                      width: 8,
+                                    ),
+                                    Expanded(
+                                        child: Text(
+                                      'Appointment will be add as guest user $appointeeName',
+                                      style: const TextStyle(fontSize: 14),
+                                    ))
+                                  ])),
+                            )),
                       Padding(
-                          padding: EdgeInsets.fromLTRB(15, 15, 15, 0),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                color: Colors.green.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(14)),
-                            child: Padding(
-                                padding: EdgeInsets.all(14),
-                                child: Row(children: [
-                                  Icon(Icons.task_alt_rounded, color: FlutterFlowTheme.of(context).primary,),
-                                  const SizedBox(width: 8,),
-                                   Expanded(
-                                      child: Text(
-                                        'Appointment will be add as guest user $appointeeName',
-                                        style: const TextStyle(fontSize: 14),
-                                      ))
-                                ])),
-                          )),
-
-                      Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(15, 16, 0, 0),
+                        padding:
+                            const EdgeInsetsDirectional.fromSTEB(15, 16, 0, 0),
                         child: Row(
                           mainAxisSize: MainAxisSize.max,
                           children: [
@@ -796,7 +745,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           ],
                         ),
                       ),
-
                       Padding(
                         padding:
                             const EdgeInsetsDirectional.fromSTEB(0, 6, 0, 0),
@@ -1175,6 +1123,9 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                 left: 15, right: 15, top: 15, bottom: 0),
                             child: Container(
                                 decoration: BoxDecoration(
+                                  border: Border.all(
+                                      color: Colors.green.withOpacity(0.12)
+                                  ),
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
@@ -1186,7 +1137,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                           0.12), // Or any color for the bottom glow
                                     ],
                                   ),
-                                  // border: Border.all(color: Colors.black26),
                                   borderRadius: const BorderRadius.only(
                                     bottomLeft: Radius.circular(12),
                                     bottomRight: Radius.circular(12),
@@ -1301,6 +1251,9 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
                           child: Container(
                             decoration: BoxDecoration(
+                              border: Border.all(
+                                color: Colors.green.withOpacity(0.12)
+                              ),
                                 color: Colors.green.withOpacity(0.08),
                                 borderRadius: BorderRadius.circular(14)),
                             child: const Padding(
@@ -1380,6 +1333,14 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           "token_number": "string",
                           "turn_time": 0,
                           "queue_services": services,
+                          "estimated_enqueue_time": convertToIsoUtc(widget.date, (selectedTimeSlot != null)? selectedTimeSlot! : appointmentTime!),
+                          "notes": "string",
+                          "cancellation_reason": "string",
+                          "reschedule_count": 0,
+                          "joined_queue":
+                              (selectedTimeSlot != null) ? false : true,
+                          "is_scheduled":
+                              (selectedTimeSlot != null) ? true : false
                         }, 'queue_user')
                             .then((value) {
                           log('response: $value');
@@ -1440,270 +1401,144 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
         ));
   }
 
-  bool? showPremiumAppointmentDialog(BuildContext context,
-      {required String userName,
-      required String businessName,
-      required String date,
-      required String time,
-      required String staffName,
-      required String serviceName,
-      required String userId,
-      required String queueId,
-      required String queueDate,
-      required List<dynamic> queueServices}) {
-    showDialog(
-      context: context,
-      builder: (context) {
-        return Dialog(
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-          backgroundColor: Colors.white,
-          child: Stack(
-            clipBehavior: Clip.none,
-            alignment: Alignment.topCenter,
+  Widget slotTime() {
+    return Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              Column(mainAxisSize: MainAxisSize.min, children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 60, left: 20, right: 20, bottom: 10),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        "Appointment Confirmation",
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: FlutterFlowTheme.of(context).primary,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 10),
-                      Text(
-                        "Hi $userName 👋\nYou're booking with",
-                        style: TextStyle(fontSize: 14, color: Colors.grey[700]),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        businessName,
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: FlutterFlowTheme.of(context).primary,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-
-                      // Details
-                      _infoTile(
-                          Icons.calendar_today_rounded, 'Date', widget.date),
-                      _infoTile(Icons.access_time_rounded, 'Time', time),
-                      _infoTile(Icons.cut_rounded, 'Service', serviceName),
-                      _infoTile(Icons.person_rounded, 'Staff', staffName),
-                    ],
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.center,
-                  child: Text(
-                    "Note: Time is approximate and may vary slightly.",
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontStyle: FontStyle.normal,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ),
-                Padding(
-                    padding: EdgeInsets.all(20),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
+              Padding(
+                  padding: const EdgeInsets.only(left: 5),
+                  child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Expanded(
-                          child: SizedBox(
-                              height: 45,
-                              child: OutlinedButton(
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor:
-                                      FlutterFlowTheme.of(context).primary,
-                                  side: BorderSide(
-                                      color:
-                                          FlutterFlowTheme.of(context).primary),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
-                                  ),
-                                ),
-                                onPressed: () => Navigator.pop(context, false),
-                                child: Text(
-                                  "Cancel",
-                                  style: FlutterFlowTheme.of(context)
-                                      .titleMedium
-                                      .override(
-                                        fontFamily: 'Inter Tight',
-                                        color: FlutterFlowTheme.of(context)
-                                            .primary,
-                                        fontSize: 16,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                ),
-                              )),
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                            child: FFButtonWidget(
-                                text: 'Confirm',
-                                onPressed: () async {},
-                                options: FFButtonOptions(
-                                  width: double.infinity,
-                                  height: 45,
-                                  padding: const EdgeInsetsDirectional.fromSTEB(
-                                      0, 0, 0, 0),
-                                  iconPadding:
-                                      const EdgeInsetsDirectional.fromSTEB(
-                                          0, 0, 0, 0),
-                                  color: FlutterFlowTheme.of(context).primary,
-                                  textStyle: FlutterFlowTheme.of(context)
-                                      .titleMedium
-                                      .override(
-                                        fontFamily: 'Inter Tight',
-                                        color: Colors.white,
-                                        fontSize: 16,
-                                        letterSpacing: 0.0,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                  elevation: 2,
-                                  borderSide: const BorderSide(
-                                    color: Colors.transparent,
-                                    width: 1,
-                                  ),
-                                  borderRadius: BorderRadius.circular(30),
-                                )))
-                      ],
-                    )),
-              ]),
-
-              // Avatar / Icon
-              Positioned(
-                top: -40,
-                child: CircleAvatar(
-                  radius: 40,
-                  backgroundColor: FlutterFlowTheme.of(context).primary,
-                  child: Text(
-                    businessName.isNotEmpty ? businessName[0] : 'B',
-                    style: const TextStyle(fontSize: 32, color: Colors.white),
-                  ),
-                ),
+                        const Text("Book with slot",
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16,
+                              fontFamily: 'Inter',
+                            )),
+                        GestureDetector(
+                            onTap: () {
+                              context.pop();
+                            },
+                            child: const Padding(
+                              padding: EdgeInsets.all(6),
+                              child: Icon(Icons.close_rounded),
+                            ))
+                      ])),
+              const SizedBox(
+                height: 7,
               ),
+              Padding(
+                  padding: const EdgeInsets.all(5),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: List.generate(times.length, (index) {
+                        final timeData = times[index];
+                        return GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedLunchTimeIndex = index;
+                              selectedTimeSlot = timeData['start'];
+                            });
+                            context.pop();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(vertical: 8),
+                            decoration: BoxDecoration(
+                              border: Border.all(
+                                  width:
+                                      selectedLunchTimeIndex == index ? 2 : 1,
+                                  color: selectedLunchTimeIndex == index
+                                      ? FlutterFlowTheme.of(context).primary
+                                      : Colors.grey[400]!),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8),
+                                child: Text(
+                                  '${timeData['start']}',
+                                  textAlign: TextAlign.center,
+                                )),
+                          ),
+                        );
+                      }),
+                    ),
+                  ))
             ],
           ),
-        );
-      },
-    ).then((value) {});
-  }
-
-  Widget _infoTile(IconData icon, String label, String value) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Icon(icon, color: FlutterFlowTheme.of(context).primary),
-          const SizedBox(width: 12),
-          Text(
-            "$label:",
-            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-          ),
-          const SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              value,
-              style: TextStyle(color: Colors.grey[800], fontSize: 16),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ),
-        ],
-      ),
-    );
+        ));
   }
 
   bool _isIncognito = false;
   Widget toggleButton() {
-    return
-        Padding(
-          padding: EdgeInsets.symmetric(horizontal: 12),
-          child:
-              Switch(
-                value: _isIncognito,
-                activeColor: Colors.teal,
-                inactiveTrackColor: Colors.white,
-                trackOutlineWidth: WidgetStateProperty.resolveWith ((Set  states) {
-                  if (states.contains(WidgetState.disabled)) {
-                    return 0.1;
-                  }
-                  return null; // Use the default width.
-                }),
-                trackOutlineColor: WidgetStateProperty.resolveWith ((Set  states) {
-                  if (states.contains(WidgetState.disabled)) {
-                    return Colors.teal.withOpacity(.48);
-                  }
-                  return Colors.transparent; // Use the default color.
-                }),
-                inactiveThumbImage: const AssetImage('assets/images/user.png',),
-                activeThumbImage: const AssetImage('assets/images/user.png',),
-                activeTrackColor: Colors.black54,
-                onChanged: (value) async {
-                  if(value == true){
-                  debugPrint('Guest Mode: $_isIncognito');
-                  await showModalBottomSheet(
-                  context: context,
-                  isScrollControlled: true,
-                  backgroundColor: Colors.transparent,
-                  enableDrag: false,
-                  builder: (context) {
-                    return Padding(
-                        padding: MediaQuery.viewInsetsOf(context),
-                        child: const AddAnotherCustomerWidget());
-                  }).then((response) {
-                    if (response != null) {
-                      final uuid = response['uuid'];
-                      final name = response['full_name'];
-                      setState(() {
-                        _isIncognito = true;
-                        appointeeUUID = uuid;
-                        appointeeName = name;
-                      });
-                    }
-                  });
-                  }else{
-                    setState(() {
-                      _isIncognito = false;
-                      appointeeUUID = widget.uuid;
-                      appointeeName = '';
-                    });
-                  }
-                },
-              ),
+    return Padding(
+      padding: const EdgeInsets.only(right: 12),
+      child: Switch(
+        value: _isIncognito,
+        activeColor: Colors.teal,
+        inactiveTrackColor: Colors.white,
+        trackOutlineWidth: WidgetStateProperty.resolveWith((Set states) {
+          if (states.contains(WidgetState.disabled)) {
+            return 0.1;
+          }
+          return null; // Use the default width.
+        }),
+        trackOutlineColor: WidgetStateProperty.resolveWith((Set states) {
+          if (states.contains(WidgetState.disabled)) {
+            return Colors.teal.withOpacity(.48);
+          }
+          return Colors.transparent; // Use the default color.
+        }),
+        inactiveThumbImage: const AssetImage(
+          'assets/images/user.png',
+        ),
+        activeThumbImage: const AssetImage(
+          'assets/images/user.png',
+        ),
+        activeTrackColor: Colors.black54,
+        onChanged: (value) async {
+          if (value == true) {
+            debugPrint('Guest Mode: $_isIncognito');
+            await showModalBottomSheet(
+                context: context,
+                isScrollControlled: true,
+                backgroundColor: Colors.transparent,
+                enableDrag: false,
+                builder: (context) {
+                  return Padding(
+                      padding: MediaQuery.viewInsetsOf(context),
+                      child: const AddAnotherCustomerWidget());
+                }).then((response) {
+              if (response != null) {
+                final uuid = response['uuid'];
+                final name = response['full_name'];
+                setState(() {
+                  _isIncognito = true;
+                  appointeeUUID = uuid;
+                  appointeeName = name;
+                });
+              }
+            });
+          } else {
+            setState(() {
+              _isIncognito = false;
+              appointeeUUID = widget.uuid;
+              appointeeName = '';
+            });
+          }
+        },
+      ),
     );
   }
 
-  String totalPrice(List<dynamic> dataList, parameter) {
-    double total = 0;
 
-    for (final d in dataList) {
-      if (d[parameter] != null) {
-        total += (d[parameter]);
-        log('price: $total');
-      } else {
-        return '';
-      }
-    }
-
-    // Convert to int if no decimal part, else keep it as double.
-    if (total == total.toInt()) {
-      return total.toInt().toString();
-    } else {
-      return total.toString();
-    }
-  }
 }

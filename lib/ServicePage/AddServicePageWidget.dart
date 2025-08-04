@@ -1,8 +1,4 @@
 import 'dart:developer';
-import 'package:eqlite/BookingDateAndTime/bookingDateAndTimeWidget.dart';
-import 'package:url_launcher/url_launcher.dart';
-
-import 'package:eqlite/Component/AddAnotherPerson/AddOtherWidget.dart';
 import 'package:eqlite/ServicePage/service_model.dart';
 import 'package:eqlite/function.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -11,6 +7,7 @@ import 'package:screenshot/screenshot.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../Component/BusinessDetail/business_info_widget.dart';
+import '../Component/rating_dailog.dart';
 import '../FixAppointment/fix_Appointment_Widget.dart';
 import '../apiFunction.dart';
 import '/flutter_flow/flutter_flow_icon_button.dart';
@@ -18,16 +15,11 @@ import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'dart:ui';
-import '/flutter_flow/random_data_util.dart' as random_data;
 import 'package:flutter/material.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:provider/provider.dart';
 
 class AddServicePageWidget extends StatefulWidget {
   const AddServicePageWidget(
-      {super.key, this.businessDetail, this.businessId, this.lat, this.long});
-  final dynamic businessDetail;
+      {super.key, this.businessId, this.lat, this.long});
   final String? lat;
   final String? long;
   final String? businessId;
@@ -146,7 +138,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     loadSchedule();
     loadReviews();
     setMapData();
-    isAddedFav = businessDetail['is_favourite'] ?? false;
+    // isAddedFav = businessDetail['is_favourite'] ?? false;
   }
 
   void loadSchedule() {
@@ -218,7 +210,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-                FlutterFlowIconButton(
+               /* FlutterFlowIconButton(
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
@@ -231,7 +223,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                   onPressed: () async {
                     await sendData({
                       "user_id": FFAppState().userId,
-                      "business_id": widget.businessDetail['uuid']
+                      "business_id": widget.businessId
                     }, 'favourite')
                         .then((value) {
                       setState(() {
@@ -239,16 +231,31 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                       });
                     });
                   },
+                ),*/
+                FlutterFlowIconButton(
+                  borderRadius: 40,
+                  icon: Icon(
+                    Icons.star_rate_sharp,
+                    color: FlutterFlowTheme.of(context).primaryBackground,
+                    size: 24,
+                  ),
+                  onPressed: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => BusinessRatingDialog(
+                        businessId: widget.businessId!,
+                      ),
+                    );
+                  },
                 ),
                 const SizedBox(
                   width: 6,
                 ),
                 FlutterFlowIconButton(
                   borderRadius: 40,
-                  fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
                     Icons.share_rounded,
-                    color: FlutterFlowTheme.of(context).primary,
+                    color: FlutterFlowTheme.of(context).primaryBackground,
                     size: 24,
                   ),
                   onPressed: () async {
@@ -295,7 +302,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   color: FlutterFlowTheme.of(context).primary),
                               child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    18, 35, 18, 20),
+                                    18, 10, 18, 20),
                                 child: Column(children: [
                                   const Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1197,8 +1204,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   children: [
                                     InkWell(
                                         onTap: () {
-                                          sendWhatsAppMessage(widget
-                                              .businessDetail['phone_number']);
+                                          sendWhatsAppMessage(
+                                              businessDetail['phone_number']);
                                         },
                                         child: Image.asset(
                                           'assets/images/whatsapp.png',

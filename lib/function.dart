@@ -622,3 +622,30 @@ String changeFormat(String dateTime) {
   print(formatted); // 25 June 2025\n08:09 PM
   return formatted;
 }
+
+Widget addressIcon(String address, BuildContext context){
+  return Material(
+      borderRadius:
+      BorderRadius.circular(6),
+      child: InkWell(
+      onTap: () {
+        openGoogleMapSearch(address);
+      },
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius:
+          BorderRadius.circular(6),
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(4),
+          child: Icon(
+            Icons.directions_rounded,
+            color:
+            FlutterFlowTheme.of(context)
+                .primaryText,
+            size: 22,
+          ),
+        ),
+      )));
+}

@@ -3,7 +3,6 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 import 'package:eqlite/Dashboard/dashboard_widget.dart';
-import 'package:eqlite/DetailAppointment/detail_Appointment_Widget.dart';
 import 'package:eqlite/flutter_flow/flutter_flow_icon_button.dart';
 // import 'package:image_gallery_saver/image_gallery_saver.dart';
 import 'package:path_provider/path_provider.dart';

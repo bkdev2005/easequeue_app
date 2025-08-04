@@ -140,7 +140,6 @@ class _ScannerQrState extends State<ScannerQr> {
                   context,
                   MaterialPageRoute(
                       builder: (context) => AddServicePageWidget(
-                            businessDetail: data,
                             lat: widget.lat,
                             long: widget.long,
                           ))).then((value) {
@@ -182,7 +181,6 @@ class _ScannerQrState extends State<ScannerQr> {
           context,
           MaterialPageRoute(
               builder: (context) => AddServicePageWidget(
-                    businessDetail: null,
                     businessId: code,
                   )));
       // Your logic here, e.g., API call or navigation

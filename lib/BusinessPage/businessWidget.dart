@@ -341,7 +341,6 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                                   context,
                                   MaterialPageRoute(
                                     builder: (context) => AddServicePageWidget(
-                                      businessDetail: businessListItem,
                                       lat: widget.latitude,
                                       long: widget.longitude,
                                       businessId: businessListItem['uuid'],

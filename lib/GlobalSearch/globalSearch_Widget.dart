@@ -286,7 +286,6 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => AddServicePageWidget(
-                                    businessDetail: businessItem,
                                     businessId: businessItem['uuid'],
                                     lat: widget.lat,
                                     long: widget.long,

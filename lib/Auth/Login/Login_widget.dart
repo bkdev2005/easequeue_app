@@ -64,7 +64,7 @@ class _LoginWidgetState extends State<LoginWidget> {
               child: Column(
                 mainAxisSize: MainAxisSize.max,
                 children: [
-                  Row(
+                  const Row(
                     mainAxisSize: MainAxisSize.max,
                     children: [],
                   ),
@@ -114,14 +114,14 @@ class _LoginWidgetState extends State<LoginWidget> {
                                     width: 25,
                                     height: 25,
                                     clipBehavior: Clip.antiAlias,
-                                    decoration: BoxDecoration(
+                                    decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                     ),
                                     child: Image.asset(
                                       'assets/images/india.png',
                                     ),
                                   ),
-                                  Icon(
+                                  const Icon(
                                     Icons.arrow_drop_down_rounded,
                                     color: Color(0xFF828282),
                                     size: 24,

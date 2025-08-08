@@ -101,21 +101,21 @@ class _BusinessRatingDialogState extends State<BusinessRatingDialog> {
                           textStyle: const TextStyle(
                               color: Colors
                                   .black)))),
-                 Expanded(child: FFButtonWidget(text: 'Submit', onPressed: () async{
-                  final review = await sendData({
-                     "user_id": FFAppState().userId,
-                     "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                     "queue_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                     "service_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                     "business_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                     "queue_user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                     "rating": _rating,
-                     "comment": "string",
-                     "is_verified": true
-                   }, 'review').then((response){
-                     log('response: $response');
-                  });
-                 },
+                         Expanded(child: FFButtonWidget(text: 'Submit', onPressed: () async{
+                          final review = await sendData({
+                             "user_id": FFAppState().userId,
+                             "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                             "queue_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                             "service_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                             "business_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                             "queue_user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                             "rating": _rating,
+                             "comment": "string",
+                             "is_verified": true
+                           }, 'review').then((response){
+                             log('response: $response');
+                          });
+                         },
                      options: FFButtonOptions(
                      width:
                      double.infinity,

@@ -116,14 +116,14 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                           .fontStyle,
                     ),
                     enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0x00000000),
                         width: 1,
                       ),
                       borderRadius: BorderRadius.circular(8),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
+                      borderSide: const BorderSide(
                         color: Color(0x00000000),
                         width: 1,
                       ),
@@ -144,8 +144,8 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                       borderRadius: BorderRadius.circular(8),
                     ),
                     filled: true,
-                    fillColor: Color(0xFFF4F4F4),
-                    prefixIcon: Icon(
+                    fillColor: const Color(0xFFF4F4F4),
+                    prefixIcon: const Icon(
                       Icons.search_rounded,
                     ),
                   ),
@@ -163,36 +163,36 @@ class _SelectCityWidgetState extends State<SelectCityWidget> {
                   _model.textControllerValidator.asValidator(context),
                 ),
               ),
-              Padding(
-                padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 10),
-                child: Row(
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    Icon(
-                      Icons.my_location_sharp,
-                      color: FlutterFlowTheme.of(context).primary,
-                      size: 24,
-                    ),
-                    Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
-                      child: Text(
-                        'Auto Detect My Location',
-                        style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Inter',
-                          color: FlutterFlowTheme.of(context).primary,
-                          letterSpacing: 0.0,
-                          fontWeight: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .fontWeight,
-                          fontStyle: FlutterFlowTheme.of(context)
-                              .bodyMedium
-                              .fontStyle,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Padding(
+              //   padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 10),
+              //   child: Row(
+              //     mainAxisSize: MainAxisSize.max,
+              //     children: [
+              //       Icon(
+              //         Icons.my_location_sharp,
+              //         color: FlutterFlowTheme.of(context).primary,
+              //         size: 24,
+              //       ),
+              //       Padding(
+              //         padding: EdgeInsetsDirectional.fromSTEB(8, 0, 0, 0),
+              //         child: Text(
+              //           'Auto Detect My Location',
+              //           style: FlutterFlowTheme.of(context).bodyMedium.override(
+              //             fontFamily: 'Inter',
+              //             color: FlutterFlowTheme.of(context).primary,
+              //             letterSpacing: 0.0,
+              //             fontWeight: FlutterFlowTheme.of(context)
+              //                 .bodyMedium
+              //                 .fontWeight,
+              //             fontStyle: FlutterFlowTheme.of(context)
+              //                 .bodyMedium
+              //                 .fontStyle,
+              //           ),
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
               Divider(
                 thickness: 0.5,
                 color: Color(0xFF626262),

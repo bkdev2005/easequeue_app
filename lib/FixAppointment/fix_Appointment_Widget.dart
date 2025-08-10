@@ -111,8 +111,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           _messageStreamController?.add(message);
           setState(() {
             messageList = getJsonField(jsonDecode(message), r'''$.data''');
-            appointmentTime = (messageList['estimated_appointment_time'].toString().length > 5)
-                ? messageList['estimated_appointment_time'].toString().substring(11)
+            appointmentTime = (messageList['estimated_appointment_time'].toString().length > 8)
+                ? messageList['estimated_appointment_time'].toString().substring(15)
                 : messageList['estimated_appointment_time'].toString();
           });
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
@@ -384,8 +384,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                             null
                                                                         ? (data['formatted_wait_time'] !=
                                                                                 null)
-                                                                            ? (messageList['estimated_appointment_time'].toString().length > 5)
-                                                                                ? messageList['estimated_appointment_time'].toString().substring(11)
+                                                                            ? (messageList['estimated_appointment_time'].toString().length > 8)
+                                                                                ? messageList['estimated_appointment_time'].toString().substring(15)
                                                                                 : messageList['estimated_appointment_time'].toString()
                                                                             : '0'
                                                                         : '00',
@@ -1308,6 +1308,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       circleSlidingButtonBackgroundColor: Colors.white,
                       isEnable: true,
                       onSlideActionCompleted: () async {
+                        if(isLoading == false){
                         setState(() {
                           isLoading = true;
                         });
@@ -1360,6 +1361,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                         setState(() {
                           isLoading = false;
                         });
+                        }
                       },
                       onSlideActionCanceled: () {
                         print("Sliding action cancelled");

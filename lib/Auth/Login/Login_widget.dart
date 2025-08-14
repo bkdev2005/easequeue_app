@@ -33,7 +33,6 @@ class _LoginWidgetState extends State<LoginWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => LoginModel());
-
     _model.phoneTextController ??= TextEditingController();
     _model.phoneFocusNode ??= FocusNode();
   }
@@ -208,10 +207,15 @@ class _LoginWidgetState extends State<LoginWidget> {
                     padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                     child: FFButtonWidget(
                         onPressed: () async{
+
+                          getDeviceInfo(context);
+                          log('device: ${FFAppState().deviceInfo}');
                           if(_model.phoneTextController.text.length == 10){
                             final response = await preAuthApi(
                                 {
-                                  "phone_number": _model.phoneTextController.text
+                                  "phone_number": _model.phoneTextController.text,
+                                  "fcm_token": FFAppState().fcmToken,
+                                  "device_info": jsonDecode(FFAppState().deviceInfo)['platform']
                                 },
                                 'send_otp').then((value) {
                               if(value!= null){

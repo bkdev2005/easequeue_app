@@ -111,9 +111,13 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
           _messageStreamController?.add(message);
           setState(() {
             messageList = getJsonField(jsonDecode(message), r'''$.data''');
-            appointmentTime = (messageList['estimated_appointment_time'].toString().length > 8)
-                ? messageList['estimated_appointment_time'].toString().substring(15)
-                : messageList['estimated_appointment_time'].toString();
+            appointmentTime =
+                (messageList['estimated_appointment_time'].toString().length >
+                        8)
+                    ? messageList['estimated_appointment_time']
+                        .toString()
+                        .substring(15)
+                    : messageList['estimated_appointment_time'].toString();
           });
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
           log("Received: $message");
@@ -200,19 +204,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
               ],
             ),
             actions: [
-              if(selectedTimeSlot != null)
-              IconButton(
-                color: Colors.white,
-                  onPressed: (){
-                  setState(() {
-                    selectedTimeSlot = null;
-                    selectedLunchTimeIndex = -1;
-                  });
-                  Fluttertoast.showToast(msg: 'Time slot reset');
-                  },
-                  icon: const Icon(Icons.refresh_rounded)
-              ),
-              toggleButton()],
+              if (selectedTimeSlot != null)
+                IconButton(
+                    color: Colors.white,
+                    onPressed: () {
+                      setState(() {
+                        selectedTimeSlot = null;
+                        selectedLunchTimeIndex = -1;
+                      });
+                      Fluttertoast.showToast(msg: 'Time slot reset');
+                    },
+                    icon: const Icon(Icons.refresh_rounded)),
+              toggleButton()
+            ],
             centerTitle: false,
             elevation: 2,
           ),
@@ -447,14 +451,15 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                             .fromSTEB(
                                                             0, 0, 0, 0),
                                                     child: Text(
-                                                      (selectedTimeSlot != null)? '-/-' :
-                                                      data != null
-                                                          ? (data['position'] !=
-                                                                  null)
-                                                              ? data['position']
-                                                                  .toString()
-                                                              : '0'
-                                                          : '0',
+                                                      (selectedTimeSlot != null)
+                                                          ? '-/-'
+                                                          : data != null
+                                                              ? (data['position'] !=
+                                                                      null)
+                                                                  ? data['position']
+                                                                      .toString()
+                                                                  : '0'
+                                                              : '0',
                                                       style: FlutterFlowTheme
                                                               .of(context)
                                                           .bodyMedium
@@ -1124,8 +1129,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                             child: Container(
                                 decoration: BoxDecoration(
                                   border: Border.all(
-                                      color: Colors.green.withOpacity(0.12)
-                                  ),
+                                      color: Colors.green.withOpacity(0.12)),
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
@@ -1251,9 +1255,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                           padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
                           child: Container(
                             decoration: BoxDecoration(
-                              border: Border.all(
-                                color: Colors.green.withOpacity(0.12)
-                              ),
+                                border: Border.all(
+                                    color: Colors.green.withOpacity(0.12)),
                                 color: Colors.green.withOpacity(0.08),
                                 borderRadius: BorderRadius.circular(14)),
                             child: const Padding(
@@ -1308,59 +1311,63 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                       circleSlidingButtonBackgroundColor: Colors.white,
                       isEnable: true,
                       onSlideActionCompleted: () async {
-                        if(isLoading == false){
-                        setState(() {
-                          isLoading = true;
-                        });
-                        final services = [];
-                        for (final x in serviceSelectQueue) {
-                          for (final s in widget.services) {
-                            log('service s: $s');
-                            log('service x: $x');
-                            if (x['service_id'] == s['service_id']) {
-                              services.add(s['queue_service_uuids']
-                                  .toString()
-                                  .replaceAll('[', '')
-                                  .replaceAll(']', ''));
+                        if (isLoading == false) {
+                          setState(() {
+                            isLoading = true;
+                          });
+                          final services = [];
+                          for (final x in serviceSelectQueue) {
+                            for (final s in widget.services) {
+                              log('service s: $s');
+                              log('service x: $x');
+                              if (x['service_id'] == s['service_id']) {
+                                services.add(s['queue_service_uuids']
+                                    .toString()
+                                    .replaceAll('[', '')
+                                    .replaceAll(']', ''));
+                              }
                             }
                           }
-                        }
 
-                        final apiCall = await sendData({
-                          "user_id": appointeeUUID,
-                          "priority": false,
-                          "queue_id": selectedQueueId!,
-                          "queue_date": widget.date,
-                          "token_number": "string",
-                          "turn_time": 0,
-                          "queue_services": services,
-                          "estimated_enqueue_time": convertToIsoUtc(widget.date, (selectedTimeSlot != null)? selectedTimeSlot! : appointmentTime!),
-                          "notes": "string",
-                          "cancellation_reason": "string",
-                          "reschedule_count": 0,
-                          "joined_queue":
-                              (selectedTimeSlot != null) ? false : true,
-                          "is_scheduled":
-                              (selectedTimeSlot != null) ? true : false
-                        }, 'queue_user')
-                            .then((value) {
-                          log('response: $value');
-                          if (value != null) {
-                            setState(() {
-                              isLoading = false;
-                            });
-                            return Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => ConfirmUiWidget(
-                                          response: value,
-                                        )));
-                          }
-                        });
+                          final apiCall = await sendData({
+                            "user_id": appointeeUUID,
+                            "priority": false,
+                            "queue_id": selectedQueueId!,
+                            "queue_date": widget.date,
+                            "token_number": "string",
+                            "turn_time": 0,
+                            "queue_services": services,
+                            "estimated_enqueue_time": convertToIsoUtc(
+                                widget.date,
+                                (selectedTimeSlot != null)
+                                    ? selectedTimeSlot!
+                                    : appointmentTime!),
+                            "notes": "string",
+                            "cancellation_reason": "string",
+                            "reschedule_count": 0,
+                            "joined_queue":
+                                (selectedTimeSlot != null) ? false : true,
+                            "is_scheduled":
+                                (selectedTimeSlot != null) ? true : false
+                          }, 'queue_user')
+                              .then((value) {
+                            log('response: $value');
+                            if (value != null) {
+                              setState(() {
+                                isLoading = false;
+                              });
+                              return Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ConfirmUiWidget(
+                                            response: value,
+                                          )));
+                            }
+                          });
 
-                        setState(() {
-                          isLoading = false;
-                        });
+                          setState(() {
+                            isLoading = false;
+                          });
                         }
                       },
                       onSlideActionCanceled: () {
@@ -1541,6 +1548,4 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
       ),
     );
   }
-
-
 }

@@ -57,6 +57,9 @@ class FFAppState extends ChangeNotifier {
       _userId = prefs.getString('ff_userId') ?? _userId;
     });
     _safeInit(() {
+      _deviceInfo = prefs.getString('ff_deviceInfo') ?? _deviceInfo;
+    });
+    _safeInit(() {
       _businessDetail = prefs.getString('ff_businessDetail') ?? _businessDetail;
     });
     _safeInit(() {
@@ -187,6 +190,13 @@ class FFAppState extends ChangeNotifier {
   set user(dynamic _value) {
     _user = _value;
     prefs.setString('ff_user', jsonEncode(_value));
+  }
+
+  dynamic _deviceInfo;
+  dynamic get deviceInfo => _deviceInfo;
+  set deviceInfo(dynamic _value) {
+    _deviceInfo = _value;
+    prefs.setString('ff_deviceInfo', jsonEncode(_value));
   }
 
   dynamic _businessDetail;

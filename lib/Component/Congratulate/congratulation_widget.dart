@@ -61,12 +61,9 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
         },
         child: SafeArea(
             child: Material(
-          child: Container(
-            decoration: BoxDecoration(
-              color: FlutterFlowTheme.of(context).secondaryBackground,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
+              color: FlutterFlowTheme.of(context).primaryBackground,
+          child: Column( children: [
+            Expanded(child: SingleChildScrollView( child: Column(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -221,77 +218,78 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                       ),
                     ),
                   ),
-                Padding(
-                    padding: const EdgeInsets.all(20),
-                    child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 25, 8, 0),
-                            child: FlutterFlowIconButton(
-                              borderRadius: 30,
-                              fillColor: FlutterFlowTheme.of(context).primary,
-                              icon: const Icon(
-                                Icons.share_rounded,
-                                color: Colors.white,
-                                size: 36,
-                              ),
-                              onPressed: () async {
-                                log('call ');
-                                await decodeBase64ToFile().then((onValue) {
-                                  navigateTo(context, HomePageWidget());
-                                });
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(0, 25, 8, 0),
-                            child: FlutterFlowIconButton(
-                              borderRadius: 30,
-                              fillColor: FlutterFlowTheme.of(context).primary,
-                              icon: const Icon(
-                                Icons.download_rounded,
-                                color: Colors.white,
-                                size: 36,
-                              ),
-                              onPressed: () async {
-                                log('call ');
-                                await decodeBase64ToFile().then((_) {
-                                  navigateTo(context, HomePageWidget());
-                                });
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding:
-                                EdgeInsetsDirectional.fromSTEB(8, 25, 0, 0),
-                            child: FlutterFlowIconButton(
-                              borderRadius: 30,
-                              fillColor: FlutterFlowTheme.of(context).primary,
-                              icon: const Icon(
-                                Icons.home_rounded,
-                                color: Colors.white,
-                                size: 36,
-                              ),
-                              onPressed: () async {
-                                if (FFAppState().fistTimeUser) {
-                                  final response =
-                                      await fetchData('user/me', context)
-                                          ?.then((value) {
-                                    if (value != null) {}
-                                  });
-                                }
-                                navigateTo(context, HomePageWidget());
-                              },
-                            ),
-                          ),
-                        ]))
+
               ],
             ),
-          ),
-        )));
+          )),
+            Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Padding(
+                        padding:
+                        EdgeInsetsDirectional.fromSTEB(0, 10, 8, 0),
+                        child: FlutterFlowIconButton(
+                          borderRadius: 30,
+                          fillColor: FlutterFlowTheme.of(context).primary,
+                          icon: const Icon(
+                            Icons.share_rounded,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                          onPressed: () async {
+                            log('call ');
+                            await decodeBase64ToFile().then((onValue) {
+                              navigateTo(context, HomePageWidget());
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                        EdgeInsetsDirectional.fromSTEB(8, 10, 8, 0),
+                        child: FlutterFlowIconButton(
+                          borderRadius: 30,
+                          fillColor: FlutterFlowTheme.of(context).primary,
+                          icon: const Icon(
+                            Icons.download_rounded,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                          onPressed: () async {
+                            log('call ');
+                            await decodeBase64ToFile().then((_) {
+                              navigateTo(context, HomePageWidget());
+                            });
+                          },
+                        ),
+                      ),
+                      Padding(
+                        padding:
+                        EdgeInsetsDirectional.fromSTEB(8, 10, 0, 0),
+                        child: FlutterFlowIconButton(
+                          borderRadius: 30,
+                          fillColor: FlutterFlowTheme.of(context).primary,
+                          icon: const Icon(
+                            Icons.home_rounded,
+                            color: Colors.white,
+                            size: 36,
+                          ),
+                          onPressed: () async {
+                            if (FFAppState().fistTimeUser) {
+                              final response =
+                              await fetchData('user/me', context)
+                                  ?.then((value) {
+                                if (value != null) {}
+                              });
+                            }
+                            navigateTo(context, HomePageWidget());
+                          },
+                        ),
+                      ),
+                    ]))
+       ]) )));
   }
 
   Widget appointmentDetail(String label, String value, {IconData? icon}) {

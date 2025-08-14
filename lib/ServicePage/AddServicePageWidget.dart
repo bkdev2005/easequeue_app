@@ -68,7 +68,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   void initBusinessData() {
     setState(() => isLoading = true);
     fetchData(
-            'business/${widget.businessId}?user_location=$lat&user_location=$long?filter_date=$finalDate',
+            'business/${widget.businessId}?filter_date=$finalDate&user_location=$lat&user_location=$long',
             context)
         ?.then((value) {
       if (value != null) {
@@ -611,8 +611,10 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
                                                                             )),
-                                                                    Text(
+                                                                    Expanded(child: Text(
                                                                         ' • ${businessDetail['status_message']}',
+                                                                        maxLines: 1,
+                                                                        overflow: TextOverflow.ellipsis,
                                                                         style: FlutterFlowTheme.of(context)
                                                                             .bodyMedium
                                                                             .override(
@@ -621,7 +623,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               color: Colors.black45,
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
-                                                                            )),
+                                                                            ))),
                                                                     const Icon(
                                                                       Icons
                                                                           .keyboard_arrow_down_rounded,

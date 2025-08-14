@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/rendering.dart';
@@ -45,8 +46,7 @@ Widget backIcon(BuildContext context) {
 /// Generates a list of the next 7 days including today.
 /// Each entry is a map with keys: "year", "month", "date", "day".
 List<dynamic> getNext7DaysAsMap() {
-  final DateFormat yearFormatter =
-      DateFormat('yyyy');
+  final DateFormat yearFormatter = DateFormat('yyyy');
   final DateFormat monthFormatter =
       DateFormat('MMM'); // Abbreviated month name (e.g., Jan)
   final DateFormat dayFormatter =
@@ -104,22 +104,27 @@ void dialNumber(String phoneNumber) async {
 }
 
 // Loading
-Widget loading(BuildContext context){
-  return Center(child: Container(
-    height: 60,
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: FlutterFlowTheme.of(context).primaryBackground,
-        boxShadow: const [ BoxShadow(
-          color: Colors.black38,
-          blurRadius: 5.0,
-        ),]
+Widget loading(BuildContext context) {
+  return Center(
+    child: Container(
+      height: 60,
+      decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: FlutterFlowTheme.of(context).primaryBackground,
+          boxShadow: const [
+            BoxShadow(
+              color: Colors.black38,
+              blurRadius: 5.0,
+            ),
+          ]),
+      child: const Padding(
+          padding: EdgeInsets.all(12),
+          child: CircularProgressIndicator(
+            color: Colors.black54,
+            strokeWidth: 3,
+          )),
     ),
-    child: const Padding(
-        padding: EdgeInsets.all(12),
-        child: CircularProgressIndicator(
-          color: Colors.black54, strokeWidth: 3,)),
-  ),);
+  );
 }
 
 // joint address
@@ -133,13 +138,18 @@ String formatAddress(dynamic address) {
 
 // Empty List
 
-Widget emptyList(){
-  return Center(child: Image.asset('assets/images/empty-folder.png', height: 70 ,),);
+Widget emptyList() {
+  return Center(
+    child: Image.asset(
+      'assets/images/empty-folder.png',
+      height: 70,
+    ),
+  );
 }
 
 // Button Style
 
-FFButtonOptions buttonStyle(BuildContext context){
+FFButtonOptions buttonStyle(BuildContext context) {
   return FFButtonOptions(
     width: double.infinity,
     height: 55,
@@ -147,12 +157,12 @@ FFButtonOptions buttonStyle(BuildContext context){
     iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
     color: FlutterFlowTheme.of(context).primary,
     textStyle: FlutterFlowTheme.of(context).titleMedium.override(
-      fontFamily: 'Inter Tight',
-      color: Colors.white,
-      fontSize: 16,
-      letterSpacing: 0.0,
-      fontWeight: FontWeight.w500,
-    ),
+          fontFamily: 'Inter Tight',
+          color: Colors.white,
+          fontSize: 16,
+          letterSpacing: 0.0,
+          fontWeight: FontWeight.w500,
+        ),
     elevation: 2,
     borderSide: const BorderSide(
       color: Colors.transparent,
@@ -218,14 +228,14 @@ InputDecoration textInputDecoration(BuildContext context, String label) {
   );
 }
 
- // Check Null
- bool checkNull(dynamic data){
-  if(data != null && data != '' && data != 'null'){
+// Check Null
+bool checkNull(dynamic data) {
+  if (data != null && data != '' && data != 'null') {
     return true;
-  }else{
+  } else {
     return false;
   }
- }
+}
 
 //getMonthNumber
 
@@ -278,16 +288,20 @@ Future<List<dynamic>?> getLocation() async {
 // getAddressFromCoordinates
 
 Future<List<String?>?> getAddressFromCoordinates(Position position) async {
-try {
-List<Placemark> placemarks = await placemarkFromCoordinates(
-position.latitude, position.longitude);
+  try {
+    List<Placemark> placemarks =
+        await placemarkFromCoordinates(position.latitude, position.longitude);
 
-Placemark place = placemarks.first;
-return [place.name, '${place.subLocality}, ${place.locality}, ${place.country}', place.postalCode.toString()];
-} catch (e) {
-print('Error: $e');
-}
-return null;
+    Placemark place = placemarks.first;
+    return [
+      place.name,
+      '${place.subLocality}, ${place.locality}, ${place.country}',
+      place.postalCode.toString()
+    ];
+  } catch (e) {
+    print('Error: $e');
+  }
+  return null;
 }
 
 // CaptureScreenshot Image
@@ -315,7 +329,8 @@ Future<XFile?> pickImageFile() async {
   final ImagePicker picker = ImagePicker();
 
   try {
-    final XFile? pickedFile = await picker.pickImage(source: ImageSource.gallery);
+    final XFile? pickedFile =
+        await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       // Compress the image
       File? compressedFile = await compressImage(File(pickedFile.path));
@@ -350,10 +365,9 @@ Future<File?> compressImage(File file) async {
 
 Color appBarColor = const Color(0xFF37625A);
 
-
 // AppBar
 
-AppBar appBarWidget(BuildContext context, String name){
+AppBar appBarWidget(BuildContext context, String name) {
   return AppBar(
     backgroundColor: const Color(0xFF37625A),
     automaticallyImplyLeading: false,
@@ -374,11 +388,11 @@ AppBar appBarWidget(BuildContext context, String name){
     title: Text(
       name,
       style: FlutterFlowTheme.of(context).headlineSmall.override(
-        fontFamily: 'Inter Tight',
-        color: FlutterFlowTheme.of(context).primaryBackground,
-        fontSize: 22,
-        letterSpacing: 0.0,
-      ),
+            fontFamily: 'Inter Tight',
+            color: FlutterFlowTheme.of(context).primaryBackground,
+            fontSize: 22,
+            letterSpacing: 0.0,
+          ),
     ),
     actions: [],
     centerTitle: false,
@@ -397,7 +411,8 @@ String todayDate() {
 // format time stamp
 
 String formatTimestamp(String timestamp) {
-  DateTime dateTime = DateTime.parse(timestamp).toLocal(); // Convert to local timezone
+  DateTime dateTime =
+      DateTime.parse(timestamp).toLocal(); // Convert to local timezone
   return DateFormat("dd MMM yy, hh:mm a").format(dateTime);
 }
 
@@ -420,22 +435,18 @@ String _formatTime(String time) {
   return '${hour.toString().padLeft(2, '0')}:$minute $period';
 }
 
-
-
-InputDecoration searchInputDecoration(BuildContext context, String hintText){
+InputDecoration searchInputDecoration(BuildContext context, String hintText) {
   return InputDecoration(
     isDense: true,
-    labelStyle:
-    FlutterFlowTheme.of(context).labelMedium.override(
-      fontFamily: 'Inter',
-      letterSpacing: 0.0,
-    ),
+    labelStyle: FlutterFlowTheme.of(context).labelMedium.override(
+          fontFamily: 'Inter',
+          letterSpacing: 0.0,
+        ),
     hintText: hintText,
-    hintStyle:
-    FlutterFlowTheme.of(context).labelMedium.override(
-      fontFamily: 'Inter',
-      letterSpacing: 0.0,
-    ),
+    hintStyle: FlutterFlowTheme.of(context).labelMedium.override(
+          fontFamily: 'Inter',
+          letterSpacing: 0.0,
+        ),
     enabledBorder: OutlineInputBorder(
       borderSide: const BorderSide(
         color: Color(0x00000000),
@@ -465,9 +476,11 @@ InputDecoration searchInputDecoration(BuildContext context, String hintText){
       borderRadius: BorderRadius.circular(8),
     ),
     filled: true,
-    suffixIcon: IconButton(icon: Icon(Icons.close), iconSize: 24, onPressed: (){
-
-    },),
+    suffixIcon: IconButton(
+      icon: Icon(Icons.close),
+      iconSize: 24,
+      onPressed: () {},
+    ),
     fillColor: const Color(0xFFF4F4F4),
     prefixIcon: const Icon(
       Icons.search_rounded,
@@ -487,10 +500,9 @@ Future<String?> getFCMToken() async {
     return token;
   } else {
     print("Failed to get token");
-      return null;
+    return null;
   }
 }
-
 
 String serviceName(List<dynamic> services) {
   // Use a list to collect the service names
@@ -506,7 +518,6 @@ String serviceName(List<dynamic> services) {
   return names.join(', ');
 }
 
-
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   print('Handling background message: ${message.messageId}');
@@ -520,7 +531,8 @@ Future<String?> getToken() async {
 
 List<String> getAllQueueServiceUuids(List<dynamic> services) {
   return services
-      .expand((service) => List<String>.from(service["queue_service_uuids"] ?? []))
+      .expand(
+          (service) => List<String>.from(service["queue_service_uuids"] ?? []))
       .toList();
 }
 
@@ -558,12 +570,14 @@ List<String> getAllQueueServiceUuids(List<dynamic> services) {
 //   }
 // }
 
-
 Future<void> openGoogleMapSearch(String query) async {
-  final Uri url = Uri.parse("https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}");
+  final Uri url = Uri.parse(
+      "https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(query)}");
 
   if (await canLaunchUrl(url)) {
-    await launchUrl(url,);
+    await launchUrl(
+      url,
+    );
   } else {
     throw 'Could not launch $url';
   }
@@ -584,7 +598,8 @@ String convertToIsoUtc(String date, String time) {
   String dateTimeString = "$date $time";
 
   // Parse the local DateTime (from 12-hour time)
-  DateTime localDateTime = DateFormat('yyyy-MM-dd hh:mm a').parse(dateTimeString);
+  DateTime localDateTime =
+      DateFormat('yyyy-MM-dd hh:mm a').parse(dateTimeString);
 
   // Convert to UTC
   DateTime utcDateTime = localDateTime.toUtc();
@@ -623,29 +638,65 @@ String changeFormat(String dateTime) {
   return formatted;
 }
 
-Widget addressIcon(String address, BuildContext context){
+Widget addressIcon(String address, BuildContext context) {
   return Material(
-      borderRadius:
-      BorderRadius.circular(6),
+      borderRadius: BorderRadius.circular(6),
       child: InkWell(
-      onTap: () {
-        openGoogleMapSearch(address);
-      },
-      child: Container(
-        decoration: BoxDecoration(
-          color: Colors.grey[200],
-          borderRadius:
-          BorderRadius.circular(6),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(4),
-          child: Icon(
-            Icons.directions_rounded,
-            color:
-            FlutterFlowTheme.of(context)
-                .primaryText,
-            size: 22,
-          ),
-        ),
-      )));
+          onTap: () {
+            openGoogleMapSearch(address);
+          },
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.grey[200],
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(4),
+              child: Icon(
+                Icons.directions_rounded,
+                color: FlutterFlowTheme.of(context).primaryText,
+                size: 22,
+              ),
+            ),
+          )));
 }
+
+
+Future<void> getDeviceInfo(BuildContext context) async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  Map<String, dynamic> info = {};
+
+  try {
+    if (Theme.of(context).platform == TargetPlatform.android) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      info = {
+        "platform": "android",
+        "brand": androidInfo.brand,
+        "model": androidInfo.model,
+        "manufacturer": androidInfo.manufacturer,
+        "androidVersion": androidInfo.version.release,
+        "sdk": androidInfo.version.sdkInt
+      };
+    } else if (Theme.of(context).platform == TargetPlatform.iOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      info = {
+        "platform": "ios",
+        "model": iosInfo.utsname.machine,
+        "iosVersion": iosInfo.systemVersion,
+        "deviceName": iosInfo.name
+      };
+    }
+  } catch (e) {
+    info = {
+      "error": e.toString()
+    };
+  }
+
+  // Save as JSON string
+  FFAppState().deviceInfo = jsonEncode(info);
+
+  // If you want to save in local storage:
+  // final prefs = await SharedPreferences.getInstance();
+  // await prefs.setString('device_info', jsonEncode(info));
+}
+

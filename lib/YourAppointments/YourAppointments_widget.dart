@@ -33,7 +33,7 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
-  String statusLabel = '1';
+  String statusLabel = '2';
   int currentPage = 1;
   bool isFetchingMore = false;
   bool hasMoreData = true;
@@ -514,7 +514,28 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                                       ),
                                                 ),
                                               ),
-                                            ])
+                                            ]),
+
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsetsDirectional
+                                                  .fromSTEB(0, 15, 0, 0),
+                                              child: Text(
+                                                (appointmentListItem['is_scheduled'] == true)? '"Time-slot-based appointment booking"' : '"Queue-based appointment booking"',
+                                                style: FlutterFlowTheme.of(context)
+                                                    .bodyMedium
+                                                    .override(
+                                                  fontSize: 12,
+                                                  color: FlutterFlowTheme.of(context).primary,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: 0.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),

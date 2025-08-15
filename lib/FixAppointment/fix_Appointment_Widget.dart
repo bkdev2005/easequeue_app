@@ -803,15 +803,16 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
                                           Container(
-                                            width: 50,
-                                            height: 50,
+                                            width: 46,
+                                            height: 46,
                                             clipBehavior: Clip.antiAlias,
-                                            decoration: const BoxDecoration(
+                                            decoration: BoxDecoration(
                                               shape: BoxShape.circle,
+                                              color: Colors.grey.shade100
                                             ),
-                                            child: Image.network(
-                                              'https://picsum.photos/seed/273/600',
-                                              fit: BoxFit.cover,
+                                            child: Icon(
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              Icons.person_rounded, size: 30,
                                             ),
                                           ),
                                           Expanded(

@@ -214,7 +214,6 @@ class _LoginWidgetState extends State<LoginWidget> {
                             final response = await preAuthApi(
                                 {
                                   "phone_number": _model.phoneTextController.text,
-                                  "fcm_token": FFAppState().fcmToken,
                                   "device_info": jsonDecode(FFAppState().deviceInfo)['platform']
                                 },
                                 'send_otp').then((value) {

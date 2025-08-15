@@ -1,7 +1,9 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:eqlite/Dashboard/dashboard_widget.dart';
 import 'package:eqlite/Profile/Profile_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import '../../apiFunction.dart';
 import '../../app_state.dart';
@@ -28,20 +30,66 @@ class VerifyWidget extends StatefulWidget {
 
 class _VerifyWidgetState extends State<VerifyWidget> {
   late VerifyModel _model;
-
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  static const int initialTime = 5 * 60; // 5 minutes in seconds
+  int timeLeft = initialTime;
+  Timer? timer;
+  bool isRunning = false;
+
+  void startTimer() {
+    if (!isRunning) {
+      timer = Timer.periodic(Duration(seconds: 1), (Timer t) {
+        setState(() {
+          if (timeLeft < 1) {
+            t.cancel();
+            isRunning = false;
+          } else {
+            timeLeft--;
+          }
+        });
+      });
+      setState(() {
+        isRunning = true;
+      });
+    }
+  }
+
+  void pauseTimer() {
+    if (isRunning) {
+      timer?.cancel();
+      setState(() {
+        isRunning = false;
+      });
+    }
+  }
+
+  void resetTimer() {
+    timer?.cancel();
+    setState(() {
+      timeLeft = initialTime;
+      isRunning = false;
+    });
+  }
+
+  String formatTime(int seconds) {
+    int minutes = seconds ~/ 60;
+    int remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
 
   @override
   void initState() {
     super.initState();
+    startTimer();
     _model = createModel(context, () => VerifyModel());
-    _model.pinCodeController = TextEditingController(text: '654321');
+    _model.pinCodeController = TextEditingController(text: '');
   }
 
   @override
   void dispose() {
+    timer?.cancel();
     _model.dispose();
-
     super.dispose();
   }
 
@@ -60,7 +108,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
           child: Column(
             mainAxisSize: MainAxisSize.max,
             children: [
-              Row(
+              const Row(
                 mainAxisSize: MainAxisSize.max,
                 children: [],
               ),
@@ -75,24 +123,24 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                       Text(
                         'Verify with OTP',
                         style: FlutterFlowTheme.of(context).bodyMedium.override(
-                          fontFamily: 'Inter',
-                          fontSize: 22,
-                          letterSpacing: 0.0,
-                          fontWeight: FontWeight.w500,
-                        ),
+                              fontFamily: 'Inter',
+                              fontSize: 22,
+                              letterSpacing: 0.0,
+                              fontWeight: FontWeight.w500,
+                            ),
                       ),
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                         child: Text(
                           'Enter the OTP you received to',
                           style:
-                          FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            color: Color(0xFF828282),
-                            fontSize: 15,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.normal,
-                          ),
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Inter',
+                                    color: Color(0xFF828282),
+                                    fontSize: 15,
+                                    letterSpacing: 0.0,
+                                    fontWeight: FontWeight.normal,
+                                  ),
                         ),
                       ),
                       Padding(
@@ -100,12 +148,12 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                         child: Text(
                           '+91-${widget.phone}',
                           style:
-                          FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            color: Colors.black54,
-                            fontSize: 15,
-                            letterSpacing: 0.0,
-                          ),
+                              FlutterFlowTheme.of(context).bodyMedium.override(
+                                    fontFamily: 'Inter',
+                                    color: Colors.black54,
+                                    fontSize: 15,
+                                    letterSpacing: 0.0,
+                                  ),
                         ),
                       ),
                       Padding(
@@ -115,11 +163,11 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                           appContext: context,
                           length: 6,
                           textStyle:
-                          FlutterFlowTheme.of(context).bodyLarge.override(
-                            fontFamily: 'Inter',
-                            color: Colors.black,
-                            letterSpacing: 0.0,
-                          ),
+                              FlutterFlowTheme.of(context).bodyLarge.override(
+                                    fontFamily: 'Inter',
+                                    color: Colors.black,
+                                    letterSpacing: 0.0,
+                                  ),
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           enableActiveFill: false,
                           autoFocus: true,
@@ -134,7 +182,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                             fieldHeight: 44,
                             fieldWidth: 44,
                             borderWidth: 2,
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(8),
                               bottomRight: Radius.circular(8),
                               topLeft: Radius.circular(8),
@@ -152,36 +200,61 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                               .asValidator(context),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
-                        child: Text(
-                          'By continue to next step you are accepting Terms & Conditions and Privacy Policy !',
-                          style:
-                          FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Inter',
-                            color: Color(0xFF828282),
-                            fontSize: 12,
-                            letterSpacing: 0.0,
-                            fontWeight: FontWeight.normal,
-                            lineHeight: 1.5,
-                          ),
-                        ),
-                      ),
+                      // Padding(
+                      //   padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
+                      //   child: Text(
+                      //     'By continue to next step you are accepting Terms & Conditions and Privacy Policy !',
+                      //     style:
+                      //     FlutterFlowTheme.of(context).bodyMedium.override(
+                      //       fontFamily: 'Inter',
+                      //       color: Color(0xFF828282),
+                      //       fontSize: 12,
+                      //       letterSpacing: 0.0,
+                      //       fontWeight: FontWeight.normal,
+                      //       lineHeight: 1.5,
+                      //     ),
+                      //   ),
+                      // ),
                       Align(
-                        alignment: AlignmentDirectional(1, 0),
+                        alignment: AlignmentDirectional(0, 0),
                         child: Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(0, 20, 0, 0),
-                          child: Text(
-                            'Resend OTP',
-                            style: FlutterFlowTheme.of(context)
-                                .bodyMedium
-                                .override(
-                              fontFamily: 'Inter',
-                              color:
-                              FlutterFlowTheme.of(context).primaryText,
-                              letterSpacing: 0.0,
-                            ),
-                          ),
+                          child: (isRunning)
+                              ? Text(
+                                  'Resend OTP In ${formatTime(timeLeft)}',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        color: FlutterFlowTheme.of(context)
+                                            .primary,
+                                        letterSpacing: 0.0,
+                                      ),
+                                )
+                              : GestureDetector(
+                                  onTap: () async {
+                                    final response = await preAuthApi({
+                                      "phone_number": widget.phone,
+                                      "device_info": jsonDecode(
+                                          FFAppState().deviceInfo)['platform']
+                                    }, 'send_otp')
+                                        .then((value) {
+                                      Fluttertoast.showToast(
+                                          msg: 'OTP sent successfully');
+                                      startTimer();
+                                    });
+                                  },
+                                  child: Text(
+                                    'Resend OTP',
+                                    style: FlutterFlowTheme.of(context)
+                                        .bodyMedium
+                                        .override(
+                                          fontFamily: 'Inter',
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
+                                          letterSpacing: 0.0,
+                                        ),
+                                  )),
                         ),
                       ),
                     ],
@@ -197,10 +270,11 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                         "country_code": "+91",
                         "phone_number": widget.phone.toString(),
                         "otp": _model.pinCodeController.text.toString()
-                      }, 'verify_otp').then((value) {
+                      }, 'verify_otp')
+                          .then((value) {
                         if (value != null) {
                           log('value: $value');
-                          if(value['data']!= null){
+                          if (value['data'] != null) {
                             final data = value['data'];
                             setState(() {
                               FFAppState().phone = widget.phone.toString();
@@ -211,9 +285,9 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                             });
 
                             fetchData('user/me', context)?.then((value) async {
-                              if(value != null){
+                              if (value != null) {
                                 log('data: $value');
-                                if(value['data']!= null){
+                                if (value['data'] != null) {
                                   final data = value['data'];
                                   setState(() {
                                     FFAppState().user = data;
@@ -221,14 +295,21 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                   });
                                 }
 
-                                if(checkNull(FFAppState().user['full_name']) == true){
-                                  final storeToken = await sendData({}, 'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}').then((response){
+                                if (checkNull(FFAppState().user['full_name']) ==
+                                    true) {
+                                  final storeToken = await sendData({},
+                                          'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}')
+                                      .then((response) {
                                     log('response: $response');
                                   });
-                                  Navigator.push(context,
-                                      MaterialPageRoute(builder: (context)=> HomePageWidget()));
-                                }else{
-                                  navigateTo(context, ProfileWidget(backButton: false));
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const HomePageWidget()));
+                                } else {
+                                  navigateTo(context,
+                                      const ProfileWidget(backButton: false));
                                 }
                               }
                             });
@@ -245,11 +326,11 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                     iconPadding: EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
                     color: FlutterFlowTheme.of(context).primary,
                     textStyle: FlutterFlowTheme.of(context).titleSmall.override(
-                      fontFamily: 'Inter Tight',
-                      color: Colors.white,
-                      letterSpacing: 0.0,
-                      fontWeight: FontWeight.w500,
-                    ),
+                          fontFamily: 'Inter Tight',
+                          color: Colors.white,
+                          letterSpacing: 0.0,
+                          fontWeight: FontWeight.w500,
+                        ),
                     elevation: 2,
                     borderRadius: BorderRadius.circular(30),
                   ),

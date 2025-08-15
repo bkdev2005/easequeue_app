@@ -611,7 +611,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
                                                                             )),
-                                                                    Expanded(child: Text(
+                                                                    Text(
                                                                         ' • ${businessDetail['status_message']}',
                                                                         maxLines: 1,
                                                                         overflow: TextOverflow.ellipsis,
@@ -623,7 +623,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                               color: Colors.black45,
                                                                               fontFamily: 'Inter',
                                                                               letterSpacing: 0.0,
-                                                                            ))),
+                                                                            )),
                                                                     const Icon(
                                                                       Icons
                                                                           .keyboard_arrow_down_rounded,

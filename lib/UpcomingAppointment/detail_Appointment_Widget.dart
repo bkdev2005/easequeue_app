@@ -275,7 +275,8 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
-                                              child: Text(
+                                              child: Row( children: [
+                                                Text(
                                                 appointmentListItem[
                                                         'business_name'] ??
                                                     'N/A',
@@ -290,6 +291,23 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                               FontWeight.w500,
                                                         ),
                                               ),
+                                                Text(
+                                                  (appointmentListItem[
+                                                  'queue_name'] != null) ? ' (${appointmentListItem[
+                                                  'queue_name']})' :
+                                                      '',
+                                                  style:
+                                                  FlutterFlowTheme.of(context)
+                                                      .bodyMedium
+                                                      .override(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 12,
+                                                    letterSpacing: 0.0,
+                                                    fontWeight:
+                                                    FontWeight.w400,
+                                                  ),
+                                                ),
+                                            ])
                                             ),
                                             Text(
                                               appointmentListItem[
@@ -360,6 +378,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                 ),
                                           ),
                                         ),
+
                                         Divider(
                                           indent: 0,
                                           endIndent: 0,
@@ -374,17 +393,17 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               if (appointmentListItem[
-                                                          'enqueue_datetime'] !=
+                                                          'estimated_enqueue_time'] !=
                                                       null &&
                                                   appointmentListItem[
-                                                          'enqueue_datetime'] !=
+                                                          'estimated_enqueue_time'] !=
                                                       '')
                                                 Padding(
                                                   padding:
                                                       const EdgeInsetsDirectional
                                                           .fromSTEB(0, 5, 0, 0),
                                                   child: Text(
-                                                    'Appointment Time:\n${appointmentListItem['enqueue_datetime']}',
+                                                    'Appointment Time:',
                                                     textAlign: TextAlign.end,
                                                     style: FlutterFlowTheme.of(
                                                             context)
@@ -396,28 +415,23 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                         ),
                                                   ),
                                                 ),
-                                              if (appointmentListItem[
-                                                          'duration'] !=
-                                                      null &&
-                                                  appointmentListItem[
-                                                          'duration'] !=
-                                                      '')
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 5, 0, 0),
-                                                  child: Text(
-                                                    'Duration: ${appointmentListItem['duration']}',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontSize: 12,
-                                                          fontFamily: 'Inter',
-                                                          letterSpacing: 0.0,
-                                                        ),
+                                              Padding(
+                                                padding:
+                                                const EdgeInsetsDirectional
+                                                    .fromSTEB(0, 5, 0, 0),
+                                                child: Text(
+                                                  '${appointmentListItem['estimated_enqueue_time']}',
+                                                  textAlign: TextAlign.end,
+                                                  style: FlutterFlowTheme.of(
+                                                      context)
+                                                      .bodyMedium
+                                                      .override(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 12,
+                                                    letterSpacing: 0.0,
                                                   ),
                                                 ),
+                                              ),
                                             ]),
                                         Row(
                                             mainAxisAlignment:
@@ -519,7 +533,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                       text: 'Reschedule',
                                                       onPressed: () {
                                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
-                                                         businessId: (getJsonField(appointmentListItem, r'''$.business_address[0].uuid''')).toString()
+                                                         businessId: (getJsonField(appointmentListItem, r'''$.business_id''')).toString()
                                                         )));
                                                       },
                                                       options: const FFButtonOptions(
@@ -534,10 +548,29 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                           textStyle: TextStyle(
                                                               color: Colors
                                                                   .black))))
-                                            ]))
+                                            ])),
+
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          children: [
+                                          Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(0, 10, 0, 0),
+                                          child: Text(
+                                            (appointmentListItem['is_scheduled'] == true)? '"Time-slot-based appointment booking"' : '"Queue-based appointment booking"',
+                                            style: FlutterFlowTheme.of(context)
+                                                .bodyMedium
+                                                .override(
+                                              fontSize: 12,
+                                              color: FlutterFlowTheme.of(context).primary,
+                                              fontFamily: 'Inter',
+                                              letterSpacing: 0.0,
+                                            ),
+                                          ),
+                                        ),
                                       ],
                                     ),
-                                  ),
+                                  ])),
                                 ),
                               );
                             });

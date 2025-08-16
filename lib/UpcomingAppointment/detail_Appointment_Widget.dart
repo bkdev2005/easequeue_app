@@ -531,7 +531,21 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                               Expanded(
                                                   child: FFButtonWidget(
                                                       text: 'Reschedule',
-                                                      onPressed: () {
+                                                      onPressed: () async{
+                                                        await putData({
+                                                          "queue_id": appointmentListItem['queue_id'],
+                                                          "queue_date": onlyDate((appointmentListItem['estimated_enqueue_time'])),
+                                                          "token_number": appointmentListItem['your_token'].toString(),
+                                                          "estimated_enqueue_time": dateFormat(appointmentListItem['estimated_enqueue_time']),
+                                                          "estimated_dequeue_time": dateFormat(appointmentListItem['estimated_dequeue_time']),
+                                                          "notes": appointmentListItem['notes'],
+                                                          "reschedule_count": appointmentListItem['reschedule_count'],
+                                                          "joined_queue": appointmentListItem['joined_queue'],
+                                                          "is_scheduled": appointmentListItem['is_scheduled'],
+                                                          "queue_services": appointmentListItem['services']
+                                                        }, "reschedule_queue_entry").then((response){
+                                                              log("message: $response");
+                                                        });
                                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
                                                          businessId: (getJsonField(appointmentListItem, r'''$.business_id''')).toString()
                                                         )));
@@ -581,6 +595,40 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
       ),
     );
   }
+
+  String dateFormat(String inputDate) {
+    // Step 1: Local time (16 August 2025, 03:41 PM)
+
+    // Step 2: Parse it using DateFormat
+    DateFormat inputFormat = DateFormat("dd MMMM yyyy hh:mm a");
+    DateTime localDateTime = inputFormat.parse(inputDate);
+
+    // Step 3: Convert to UTC
+    DateTime utcDateTime = localDateTime.toUtc();
+
+    // Step 4: Format to ISO8601
+    String isoUtc = utcDateTime.toIso8601String();
+
+    print("Local: $localDateTime");
+    print("UTC ISO: $isoUtc");
+    return isoUtc;
+  }
+
+  String onlyDate(String inputDate) {
+    // Input string
+
+    // Parse string to DateTime
+    DateFormat inputFormat = DateFormat("dd MMMM yyyy hh:mm a");
+    DateTime dateTime = inputFormat.parse(inputDate);
+
+    // Format only date as yyyy-MM-dd
+    String onlyDate = DateFormat("yyyy-MM-dd").format(dateTime);
+
+    print(onlyDate); // 👉 2025-08-16
+    return onlyDate;
+  }
+
+
 }
 
 // QUEUE_USER_REGISTERED = 1

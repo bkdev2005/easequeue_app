@@ -114,7 +114,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
               ),
               Expanded(
                 child: Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                  padding: const EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,

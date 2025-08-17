@@ -17,8 +17,9 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
 class DetailAppointmentsWidget extends StatefulWidget {
-  const DetailAppointmentsWidget({super.key});
-
+  const DetailAppointmentsWidget({super.key, this.lat, this.long});
+  final String? lat;
+  final String? long;
   @override
   State<DetailAppointmentsWidget> createState() =>
       _DetailAppointmentsWidgetState();
@@ -100,6 +101,7 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
   void initState() {
     textController = TextEditingController();
     textFieldFocusNode = FocusNode();
+    log('token: ${FFAppState().token}');
     _scrollController.addListener(_onScroll);
     setState(() {
       isMainLoading = true;
@@ -532,22 +534,26 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                   child: FFButtonWidget(
                                                       text: 'Reschedule',
                                                       onPressed: () async{
-                                                        await putData({
-                                                          "queue_id": appointmentListItem['queue_id'],
-                                                          "queue_date": onlyDate((appointmentListItem['estimated_enqueue_time'])),
-                                                          "token_number": appointmentListItem['your_token'].toString(),
-                                                          "estimated_enqueue_time": dateFormat(appointmentListItem['estimated_enqueue_time']),
-                                                          "estimated_dequeue_time": dateFormat(appointmentListItem['estimated_dequeue_time']),
-                                                          "notes": appointmentListItem['notes'],
-                                                          "reschedule_count": appointmentListItem['reschedule_count'],
-                                                          "joined_queue": appointmentListItem['joined_queue'],
-                                                          "is_scheduled": appointmentListItem['is_scheduled'],
-                                                          "queue_services": appointmentListItem['services']
-                                                        }, "reschedule_queue_entry").then((response){
-                                                              log("message: $response");
-                                                        });
+
                                                         Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
-                                                         businessId: (getJsonField(appointmentListItem, r'''$.business_id''')).toString()
+                                                         businessId: appointmentListItem['business_id'],
+                                                          lat: widget.lat,
+                                                          long: widget.long,
+                                                          rescheduleData: {
+                                                            "queue_id": appointmentListItem['queue_id'],
+                                                            "queue_date": onlyDate((appointmentListItem['estimated_enqueue_time'])),
+                                                            "token_number": appointmentListItem['your_token'].toString(),
+                                                            "estimated_enqueue_time": dateFormat(appointmentListItem['estimated_enqueue_time']),
+                                                            "estimated_dequeue_time": dateFormat(appointmentListItem['estimated_dequeue_time']),
+                                                            "notes": appointmentListItem['notes'],
+                                                            "reschedule_count": appointmentListItem['reschedule_count'],
+                                                            "joined_queue": appointmentListItem['joined_queue'],
+                                                            "is_scheduled": appointmentListItem['is_scheduled'],
+                                                            "queue_services_ids": (appointmentListItem['services'] as List)
+                                                                .map((service) => service['service_id']['uuid'].toString())
+                                                                .toList(),
+                                                            "queue_services": (appointmentListItem['services'] as List).map((service)=> service['service_id']).toList()
+                                                          },
                                                         )));
                                                       },
                                                       options: const FFButtonOptions(

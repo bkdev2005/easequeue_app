@@ -372,7 +372,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           context,
                                           MaterialPageRoute(
                                               builder: (context) =>
-                                                  const DetailAppointmentsWidget()));
+                                                  DetailAppointmentsWidget(
+                                                    lat: latitude,
+                                                    long: longitude,
+                                                  )));
                                     },
                                   ),
                                   FlutterFlowIconButton(

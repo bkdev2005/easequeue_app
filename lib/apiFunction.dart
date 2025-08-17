@@ -97,6 +97,7 @@ Future<dynamic> preAuthApi(Object body, String endpoint) async {
 
 Future<dynamic> putData(Object body, String endpoint) async {
   final url = Uri.parse('$apiUrl/$endpoint');
+  log('body: $body');
   try {
     final response = await http.put(
       url,

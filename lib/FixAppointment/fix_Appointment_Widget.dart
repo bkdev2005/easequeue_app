@@ -31,12 +31,14 @@ class FixAppointmentWidget extends StatefulWidget {
       required this.date,
       required this.businessName,
       required this.formatDate,
+      this.rescheduleData,
       required this.uuid});
   final List<dynamic> services;
   final String date;
   final String businessName;
   final String formatDate;
   final String uuid;
+  final dynamic rescheduleData;
   @override
   State<FixAppointmentWidget> createState() => _FixAppointmentWidgetState();
 }
@@ -58,6 +60,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   String appointeeUUID = '';
   String appointeeName = '';
   String? appointmentTime;
+  bool pageLoader = false;
   String? _token; // Token to be passed
   int selectedGuests = 0;
   bool isLoading = false;
@@ -95,6 +98,9 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   }
 
   Future<void> connect(String url) async {
+    setState(() {
+      pageLoader = true;
+    });
     String token = FFAppState().token;
     log('token: $token');
     log('queueId: ${queueList[0]['queue_id']}');
@@ -119,17 +125,29 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                         .substring(15)
                     : messageList['estimated_appointment_time'].toString();
           });
+          setState(() {
+            pageLoader = false;
+          });
           log('message: ${getJsonField(jsonDecode(message), r'''$.data''')}');
           log("Received: $message");
         },
         onError: (error) {
+          setState(() {
+            pageLoader = false;
+          });
           print("WebSocket error: $error");
         },
         onDone: () {
+          setState(() {
+            pageLoader = false;
+          });
           print("WebSocket connection closed");
         },
       );
     } catch (e) {
+      setState(() {
+        pageLoader = false;
+      });
       print("Failed to connect to WebSocket: $e");
     }
   }
@@ -221,220 +239,59 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
             elevation: 2,
           ),
           body: SafeArea(
-            top: false,
-            child: Column(
-              mainAxisSize: MainAxisSize.max,
-              children: [
+              top: false,
+              child:
                 Column(
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    Row(
+                    Column(
                       mainAxisSize: MainAxisSize.max,
-                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Material(
-                          color: Colors.transparent,
-                          elevation: 0,
-                          shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(15),
-                              bottomRight: Radius.circular(15),
-                              topLeft: Radius.circular(0),
-                              topRight: Radius.circular(0),
-                            ),
-                          ),
-                          child: Container(
-                              width: MediaQuery.of(context).size.width,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFF3a615f),
-                                borderRadius: const BorderRadius.only(
+                        Row(
+                          mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Material(
+                              color: Colors.transparent,
+                              elevation: 0,
+                              shape: const RoundedRectangleBorder(
+                                borderRadius: BorderRadius.only(
                                   bottomLeft: Radius.circular(15),
                                   bottomRight: Radius.circular(15),
                                   topLeft: Radius.circular(0),
                                   topRight: Radius.circular(0),
                                 ),
                               ),
-                              child: StreamBuilder(
-                                  stream: _messageStreamController?.stream,
-                                  builder: (context, snapshot) {
-                                    final snap = snapshot.data;
-                                    dynamic data;
-                                    if (snap != null) {
-                                      data = getJsonField(
-                                          jsonDecode(snap), r'''$.data''');
-                                    }
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(top: 10),
-                                          child: Text(
-                                            'Current serving number',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Inter',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryBackground,
-                                                  fontSize: 14,
-                                                  letterSpacing: 0.0,
-                                                ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 2, 0, 15),
-                                          child: Text(
-                                            data != null
-                                                ? data['current_token'] ?? '00'
-                                                : '00',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Inter',
-                                                  color: FlutterFlowTheme.of(
-                                                          context)
-                                                      .primaryBackground,
-                                                  fontSize: 40,
-                                                  letterSpacing: 0.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                          ),
-                                        ),
-                                        Divider(
-                                          height: 0,
-                                          thickness: 1,
-                                          color: FlutterFlowTheme.of(context)
-                                              .tertiary,
-                                        ),
-                                        Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceAround,
-                                          mainAxisSize: MainAxisSize.max,
+                              child: Container(
+                                  width: MediaQuery.of(context).size.width,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFF3a615f),
+                                    borderRadius: const BorderRadius.only(
+                                      bottomLeft: Radius.circular(15),
+                                      bottomRight: Radius.circular(15),
+                                      topLeft: Radius.circular(0),
+                                      topRight: Radius.circular(0),
+                                    ),
+                                  ),
+                                  child: StreamBuilder(
+                                      stream: _messageStreamController?.stream,
+                                      builder: (context, snapshot) {
+                                        final snap = snapshot.data;
+                                        dynamic data;
+                                        if (snap != null) {
+                                          data = getJsonField(
+                                              jsonDecode(snap), r'''$.data''');
+                                        }
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
                                           children: [
-                                            Expanded(
-                                                child: Padding(
-                                                    padding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            10, 0, 0, 0),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        if (times.isNotEmpty) {
-                                                          showDialog(
-                                                              context: context,
-                                                              builder:
-                                                                  (context) {
-                                                                return slotTime();
-                                                              });
-                                                        }
-                                                      },
-                                                      child: Column(
-                                                          mainAxisSize:
-                                                              MainAxisSize.min,
-                                                          children: [
-                                                            Row(
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  Text(
-                                                                    'Estimated time',
-                                                                    style: FlutterFlowTheme.of(
-                                                                            context)
-                                                                        .bodyMedium
-                                                                        .override(
-                                                                          fontFamily:
-                                                                              'Inter',
-                                                                          color:
-                                                                              FlutterFlowTheme.of(context).primaryBackground,
-                                                                          fontSize:
-                                                                              14,
-                                                                          letterSpacing:
-                                                                              0.0,
-                                                                        ),
-                                                                  ),
-                                                                  if (times
-                                                                      .isNotEmpty)
-                                                                    const SizedBox(
-                                                                      width: 5,
-                                                                    ),
-                                                                  if (times
-                                                                      .isNotEmpty)
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .edit_calendar_rounded,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      size: 16,
-                                                                    )
-                                                                ]),
-                                                            Padding(
-                                                              padding:
-                                                                  const EdgeInsetsDirectional
-                                                                      .fromSTEB(
-                                                                      0,
-                                                                      0,
-                                                                      0,
-                                                                      0),
-                                                              child: Text(
-                                                                (selectedTimeSlot !=
-                                                                        null)
-                                                                    ? selectedTimeSlot ??
-                                                                        ''
-                                                                    : data !=
-                                                                            null
-                                                                        ? (data['formatted_wait_time'] !=
-                                                                                null)
-                                                                            ? (messageList['estimated_appointment_time'].toString().length > 8)
-                                                                                ? messageList['estimated_appointment_time'].toString().substring(15)
-                                                                                : messageList['estimated_appointment_time'].toString()
-                                                                            : '0'
-                                                                        : '00',
-                                                                style: FlutterFlowTheme.of(
-                                                                        context)
-                                                                    .bodyMedium
-                                                                    .override(
-                                                                      fontFamily:
-                                                                          'Inter',
-                                                                      color: FlutterFlowTheme.of(
-                                                                              context)
-                                                                          .primaryBackground,
-                                                                      fontSize:
-                                                                          30,
-                                                                      letterSpacing:
-                                                                          0.0,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
-                                                                    ),
-                                                              ),
-                                                            ),
-                                                          ]),
-                                                    ))),
-                                            SizedBox(
-                                              height: 90,
-                                              child: VerticalDivider(
-                                                thickness: 1,
-                                                color:
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  top: 10),
+                                              child: Text(
+                                                'Current serving number',
+                                                style:
                                                     FlutterFlowTheme.of(context)
-                                                        .primaryBackground,
-                                              ),
-                                            ),
-                                            Expanded(
-                                                child: Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(0, 0, 10, 0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                children: [
-                                                  Text(
-                                                    'Your position will be',
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
@@ -444,56 +301,230 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                           fontSize: 14,
                                                           letterSpacing: 0.0,
                                                         ),
-                                                  ),
-                                                  Padding(
-                                                    padding:
-                                                        const EdgeInsetsDirectional
-                                                            .fromSTEB(
-                                                            0, 0, 0, 0),
-                                                    child: Text(
-                                                      (selectedTimeSlot != null)
-                                                          ? '-/-'
-                                                          : data != null
-                                                              ? (data['position'] !=
-                                                                      null)
-                                                                  ? data['position']
-                                                                      .toString()
-                                                                  : '0'
-                                                              : '0',
-                                                      style: FlutterFlowTheme
-                                                              .of(context)
-                                                          .bodyMedium
-                                                          .override(
-                                                            fontFamily: 'Inter',
-                                                            color: FlutterFlowTheme
-                                                                    .of(context)
-                                                                .primaryBackground,
-                                                            fontSize: 30,
-                                                            letterSpacing: 0.0,
-                                                            fontWeight:
-                                                                FontWeight.bold,
-                                                          ),
-                                                    ),
-                                                  ),
-                                                ],
                                               ),
-                                            )),
+                                            ),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 2, 0, 15),
+                                              child: Text(
+                                                data != null
+                                                    ? data['current_token'] ??
+                                                        '00'
+                                                    : '00',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          color: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .primaryBackground,
+                                                          fontSize: 40,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                              ),
+                                            ),
+                                            Divider(
+                                              height: 0,
+                                              thickness: 1,
+                                              color:
+                                                  FlutterFlowTheme.of(context)
+                                                      .tertiary,
+                                            ),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.spaceAround,
+                                              mainAxisSize: MainAxisSize.max,
+                                              children: [
+                                                Expanded(
+                                                    child: Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                10, 0, 0, 0),
+                                                        child: InkWell(
+                                                          onTap: () {
+                                                            if (times
+                                                                .isNotEmpty) {
+                                                              showDialog(
+                                                                  context:
+                                                                      context,
+                                                                  builder:
+                                                                      (context) {
+                                                                    return slotTime();
+                                                                  });
+                                                            }
+                                                          },
+                                                          child: Column(
+                                                              mainAxisSize:
+                                                                  MainAxisSize
+                                                                      .min,
+                                                              children: [
+                                                                Row(
+                                                                    mainAxisAlignment:
+                                                                        MainAxisAlignment
+                                                                            .center,
+                                                                    children: [
+                                                                      Text(
+                                                                        'Estimated time',
+                                                                        style: FlutterFlowTheme.of(context)
+                                                                            .bodyMedium
+                                                                            .override(
+                                                                              fontFamily: 'Inter',
+                                                                              color: FlutterFlowTheme.of(context).primaryBackground,
+                                                                              fontSize: 14,
+                                                                              letterSpacing: 0.0,
+                                                                            ),
+                                                                      ),
+                                                                      if (times
+                                                                          .isNotEmpty)
+                                                                        const SizedBox(
+                                                                          width:
+                                                                              5,
+                                                                        ),
+                                                                      if (times
+                                                                          .isNotEmpty)
+                                                                        const Icon(
+                                                                          Icons
+                                                                              .edit_calendar_rounded,
+                                                                          color:
+                                                                              Colors.white,
+                                                                          size:
+                                                                              16,
+                                                                        )
+                                                                    ]),
+                                                                Padding(
+                                                                  padding:
+                                                                      const EdgeInsetsDirectional
+                                                                          .fromSTEB(
+                                                                          0,
+                                                                          0,
+                                                                          0,
+                                                                          0),
+                                                                  child: Text(
+                                                                    (selectedTimeSlot !=
+                                                                            null)
+                                                                        ? selectedTimeSlot ??
+                                                                            ''
+                                                                        : data !=
+                                                                                null
+                                                                            ? (data['formatted_wait_time'] != null)
+                                                                                ? (messageList['estimated_appointment_time'].toString().length > 8)
+                                                                                    ? messageList['estimated_appointment_time'].toString().substring(15)
+                                                                                    : messageList['estimated_appointment_time'].toString()
+                                                                                : '0'
+                                                                            : '00',
+                                                                    style: FlutterFlowTheme.of(
+                                                                            context)
+                                                                        .bodyMedium
+                                                                        .override(
+                                                                          fontFamily:
+                                                                              'Inter',
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primaryBackground,
+                                                                          fontSize:
+                                                                              30,
+                                                                          letterSpacing:
+                                                                              0.0,
+                                                                          fontWeight:
+                                                                              FontWeight.w600,
+                                                                        ),
+                                                                  ),
+                                                                ),
+                                                              ]),
+                                                        ))),
+                                                SizedBox(
+                                                  height: 90,
+                                                  child: VerticalDivider(
+                                                    thickness: 1,
+                                                    color: FlutterFlowTheme.of(
+                                                            context)
+                                                        .primaryBackground,
+                                                  ),
+                                                ),
+                                                Expanded(
+                                                    child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          0, 0, 10, 0),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    children: [
+                                                      Text(
+                                                        'Your position will be',
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  color: FlutterFlowTheme.of(
+                                                                          context)
+                                                                      .primaryBackground,
+                                                                  fontSize: 14,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                ),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsetsDirectional
+                                                                .fromSTEB(
+                                                                0, 0, 0, 0),
+                                                        child: Text(
+                                                          (selectedTimeSlot !=
+                                                                  null)
+                                                              ? '-/-'
+                                                              : data != null
+                                                                  ? (data['position'] !=
+                                                                          null)
+                                                                      ? data['position']
+                                                                          .toString()
+                                                                      : '0'
+                                                                  : '0',
+                                                          style: FlutterFlowTheme
+                                                                  .of(context)
+                                                              .bodyMedium
+                                                              .override(
+                                                                fontFamily:
+                                                                    'Inter',
+                                                                color: FlutterFlowTheme.of(
+                                                                        context)
+                                                                    .primaryBackground,
+                                                                fontSize: 30,
+                                                                letterSpacing:
+                                                                    0.0,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold,
+                                                              ),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                )),
+                                              ],
+                                            ),
                                           ],
-                                        ),
-                                      ],
-                                    );
-                                  })),
-                        )
+                                        );
+                                      })),
+                            )
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
-                Expanded(
-                    child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    children: [
-                      /*Padding(
+                    Expanded(
+                        child: SingleChildScrollView(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          /*Padding(
                           padding: const EdgeInsets.only(left: 15, right: 15),
                           child: Row(
                             spacing: 10,
@@ -705,257 +736,280 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                             ],
                           )),*/
 
-                      if (appointeeUUID != widget.uuid)
-                        Padding(
-                            padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: Colors.green.withOpacity(0.08),
-                                  borderRadius: BorderRadius.circular(14)),
-                              child: Padding(
-                                  padding: const EdgeInsets.all(14),
-                                  child: Row(children: [
-                                    Icon(
-                                      Icons.task_alt_rounded,
-                                      color:
-                                          FlutterFlowTheme.of(context).primary,
-                                    ),
-                                    const SizedBox(
-                                      width: 8,
-                                    ),
-                                    Expanded(
-                                        child: Text(
-                                      'Appointment will be add as guest user $appointeeName',
-                                      style: const TextStyle(fontSize: 14),
-                                    ))
-                                  ])),
-                            )),
-                      Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(15, 16, 0, 0),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.max,
-                          children: [
-                            Text(
-                              'Counter/Employee',
-                              style: FlutterFlowTheme.of(context)
-                                  .bodyMedium
-                                  .override(
-                                    fontFamily: 'Inter',
-                                    letterSpacing: 0.0,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Padding(
-                        padding:
-                            const EdgeInsetsDirectional.fromSTEB(0, 6, 0, 0),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.max,
-                          children: List.generate(queueList.length, (index) {
-                            final queue = queueList[index];
-                            if (queueList.isEmpty) {
-                              return Center(
-                                child: emptyList(),
-                              );
-                            }
-
-                            return Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    15,
-                                    10,
-                                    15,
-                                    (index == queueList.length - 1) ? 10 : 0),
-                                child: GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      selectQueue = queue;
-                                      selectedQueueId = queue['queue_id'];
-                                      serviceSelectQueue = queue['services'];
-                                    });
-                                    connect(queue['queue_id']);
-                                  },
-                                  child: Container(
-                                    height: 74,
-                                    decoration: BoxDecoration(
-                                      color: FlutterFlowTheme.of(context)
-                                          .secondaryBackground,
-                                      borderRadius: BorderRadius.circular(15),
-                                      border: Border.all(
-                                        width: (selectedQueueId !=
-                                                queue['queue_id'])
-                                            ? 1
-                                            : 2,
-                                        color: (selectedQueueId !=
-                                                queue['queue_id'])
-                                            ? Colors.grey[300]!
-                                            : FlutterFlowTheme.of(context)
-                                                .primary,
-                                      ),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(
-                                          12, 8, 15, 8),
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Container(
-                                            width: 46,
-                                            height: 46,
-                                            clipBehavior: Clip.antiAlias,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              color: Colors.grey.shade100
-                                            ),
-                                            child: Icon(
-                                              color: FlutterFlowTheme.of(context).primary,
-                                              Icons.person_rounded, size: 30,
-                                            ),
-                                          ),
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  const EdgeInsetsDirectional
-                                                      .fromSTEB(10, 0, 0, 0),
-                                              child: Column(
-                                                mainAxisSize: MainAxisSize.max,
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  Text(
-                                                    queue['employee_name'],
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'Inter',
-                                                          fontSize: 18,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                        ),
-                                                  ),
-                                                  Text(
-                                                    '${queue['queue_name']}',
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: FlutterFlowTheme.of(
-                                                            context)
-                                                        .bodyMedium
-                                                        .override(
-                                                          fontFamily: 'Inter',
-                                                          fontSize: 12,
-                                                          letterSpacing: 0.0,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                        ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ),
-                                          Icon(
-                                            (selectedQueueId !=
-                                                    queue['queue_id'])
-                                                ? Icons
-                                                    .radio_button_off_outlined
-                                                : Icons
-                                                    .radio_button_checked_rounded,
-                                            color: FlutterFlowTheme.of(context)
-                                                .primary,
-                                          )
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ));
-                          }),
-                        ),
-                      ),
-                      const SizedBox(
-                        height: 5,
-                      ),
-                      Padding(
-                          padding: EdgeInsets.only(left: 15, right: 15),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              border: Border.all(color: Colors.green.shade100),
-                              borderRadius: const BorderRadius.only(
-                                bottomLeft: Radius.circular(15),
-                                bottomRight: Radius.circular(15),
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
-                              ),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsetsDirectional.fromSTEB(
-                                  0, 15, 0, 0),
-                              child: Column(children: [
-                                Padding(
-                                    padding:
-                                        const EdgeInsetsDirectional.fromSTEB(
-                                            15, 0, 15, 10),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          '${(double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins/Person',
-                                          style: const TextStyle(
-                                              fontFamily: 'Inter',
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w600),
+                          if (appointeeUUID != widget.uuid)
+                            Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.green.withOpacity(0.08),
+                                      borderRadius: BorderRadius.circular(14)),
+                                  child: Padding(
+                                      padding: const EdgeInsets.all(14),
+                                      child: Row(children: [
+                                        Icon(
+                                          Icons.task_alt_rounded,
+                                          color: FlutterFlowTheme.of(context)
+                                              .primary,
                                         ),
-                                        Text(
-                                            '${serviceSelectQueue.length} Service',
-                                            style: const TextStyle(
-                                                fontFamily: 'Inter',
-                                                fontSize: 12,
-                                                fontWeight: FontWeight.w400))
-                                      ],
-                                    )),
-                                Divider(
-                                  indent: 0,
-                                  endIndent: 0,
-                                  height: 1,
-                                  color: Colors.green.shade50,
+                                        const SizedBox(
+                                          width: 8,
+                                        ),
+                                        Expanded(
+                                            child: Text(
+                                          'Appointment will be add as guest user $appointeeName',
+                                          style: const TextStyle(fontSize: 14),
+                                        ))
+                                      ])),
+                                )),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                15, 16, 0, 0),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.max,
+                              children: [
+                                Text(
+                                  'Counter/Employee',
+                                  style: FlutterFlowTheme.of(context)
+                                      .bodyMedium
+                                      .override(
+                                        fontFamily: 'Inter',
+                                        letterSpacing: 0.0,
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
                                 ),
-                                Column(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: List.generate(
-                                        serviceSelectQueue.length, (index) {
-                                      final queueData =
-                                          serviceSelectQueue[index];
-                                      return Padding(
-                                        padding: const EdgeInsetsDirectional
-                                            .fromSTEB(16, 8, 0, 6),
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Expanded(
-                                                flex: 2,
-                                                child: Column(
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 6, 0, 0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.max,
+                              children:
+                                  List.generate(queueList.length, (index) {
+                                final queue = queueList[index];
+                                if (queueList.isEmpty) {
+                                  return Center(
+                                    child: emptyList(),
+                                  );
+                                }
+
+                                return Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        15,
+                                        10,
+                                        15,
+                                        (index == queueList.length - 1)
+                                            ? 10
+                                            : 0),
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        setState(() {
+                                          selectQueue = queue;
+                                          selectedQueueId = queue['queue_id'];
+                                          serviceSelectQueue =
+                                              queue['services'];
+                                        });
+                                        connect(queue['queue_id']);
+                                      },
+                                      child: Container(
+                                        height: 74,
+                                        decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .secondaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(15),
+                                          border: Border.all(
+                                            width: (selectedQueueId !=
+                                                    queue['queue_id'])
+                                                ? 1
+                                                : 2,
+                                            color: (selectedQueueId !=
+                                                    queue['queue_id'])
+                                                ? Colors.grey[300]!
+                                                : FlutterFlowTheme.of(context)
+                                                    .primary,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              12, 8, 15, 8),
+                                          child: Row(
+                                            mainAxisSize: MainAxisSize.max,
+                                            children: [
+                                              Container(
+                                                width: 46,
+                                                height: 46,
+                                                clipBehavior: Clip.antiAlias,
+                                                decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    color:
+                                                        Colors.grey.shade100),
+                                                child: Icon(
+                                                  color: FlutterFlowTheme.of(
+                                                          context)
+                                                      .primary,
+                                                  Icons.person_rounded,
+                                                  size: 30,
+                                                ),
+                                              ),
+                                              Expanded(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          10, 0, 0, 0),
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.max,
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .center,
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
                                                             .start,
                                                     children: [
                                                       Text(
-                                                        queueData[
-                                                            'business_service_name'],
+                                                        queue['employee_name'],
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
                                                         style:
                                                             FlutterFlowTheme.of(
                                                                     context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontSize: 18,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                ),
+                                                      ),
+                                                      Text(
+                                                        '${queue['queue_name']}',
+                                                        maxLines: 1,
+                                                        overflow: TextOverflow
+                                                            .ellipsis,
+                                                        style:
+                                                            FlutterFlowTheme.of(
+                                                                    context)
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontSize: 12,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+                                              Icon(
+                                                (selectedQueueId !=
+                                                        queue['queue_id'])
+                                                    ? Icons
+                                                        .radio_button_off_outlined
+                                                    : Icons
+                                                        .radio_button_checked_rounded,
+                                                color:
+                                                    FlutterFlowTheme.of(context)
+                                                        .primary,
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ));
+                              }),
+                            ),
+                          ),
+                          const SizedBox(
+                            height: 5,
+                          ),
+                          Padding(
+                              padding: EdgeInsets.only(left: 15, right: 15),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Colors.green.shade100),
+                                  borderRadius: const BorderRadius.only(
+                                    bottomLeft: Radius.circular(15),
+                                    bottomRight: Radius.circular(15),
+                                    topLeft: Radius.circular(15),
+                                    topRight: Radius.circular(15),
+                                  ),
+                                ),
+                                child: Padding(
+                                  padding: const EdgeInsetsDirectional.fromSTEB(
+                                      0, 15, 0, 0),
+                                  child: Column(children: [
+                                    Padding(
+                                        padding: const EdgeInsetsDirectional
+                                            .fromSTEB(15, 0, 15, 10),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '${(double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins/Person',
+                                              style: const TextStyle(
+                                                  fontFamily: 'Inter',
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.w600),
+                                            ),
+                                            Text(
+                                                '${serviceSelectQueue.length} Service',
+                                                style: const TextStyle(
+                                                    fontFamily: 'Inter',
+                                                    fontSize: 12,
+                                                    fontWeight:
+                                                        FontWeight.w400))
+                                          ],
+                                        )),
+                                    Divider(
+                                      indent: 0,
+                                      endIndent: 0,
+                                      height: 1,
+                                      color: Colors.green.shade50,
+                                    ),
+                                    Column(
+                                        mainAxisSize: MainAxisSize.max,
+                                        children: List.generate(
+                                            serviceSelectQueue.length, (index) {
+                                          final queueData =
+                                              serviceSelectQueue[index];
+                                          return Padding(
+                                            padding: const EdgeInsetsDirectional
+                                                .fromSTEB(16, 8, 0, 6),
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    flex: 2,
+                                                    child: Column(
+                                                        crossAxisAlignment:
+                                                            CrossAxisAlignment
+                                                                .start,
+                                                        children: [
+                                                          Text(
+                                                            queueData[
+                                                                'business_service_name'],
+                                                            style: FlutterFlowTheme
+                                                                    .of(context)
                                                                 .bodyMedium
                                                                 .override(
                                                                   fontFamily:
@@ -967,28 +1021,29 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                       FontWeight
                                                                           .w500,
                                                                 ),
-                                                      ),
-                                                      if (queueData[
-                                                              'fee_type'] !=
-                                                          null)
-                                                        Text(
-                                                          '${queueData['fee_type']}',
-                                                          style: FlutterFlowTheme
-                                                                  .of(context)
-                                                              .bodyMedium
-                                                              .override(
-                                                                fontFamily:
-                                                                    'Inter',
-                                                                fontSize: 10,
-                                                                letterSpacing:
-                                                                    0.0,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w400,
-                                                              ),
-                                                        )
-                                                    ])),
-                                            /*if (queueData['fee_type'] ==
+                                                          ),
+                                                          if (queueData[
+                                                                  'fee_type'] !=
+                                                              null)
+                                                            Text(
+                                                              '${queueData['fee_type']}',
+                                                              style: FlutterFlowTheme
+                                                                      .of(context)
+                                                                  .bodyMedium
+                                                                  .override(
+                                                                    fontFamily:
+                                                                        'Inter',
+                                                                    fontSize:
+                                                                        10,
+                                                                    letterSpacing:
+                                                                        0.0,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w400,
+                                                                  ),
+                                                            )
+                                                        ])),
+                                                /*if (queueData['fee_type'] ==
                                                 'Hourly Fee')
                                               Material(
                                                   borderRadius:
@@ -1045,17 +1100,18 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                           ],
                                                         )),
                                                   )),*/
-                                            const SizedBox(
-                                              width: 15,
-                                            ),
-                                            Expanded(
-                                                child: Text(
-                                              (queueData['service_fee'] != null)
-                                                  ? '₹ ${queueData['service_fee']}/-'
-                                                  : '-/- ',
-                                              textAlign: TextAlign.end,
-                                              style:
-                                                  FlutterFlowTheme.of(context)
+                                                const SizedBox(
+                                                  width: 15,
+                                                ),
+                                                Expanded(
+                                                    child: Text(
+                                                  (queueData['service_fee'] !=
+                                                          null)
+                                                      ? '₹ ${queueData['service_fee']}/-'
+                                                      : '-/- ',
+                                                  textAlign: TextAlign.end,
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
                                                       .bodyMedium
                                                       .override(
                                                         fontFamily: 'Inter',
@@ -1064,326 +1120,382 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                         fontWeight:
                                                             FontWeight.w600,
                                                       ),
-                                            )),
-                                            IconButton(
-                                                onPressed: () {
-                                                  if (serviceSelectQueue
-                                                          .length >
-                                                      1) {
-                                                    setState(() {
-                                                      serviceSelectQueue
-                                                          .removeAt(index);
-                                                    });
-                                                  } else {
-                                                    setState(() {
-                                                      serviceSelectQueue
-                                                          .removeAt(index);
-                                                    });
-                                                    context.pop();
-                                                  }
-                                                },
-                                                icon: Icon(
-                                                  Icons
-                                                      .remove_circle_outline_rounded,
-                                                  color: Colors.red[200],
-                                                  size: 22,
-                                                ))
-                                          ],
-                                        ),
-                                      );
-                                    })),
-                                Row(
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: [
-                                      Padding(
-                                        padding: EdgeInsets.all(12),
-                                        child: GestureDetector(
-                                            onTap: () {
-                                              context.pop();
-                                            },
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                  borderRadius:
-                                                      BorderRadius.circular(10),
-                                                  border: Border.all(
-                                                      color: Colors.black26)),
-                                              child: const Padding(
-                                                  padding: EdgeInsets.all(8),
-                                                  child: Text(
-                                                    '+ Add more service',
-                                                    style: TextStyle(
-                                                        fontSize: 12,
-                                                        color: Colors.black45,
-                                                        fontWeight:
-                                                            FontWeight.w500),
-                                                  )),
-                                            )),
-                                      )
-                                    ]),
-                              ]),
-                            ),
-                          )),
-                      if (selectQueue != null)
-                        Padding(
-                            padding: const EdgeInsets.only(
-                                left: 15, right: 15, top: 15, bottom: 0),
-                            child: Container(
-                                decoration: BoxDecoration(
-                                  border: Border.all(
-                                      color: Colors.green.withOpacity(0.12)),
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.green.withOpacity(0.08),
-                                      Colors.green.withOpacity(
-                                          0.08), // Or any color for the bottom glow
-                                      Colors.green.withOpacity(
-                                          0.12), // Or any color for the bottom glow
-                                    ],
-                                  ),
-                                  borderRadius: const BorderRadius.only(
-                                    bottomLeft: Radius.circular(12),
-                                    bottomRight: Radius.circular(12),
-                                    topLeft: Radius.circular(12),
-                                    topRight: Radius.circular(12),
-                                  ),
-                                ),
-                                child: Padding(
-                                    padding: EdgeInsets.all(14),
-                                    child: Column(
-                                      children: [
-                                        // const Row(
-                                        //   children: [
-                                        //     Text(
-                                        //       'Bill Details',
-                                        //       style: TextStyle(
-                                        //           fontFamily: 'Inter',
-                                        //           fontSize: 16,
-                                        //           fontWeight: FontWeight.w500),
-                                        //     ),
-                                        //   ],
-                                        // ),
-                                        // const SizedBox(
-                                        //   height: 10,
-                                        // ),
-                                        // Divider(
-                                        //   indent: 0,
-                                        //   endIndent: 0,
-                                        //   height: 1,
-                                        //   color: Colors.grey[100],
-                                        // ),
-                                        // const SizedBox(
-                                        //   height: 2,
-                                        // ),
-                                        // detail('Business name',
-                                        //     widget.businessName),
-                                        // detail('Counter',
-                                        //     selectQueue['queue_name'] ?? ''),
-                                        // detail('Staff name',
-                                        //     selectQueue['employee_name'] ?? ''),
-                                        // detail('Per Person Fees',
-                                        //     '₹${totalPrice(serviceSelectQueue, 'service_fee')}'),
-                                        // detail('Total Person',
-                                        //     '${(selectedGuests + 1)}'),
-
-                                        // detail(
-                                        //     'Services',
-                                        //     getJsonField(serviceSelectQueue,
-                                        //             r'''$..business_service_name''')
-                                        //         .toString()
-                                        //         .replaceAll('[', '')
-                                        //         .replaceAll(']', '')),
-                                        // detail('Date', widget.date),
-                                        // if (messageList != null)
-                                        //   detail(
-                                        //       'Time',
-                                        //       (messageList['estimated_appointment_time']
-                                        //                   .toString()
-                                        //                   .length >
-                                        //               5)
-                                        //           ? messageList[
-                                        //                   'estimated_appointment_time']
-                                        //               .toString()
-                                        //               .substring(11)
-                                        //           : messageList[
-                                        //                   'estimated_appointment_time']
-                                        //               .toString()),
-                                        // detail('Total time',
-                                        //     '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
-                                        // const SizedBox(
-                                        //   height: 10,
-                                        // ),
-                                        // Divider(
-                                        //   indent: 0,
-                                        //   endIndent: 0,
-                                        //   height: 1,
-                                        //   color: Colors.green.shade100,
-                                        // ),
-                                        Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 0),
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                const Text(
-                                                  'Total Service Fees',
-                                                  style: const TextStyle(
-                                                      fontFamily: 'Inter',
-                                                      fontSize: 16,
-                                                      fontWeight:
-                                                          FontWeight.w500),
-                                                ),
-                                                Text(
-                                                  (totalPrice(serviceSelectQueue,
-                                                              'service_fee') !=
-                                                          '')
-                                                      ? '₹ ${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}/-'
-                                                      : '-/-',
-                                                  style: const TextStyle(
-                                                      fontFamily: 'Inter',
-                                                      fontSize: 18,
-                                                      fontWeight:
-                                                          FontWeight.w600),
-                                                ),
+                                                )),
+                                                IconButton(
+                                                    onPressed: () {
+                                                      if (serviceSelectQueue
+                                                              .length >
+                                                          1) {
+                                                        setState(() {
+                                                          serviceSelectQueue
+                                                              .removeAt(index);
+                                                        });
+                                                      } else {
+                                                        setState(() {
+                                                          serviceSelectQueue
+                                                              .removeAt(index);
+                                                        });
+                                                        context.pop();
+                                                      }
+                                                    },
+                                                    icon: Icon(
+                                                      Icons
+                                                          .remove_circle_outline_rounded,
+                                                      color: Colors.red[200],
+                                                      size: 22,
+                                                    ))
                                               ],
-                                            )),
-                                      ],
-                                    )))),
-                      Padding(
-                          padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
-                          child: Container(
-                            decoration: BoxDecoration(
-                                border: Border.all(
-                                    color: Colors.green.withOpacity(0.12)),
-                                color: Colors.green.withOpacity(0.08),
-                                borderRadius: BorderRadius.circular(14)),
-                            child: const Padding(
-                                padding: EdgeInsets.all(14),
-                                child: Row(children: [
-                                  Expanded(
-                                      child: Text(
-                                    'Note: Appointment time is approximate and may vary slightly',
-                                    style: TextStyle(fontSize: 14),
-                                  ))
-                                ])),
-                          )),
-                    ],
-                  ),
-                )),
-                const SizedBox(
-                  height: 15,
-                ),
-                Material(
-                    borderRadius: BorderRadius.circular(30),
-                    elevation: 2,
-                    child: CircleSlideToActionButton(
-                      width: (isLoading)
-                          ? 55
-                          : MediaQuery.of(context).size.width - 40,
-                      parentBoxRadiusValue: 27,
-                      circleSlidingButtonSize: 55,
-                      leftEdgeSpacing: 0,
-                      rightEdgeSpacing: 0,
-                      initialSlidingActionLabel: (totalPrice(
-                                  serviceSelectQueue, 'service_fee') !=
-                              '')
-                          ? 'Slide to Fix Appointment | ₹${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}'
-                          : 'Slide to Fix Appointment',
-                      initialSlidingActionLabelTextStyle:
-                          const TextStyle(fontSize: 16, color: Colors.white),
-                      finalSlidingActionLabel: '',
-                      circleSlidingButtonIcon: (!isLoading)
-                          ? Icon(
-                              Icons.keyboard_double_arrow_right_rounded,
-                              color: FlutterFlowTheme.of(context).primary,
-                              size: 28,
-                            )
-                          : Padding(
-                              padding: EdgeInsets.all(12),
-                              child: CircularProgressIndicator(
-                                color: FlutterFlowTheme.of(context).primary,
+                                            ),
+                                          );
+                                        })),
+                                    Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.start,
+                                        children: [
+                                          Padding(
+                                            padding: EdgeInsets.all(12),
+                                            child: GestureDetector(
+                                                onTap: () {
+                                                  context.pop();
+                                                },
+                                                child: Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      border: Border.all(
+                                                          color:
+                                                              Colors.black26)),
+                                                  child: const Padding(
+                                                      padding:
+                                                          EdgeInsets.all(8),
+                                                      child: Text(
+                                                        '+ Add more service',
+                                                        style: TextStyle(
+                                                            fontSize: 12,
+                                                            color:
+                                                                Colors.black45,
+                                                            fontWeight:
+                                                                FontWeight
+                                                                    .w500),
+                                                      )),
+                                                )),
+                                          )
+                                        ]),
+                                  ]),
+                                ),
                               )),
-                      parentBoxBackgroundColor:
-                          FlutterFlowTheme.of(context).primary,
-                      parentBoxDisableBackgroundColor: Colors.grey,
-                      circleSlidingButtonBackgroundColor: Colors.white,
-                      isEnable: true,
-                      onSlideActionCompleted: () async {
-                        if (isLoading == false) {
-                          setState(() {
-                            isLoading = true;
-                          });
-                          final services = [];
-                          for (final x in serviceSelectQueue) {
-                            for (final s in widget.services) {
-                              log('service s: $s');
-                              log('service x: $x');
-                              if (x['service_id'] == s['service_id']) {
-                                services.add(s['queue_service_uuids']
-                                    .toString()
-                                    .replaceAll('[', '')
-                                    .replaceAll(']', ''));
-                              }
-                            }
-                          }
+                          if (selectQueue != null)
+                            Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 15, right: 15, top: 15, bottom: 0),
+                                child: Container(
+                                    decoration: BoxDecoration(
+                                      border: Border.all(
+                                          color:
+                                              Colors.green.withOpacity(0.12)),
+                                      gradient: LinearGradient(
+                                        begin: Alignment.topCenter,
+                                        end: Alignment.bottomCenter,
+                                        colors: [
+                                          Colors.green.withOpacity(0.08),
+                                          Colors.green.withOpacity(
+                                              0.08), // Or any color for the bottom glow
+                                          Colors.green.withOpacity(
+                                              0.12), // Or any color for the bottom glow
+                                        ],
+                                      ),
+                                      borderRadius: const BorderRadius.only(
+                                        bottomLeft: Radius.circular(12),
+                                        bottomRight: Radius.circular(12),
+                                        topLeft: Radius.circular(12),
+                                        topRight: Radius.circular(12),
+                                      ),
+                                    ),
+                                    child: Padding(
+                                        padding: EdgeInsets.all(14),
+                                        child: Column(
+                                          children: [
+                                            // const Row(
+                                            //   children: [
+                                            //     Text(
+                                            //       'Bill Details',
+                                            //       style: TextStyle(
+                                            //           fontFamily: 'Inter',
+                                            //           fontSize: 16,
+                                            //           fontWeight: FontWeight.w500),
+                                            //     ),
+                                            //   ],
+                                            // ),
+                                            // const SizedBox(
+                                            //   height: 10,
+                                            // ),
+                                            // Divider(
+                                            //   indent: 0,
+                                            //   endIndent: 0,
+                                            //   height: 1,
+                                            //   color: Colors.grey[100],
+                                            // ),
+                                            // const SizedBox(
+                                            //   height: 2,
+                                            // ),
+                                            // detail('Business name',
+                                            //     widget.businessName),
+                                            // detail('Counter',
+                                            //     selectQueue['queue_name'] ?? ''),
+                                            // detail('Staff name',
+                                            //     selectQueue['employee_name'] ?? ''),
+                                            // detail('Per Person Fees',
+                                            //     '₹${totalPrice(serviceSelectQueue, 'service_fee')}'),
+                                            // detail('Total Person',
+                                            //     '${(selectedGuests + 1)}'),
 
-                          final apiCall = await sendData({
-                            "user_id": appointeeUUID,
-                            "priority": false,
-                            "queue_id": selectedQueueId!,
-                            "queue_date": widget.date,
-                            "token_number": "string",
-                            "turn_time": 0,
-                            "queue_services": services,
-                            "estimated_enqueue_time": convertToIsoUtc(
-                                widget.date,
-                                (selectedTimeSlot != null)
-                                    ? selectedTimeSlot!
-                                    : appointmentTime!),
-                            "notes": "string",
-                            "cancellation_reason": "string",
-                            "reschedule_count": 0,
-                            "joined_queue":
-                                (selectedTimeSlot != null) ? false : true,
-                            "is_scheduled":
-                                (selectedTimeSlot != null) ? true : false
-                          }, 'queue_user')
-                              .then((value) {
-                            log('response: $value');
-                            if (value != null) {
+                                            // detail(
+                                            //     'Services',
+                                            //     getJsonField(serviceSelectQueue,
+                                            //             r'''$..business_service_name''')
+                                            //         .toString()
+                                            //         .replaceAll('[', '')
+                                            //         .replaceAll(']', '')),
+                                            // detail('Date', widget.date),
+                                            // if (messageList != null)
+                                            //   detail(
+                                            //       'Time',
+                                            //       (messageList['estimated_appointment_time']
+                                            //                   .toString()
+                                            //                   .length >
+                                            //               5)
+                                            //           ? messageList[
+                                            //                   'estimated_appointment_time']
+                                            //               .toString()
+                                            //               .substring(11)
+                                            //           : messageList[
+                                            //                   'estimated_appointment_time']
+                                            //               .toString()),
+                                            // detail('Total time',
+                                            //     '${((selectedGuests != 0) ? double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) * (selectedGuests + 1) / 60 : double.parse(totalPrice(serviceSelectQueue, 'avg_service_time')) / 60).toString().replaceAll('.0', '')} Mins'),
+                                            // const SizedBox(
+                                            //   height: 10,
+                                            // ),
+                                            // Divider(
+                                            //   indent: 0,
+                                            //   endIndent: 0,
+                                            //   height: 1,
+                                            //   color: Colors.green.shade100,
+                                            // ),
+                                            Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 0),
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    const Text(
+                                                      'Total Service Fees',
+                                                      style: const TextStyle(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 16,
+                                                          fontWeight:
+                                                              FontWeight.w500),
+                                                    ),
+                                                    Text(
+                                                      (totalPrice(serviceSelectQueue,
+                                                                  'service_fee') !=
+                                                              '')
+                                                          ? '₹ ${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}/-'
+                                                          : '-/-',
+                                                      style: const TextStyle(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 18,
+                                                          fontWeight:
+                                                              FontWeight.w600),
+                                                    ),
+                                                  ],
+                                                )),
+                                          ],
+                                        )))),
+                          Padding(
+                              padding: EdgeInsets.fromLTRB(15, 12, 15, 20),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                    border: Border.all(
+                                        color: Colors.green.withOpacity(0.12)),
+                                    color: Colors.green.withOpacity(0.08),
+                                    borderRadius: BorderRadius.circular(14)),
+                                child: const Padding(
+                                    padding: EdgeInsets.all(14),
+                                    child: Row(children: [
+                                      Expanded(
+                                          child: Text(
+                                        'Note: Appointment time is approximate and may vary slightly',
+                                        style: TextStyle(fontSize: 14),
+                                      ))
+                                    ])),
+                              )),
+                        ],
+                      ),
+                    )),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    if (messageList != null)
+                      Material(
+                          borderRadius: BorderRadius.circular(30),
+                          elevation: 2,
+                          child: CircleSlideToActionButton(
+                            width: (isLoading)
+                                ? 55
+                                : MediaQuery.of(context).size.width - 40,
+                            parentBoxRadiusValue: 27,
+                            circleSlidingButtonSize: 55,
+                            leftEdgeSpacing: 0,
+                            rightEdgeSpacing: 0,
+                            initialSlidingActionLabel: (totalPrice(
+                                        serviceSelectQueue, 'service_fee') !=
+                                    '')
+                                ? 'Slide to Fix Appointment | ₹${(selectedGuests != 0) ? (double.parse(totalPrice(serviceSelectQueue, 'service_fee'))) * (selectedGuests + 1) : (totalPrice(serviceSelectQueue, 'service_fee'))}'
+                                : 'Slide to Fix Appointment',
+                            initialSlidingActionLabelTextStyle: const TextStyle(
+                                fontSize: 16, color: Colors.white),
+                            finalSlidingActionLabel: '',
+                            circleSlidingButtonIcon: (!isLoading)
+                                ? Icon(
+                                    Icons.keyboard_double_arrow_right_rounded,
+                                    color: FlutterFlowTheme.of(context).primary,
+                                    size: 28,
+                                  )
+                                : Padding(
+                                    padding: EdgeInsets.all(12),
+                                    child: CircularProgressIndicator(
+                                      color:
+                                          FlutterFlowTheme.of(context).primary,
+                                    )),
+                            parentBoxBackgroundColor:
+                                FlutterFlowTheme.of(context).primary,
+                            parentBoxDisableBackgroundColor: Colors.grey,
+                            circleSlidingButtonBackgroundColor: Colors.white,
+                            isEnable: true,
+                            onSlideActionCompleted: () async {
+                              if (isLoading == false) {
+                                setState(() {
+                                  isLoading = true;
+                                });
+                                final services = [];
+                                for (final x in serviceSelectQueue) {
+                                  for (final s in widget.services) {
+                                    log('service s: $s');
+                                    log('service x: $x');
+                                    if (x['service_id'] == s['service_id']) {
+                                      services.add(s['queue_service_uuids']
+                                          .toString()
+                                          .replaceAll('[', '')
+                                          .replaceAll(']', ''));
+                                    }
+                                  }
+                                }
+
+                                if (widget.rescheduleData == null) {
+                                  final apiCall = await sendData({
+                                    "user_id": appointeeUUID,
+                                    "priority": false,
+                                    "queue_id": selectedQueueId!,
+                                    "queue_date": widget.date,
+                                    "token_number": "string",
+                                    "turn_time": 0,
+                                    "queue_services": services,
+                                    "estimated_enqueue_time": convertToIsoUtc(
+                                        widget.date,
+                                        (selectedTimeSlot != null)
+                                            ? selectedTimeSlot!
+                                            : appointmentTime!),
+                                    "notes": "string",
+                                    "cancellation_reason": "string",
+                                    "reschedule_count": 0,
+                                    "joined_queue": (selectedTimeSlot != null)
+                                        ? false
+                                        : true,
+                                    "is_scheduled": (selectedTimeSlot != null)
+                                        ? true
+                                        : false
+                                  }, 'queue_user')
+                                      .then((value) {
+                                    log('response: $value');
+                                    if (value != null) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      return Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConfirmUiWidget(
+                                                    response: value,
+                                                  )));
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                } else {
+                                  final reschedule = widget.rescheduleData;
+                                  await putData({
+                                    "queue_id": reschedule['queue_id'],
+                                    "queue_date": widget.date,
+                                    "token_number":
+                                        reschedule['token_number'].toString(),
+                                    "estimated_enqueue_time": convertToIsoUtc(
+                                        widget.date,
+                                        (selectedTimeSlot != null)
+                                            ? selectedTimeSlot!
+                                            : appointmentTime!),
+                                    "notes": "string",
+                                    "reschedule_count":
+                                        reschedule['reschedule_count'],
+                                    "joined_queue": (selectedTimeSlot != null)
+                                        ? false
+                                        : true,
+                                    "is_scheduled": (selectedTimeSlot != null)
+                                        ? true
+                                        : false,
+                                    "queue_services": services,
+                                  }, "reschedule_queue_entry")
+                                      .then((value) {
+                                    log('response: $value');
+                                    if (value != null) {
+                                      setState(() {
+                                        isLoading = false;
+                                      });
+                                      return Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  ConfirmUiWidget(
+                                                    response: value,
+                                                  )));
+                                    }
+                                  });
+                                  setState(() {
+                                    isLoading = false;
+                                  });
+                                }
+                              }
+                            },
+                            onSlideActionCanceled: () {
+                              print("Sliding action cancelled");
                               setState(() {
                                 isLoading = false;
                               });
-                              return Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => ConfirmUiWidget(
-                                            response: value,
-                                          )));
-                            }
-                          });
-
-                          setState(() {
-                            isLoading = false;
-                          });
-                        }
-                      },
-                      onSlideActionCanceled: () {
-                        print("Sliding action cancelled");
-                        setState(() {
-                          isLoading = false;
-                        });
-                      },
-                    )),
-                const SizedBox(
-                  height: 20,
-                )
-              ],
-            ),
-          )),
+                            },
+                          )),
+                    if(pageLoader)
+                      loading(context),
+                    const SizedBox(
+                      height: 20,
+                    )
+                  ],
+                ),
+               )),
     );
   }
 

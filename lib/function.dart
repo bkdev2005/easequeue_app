@@ -65,7 +65,23 @@ List<dynamic> getNext7DaysAsMap() {
       "day": "${dayFormatter.format(date)}"
     }''');
   }
+  log('days: $daysList');
   return daysList;
+}
+
+final yearFormatter = DateFormat('yyyy');
+final monthFormatter = DateFormat('MMM');
+final dateFormatter = DateFormat('dd');
+final dayFormatter = DateFormat('EEE'); // gives full day name like Sunday
+
+dynamic formattedDate(String date) {
+  final dateTime = DateTime.parse(date);
+  return '''{
+    "year": "${yearFormatter.format(dateTime)}",
+    "month": "${monthFormatter.format(dateTime)}",
+    "date": "${dateFormatter.format(dateTime)}",
+    "day": "${dayFormatter.format(dateTime)}"
+  }''';
 }
 
 // Whatsapp Message function

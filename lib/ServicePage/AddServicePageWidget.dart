@@ -19,10 +19,11 @@ import 'package:flutter/material.dart';
 
 class AddServicePageWidget extends StatefulWidget {
   const AddServicePageWidget(
-      {super.key, this.businessId, this.lat, this.long});
+      {super.key, this.businessId, this.lat, this.long, this.rescheduleData});
   final String? lat;
   final String? long;
   final String? businessId;
+  final dynamic rescheduleData;
   @override
   State<AddServicePageWidget> createState() => _AddServicePageWidgetState();
 }
@@ -44,10 +45,18 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
   void initState() {
     super.initState();
     _model = createModel(context, () => AddServicePageModel());
+
     next7Days = getNext7DaysAsMap();
+    if(widget.rescheduleData != null){
+      setState(() {
+        selectDay = jsonDecode(formattedDate(widget.rescheduleData['queue_date']));
+      });
+      log('select day: $selectDay');
+    }else{
     setState(() {
       selectDay = jsonDecode(next7Days.first);
     });
+    }
     changeDate();
     if (widget.lat != null && widget.long != null) {
       setState(() {
@@ -63,6 +72,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       });
       initBusinessData();
     }
+
   }
 
   void initBusinessData() {
@@ -106,7 +116,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             getJsonField(value, r'''$.data[:]''', true)?.toList() ?? [];
       });
 
-      if (selectedServiceIndex.isEmpty) {
+      if (selectedServiceIndex.isEmpty && widget.rescheduleData == null) {
         for (final service in serviceList) {
           if (!service['is_disabled']) {
             setState(() {
@@ -116,6 +126,20 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             break;
           }
         }
+      }else if(widget.rescheduleData != null){
+        setState(() {
+          selectedServiceIndex = (widget.rescheduleData['queue_services_ids']).toList();
+        });
+        for (final service in serviceList) {
+          for(final id in selectedServiceIndex){
+          if (!service['is_disabled'] && service['service_id'] == id) {
+            setState(() {
+              selectedServiceData.add(service);
+            });
+          }
+          }
+        }
+        log('selected services: $selectedServiceData');
       }
       setState(() => isLoading = false);
       log('Service: $value');
@@ -124,6 +148,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
 
   void changeDate(){
     final decodedDate = (selectDay);
+    log('date: $decodedDate');
     setState(() {
     finalDate =
     '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
@@ -138,7 +163,10 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     loadSchedule();
     loadReviews();
     setMapData();
-    // isAddedFav = businessDetail['is_favourite'] ?? false;
+    // if(widget.rescheduleData != null){
+    //   selectedServiceIndex = (widget.rescheduleData['queue_services_ids']);
+    //   log('selectedService: $selectedServiceIndex');
+    // }
   }
 
   void loadSchedule() {
@@ -302,7 +330,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   color: FlutterFlowTheme.of(context).primary),
                               child: Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
-                                    18, 10, 18, 20),
+                                    15, 10, 15, 18),
                                 child: Column(children: [
                                   const Row(
                                     mainAxisAlignment: MainAxisAlignment.end,
@@ -715,7 +743,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 const SizedBox(height: 20),
                                 Padding(
                                     padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
+                                        left: 15, right: 15),
                                     child: Text(
                                       "When are you visiting?",
                                       style: FlutterFlowTheme.of(context)
@@ -736,13 +764,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   height: 90,
                                   child: ListView(
                                     padding: const EdgeInsets.only(
-                                        left: 20, right: 20),
+                                        left: 15, right: 15),
                                     scrollDirection: Axis.horizontal,
                                     children: List.generate(next7Days.length,
                                         (index) {
                                       final day = jsonDecode(next7Days[index]);
                                       final isSelected =
-                                          selectedDateIndex == index;
+                                          (day.toString() == selectDay.toString());
                                       final isToday = index == 0;
                                       return Padding(
                                           padding: EdgeInsets.only(
@@ -828,7 +856,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               ]),
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 20, 0, 0),
+                                15, 20, 0, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -851,7 +879,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           ),
                           Padding(
                             padding: const EdgeInsetsDirectional.fromSTEB(
-                                20, 18, 20, 20),
+                                15, 18, 15, 20),
                             child: Builder(
                               builder: (context) {
                                 final services =
@@ -888,6 +916,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                 child: GestureDetector(
                                                     onTap: () {
                                                       if (!isDisable) {
+                                                        if(widget.rescheduleData == null){
                                                         setState(() {
                                                           if (selectedServiceIndex
                                                               .contains(
@@ -907,6 +936,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                                 serviceListItem);
                                                           }
                                                         });
+                                                      }else{
+                                                          Fluttertoast.showToast(msg: 'You can change only date and time not service in reschedule.');
+                                                        }
                                                       }
                                                     },
                                                     child: Container(
@@ -1047,7 +1079,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                                const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -1070,7 +1102,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           ),
                           Padding(
                               padding:
-                                  const EdgeInsets.fromLTRB(20, 16, 20, 20),
+                                  const EdgeInsets.fromLTRB(15, 16, 15, 20),
                               child: Column(children: [
                                 GestureDetector(
                                     onTap: () {
@@ -1172,7 +1204,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                               ])),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(20, 0, 20, 0),
+                                const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -1195,7 +1227,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                           ),
                           Padding(
                             padding:
-                                EdgeInsetsDirectional.fromSTEB(5, 15, 0, 20),
+                                const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 20),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1346,6 +1378,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               formatDate: formatAppointmentDate,
                                               services: selectedServiceData,
                                               date: date,
+                                              rescheduleData: widget.rescheduleData,
                                               uuid: FFAppState().userId,
                                             )));
                               } else {

@@ -47,15 +47,16 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     _model = createModel(context, () => AddServicePageModel());
 
     next7Days = getNext7DaysAsMap();
-    if(widget.rescheduleData != null){
+    if (widget.rescheduleData != null) {
       setState(() {
-        selectDay = jsonDecode(formattedDate(widget.rescheduleData['queue_date']));
+        selectDay =
+            jsonDecode(formattedDate(widget.rescheduleData['queue_date']));
       });
       log('select day: $selectDay');
-    }else{
-    setState(() {
-      selectDay = jsonDecode(next7Days.first);
-    });
+    } else {
+      setState(() {
+        selectDay = jsonDecode(next7Days.first);
+      });
     }
     changeDate();
     if (widget.lat != null && widget.long != null) {
@@ -64,7 +65,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
         long = widget.long;
       });
       initBusinessData();
-    }else{
+    } else {
       getLocation().then((value) {
         log('location: ${value?[1]}, ${value?[2]}');
         lat = value?[1].toString();
@@ -72,7 +73,6 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
       });
       initBusinessData();
     }
-
   }
 
   void initBusinessData() {
@@ -126,17 +126,18 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             break;
           }
         }
-      }else if(widget.rescheduleData != null){
+      } else if (widget.rescheduleData != null) {
         setState(() {
-          selectedServiceIndex = (widget.rescheduleData['queue_services_ids']).toList();
+          selectedServiceIndex =
+              (widget.rescheduleData['queue_services_ids']).toList();
         });
         for (final service in serviceList) {
-          for(final id in selectedServiceIndex){
-          if (!service['is_disabled'] && service['service_id'] == id) {
-            setState(() {
-              selectedServiceData.add(service);
-            });
-          }
+          for (final id in selectedServiceIndex) {
+            if (!service['is_disabled'] && service['service_id'] == id) {
+              setState(() {
+                selectedServiceData.add(service);
+              });
+            }
           }
         }
         log('selected services: $selectedServiceData');
@@ -146,15 +147,15 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
     });
   }
 
-  void changeDate(){
+  void changeDate() {
     final decodedDate = (selectDay);
     log('date: $decodedDate');
     setState(() {
-    finalDate =
-    '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
-    appointmentDate = decodedDate;
-    formatAppointmentDate =
-    '${decodedDate['day']}, ${decodedDate['date'].toString().padLeft(2, '0')} ${decodedDate['month']}';
+      finalDate =
+          '${decodedDate['year']}-${getMonthNumber(decodedDate['month'])}-${decodedDate['date'].toString().padLeft(2, '0')}';
+      appointmentDate = decodedDate;
+      formatAppointmentDate =
+          '${decodedDate['day']}, ${decodedDate['date'].toString().padLeft(2, '0')} ${decodedDate['month']}';
     });
   }
 
@@ -238,7 +239,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
             Row(
               mainAxisSize: MainAxisSize.max,
               children: [
-               /* FlutterFlowIconButton(
+                /* FlutterFlowIconButton(
                   borderRadius: 40,
                   fillColor: FlutterFlowTheme.of(context).secondaryBackground,
                   icon: Icon(
@@ -337,7 +338,7 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
-                                       SizedBox(
+                                      SizedBox(
                                         height: 5,
                                       ),
                                     ],
@@ -363,9 +364,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                         ),
                                       ),
                                       child: Padding(
-                                          padding:
-                                              const EdgeInsetsDirectional.fromSTEB(
-                                                  14, 12, 12, 12),
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(14, 12, 12, 12),
                                           child: Column(
                                             mainAxisSize: MainAxisSize.max,
                                             children: [
@@ -377,9 +377,9 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                   Expanded(
                                                       child: Padding(
                                                     padding:
-                                                       const  EdgeInsetsDirectional
+                                                        const EdgeInsetsDirectional
                                                             .fromSTEB(
-                                                                0, 0, 0, 0),
+                                                            0, 0, 0, 0),
                                                     child: Column(
                                                       mainAxisSize:
                                                           MainAxisSize.max,
@@ -581,85 +581,76 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                               Align(
                                                   alignment:
                                                       Alignment.centerLeft,
-                                                  child: Wrap(
-                                                    runSpacing: 8,
+                                                  child: Row(
                                                     children: [
-                                                      GestureDetector(
-                                                          onTap: () {
-                                                            showModalBottomSheet(
-                                                                context:
-                                                                    context,
-                                                                isScrollControlled:
-                                                                    true,
-                                                                builder:
-                                                                    (context) {
-                                                                  return Padding(
-                                                                      padding: MediaQuery
-                                                                          .viewInsetsOf(
-                                                                              context),
-                                                                      child:
-                                                                          BusinessInfoWidget(
-                                                                        data:
-                                                                            scheduleData,
-                                                                      ));
-                                                                });
-                                                          },
-                                                          child: Container(
-                                                            height: 35,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          6),
-                                                              color: Colors
-                                                                  .grey[200],
-                                                            ),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .fromLTRB(
-                                                                      10,
-                                                                      0,
-                                                                      8,
-                                                                      0),
-                                                              child: Row(
-                                                                  mainAxisSize:
-                                                                      MainAxisSize
-                                                                          .min,
-                                                                  children: [
-                                                                    Text(
-                                                                        '${businessDetail['status']}',
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w500,
-                                                                              color: (businessDetail['status'].toString().toLowerCase() != 'closed' ) ? Colors.green : Colors.redAccent,
-                                                                              fontFamily: 'Inter',
-                                                                              letterSpacing: 0.0,
-                                                                            )),
-                                                                    Text(
-                                                                        ' • ${businessDetail['status_message']}',
-                                                                        maxLines: 1,
-                                                                        overflow: TextOverflow.ellipsis,
-                                                                        style: FlutterFlowTheme.of(context)
-                                                                            .bodyMedium
-                                                                            .override(
-                                                                              fontSize: 12,
-                                                                              fontWeight: FontWeight.w400,
-                                                                              color: Colors.black45,
-                                                                              fontFamily: 'Inter',
-                                                                              letterSpacing: 0.0,
-                                                                            )),
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .keyboard_arrow_down_rounded,
-                                                                      size: 14,
-                                                                    )
-                                                                  ]),
-                                                            ),
-                                                          )),
+                                                      Expanded(
+                                                          child:
+                                                              GestureDetector(
+                                                                  onTap: () {
+                                                                    showModalBottomSheet(
+                                                                        context:
+                                                                            context,
+                                                                        isScrollControlled:
+                                                                            true,
+                                                                        builder:
+                                                                            (context) {
+                                                                          return Padding(
+                                                                              padding: MediaQuery.viewInsetsOf(context),
+                                                                              child: BusinessInfoWidget(
+                                                                                data: scheduleData,
+                                                                              ));
+                                                                        });
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    height: 35,
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                      borderRadius:
+                                                                          BorderRadius.circular(
+                                                                              6),
+                                                                      color: Colors
+                                                                              .grey[
+                                                                          200],
+                                                                    ),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .fromLTRB(
+                                                                          10,
+                                                                          0,
+                                                                          8,
+                                                                          0),
+                                                                      child: Row(
+                                                                          mainAxisSize:
+                                                                              MainAxisSize.min,
+                                                                          children: [
+                                                                            Text((businessDetail['status'].toString().toLowerCase() == 'closed') ? 'Closed' : 'Open',
+                                                                                style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                      fontSize: 12,
+                                                                                      fontWeight: FontWeight.w500,
+                                                                                      color: (businessDetail['status'].toString().toLowerCase() != 'closed') ? Colors.green : Colors.redAccent,
+                                                                                      fontFamily: 'Inter',
+                                                                                      letterSpacing: 0.0,
+                                                                                    )),
+                                                                            Expanded(
+                                                                                child: Text(' • ${businessDetail['status_message']}',
+                                                                                    maxLines: 1,
+                                                                                    overflow: TextOverflow.ellipsis,
+                                                                                    style: FlutterFlowTheme.of(context).bodyMedium.override(
+                                                                                          fontSize: 12,
+                                                                                          fontWeight: FontWeight.w400,
+                                                                                          color: Colors.black45,
+                                                                                          fontFamily: 'Inter',
+                                                                                          letterSpacing: 0.0,
+                                                                                        ))),
+                                                                            const Icon(
+                                                                              Icons.keyboard_arrow_down_rounded,
+                                                                              size: 18,
+                                                                            )
+                                                                          ]),
+                                                                    ),
+                                                                  ))),
                                                       const SizedBox(
                                                         width: 8,
                                                       ),
@@ -769,8 +760,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     children: List.generate(next7Days.length,
                                         (index) {
                                       final day = jsonDecode(next7Days[index]);
-                                      final isSelected =
-                                          (day.toString() == selectDay.toString());
+                                      final isSelected = (day.toString() ==
+                                          selectDay.toString());
                                       final isToday = index == 0;
                                       return Padding(
                                           padding: EdgeInsets.only(
@@ -787,7 +778,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                 selectedServiceIndex.clear();
                                               });
                                               changeDate();
-                                              loadServices(widget.businessId!, date: finalDate);
+                                              loadServices(widget.businessId!,
+                                                  date: finalDate);
                                             },
                                             child: Container(
                                               padding:
@@ -916,28 +908,34 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                                 child: GestureDetector(
                                                     onTap: () {
                                                       if (!isDisable) {
-                                                        if(widget.rescheduleData == null){
-                                                        setState(() {
-                                                          if (selectedServiceIndex
-                                                              .contains(
-                                                                  serviceId)) {
-                                                            selectedServiceIndex
-                                                                .remove(
-                                                                    serviceId);
-                                                            selectedServiceData
-                                                                .removeWhere((item) =>
-                                                                    item[
-                                                                        'service_id'] ==
-                                                                    serviceId);
-                                                          } else {
-                                                            selectedServiceIndex
-                                                                .add(serviceId);
-                                                            selectedServiceData.add(
-                                                                serviceListItem);
-                                                          }
-                                                        });
-                                                      }else{
-                                                          Fluttertoast.showToast(msg: 'You can change only date and time not service in reschedule.');
+                                                        if (widget
+                                                                .rescheduleData ==
+                                                            null) {
+                                                          setState(() {
+                                                            if (selectedServiceIndex
+                                                                .contains(
+                                                                    serviceId)) {
+                                                              selectedServiceIndex
+                                                                  .remove(
+                                                                      serviceId);
+                                                              selectedServiceData
+                                                                  .removeWhere((item) =>
+                                                                      item[
+                                                                          'service_id'] ==
+                                                                      serviceId);
+                                                            } else {
+                                                              selectedServiceIndex
+                                                                  .add(
+                                                                      serviceId);
+                                                              selectedServiceData
+                                                                  .add(
+                                                                      serviceListItem);
+                                                            }
+                                                          });
+                                                        } else {
+                                                          Fluttertoast.showToast(
+                                                              msg:
+                                                                  'You can change only date and time not service in reschedule.');
                                                         }
                                                       }
                                                     },
@@ -1078,8 +1076,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                15, 0, 15, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -1203,8 +1201,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 )
                               ])),
                           Padding(
-                            padding:
-                                const EdgeInsetsDirectional.fromSTEB(15, 0, 15, 0),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                15, 0, 15, 0),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               children: [
@@ -1226,8 +1224,8 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                             ),
                           ),
                           Padding(
-                            padding:
-                                const EdgeInsetsDirectional.fromSTEB(0, 15, 0, 20),
+                            padding: const EdgeInsetsDirectional.fromSTEB(
+                                0, 15, 0, 20),
                             child: Row(
                               mainAxisSize: MainAxisSize.max,
                               mainAxisAlignment: MainAxisAlignment.start,
@@ -1374,11 +1372,13 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                     MaterialPageRoute(
                                         builder: (context) =>
                                             FixAppointmentWidget(
-                                              businessName: businessDetail['name'],
+                                              businessName:
+                                                  businessDetail['name'],
                                               formatDate: formatAppointmentDate,
                                               services: selectedServiceData,
                                               date: date,
-                                              rescheduleData: widget.rescheduleData,
+                                              rescheduleData:
+                                                  widget.rescheduleData,
                                               uuid: FFAppState().userId,
                                             )));
                               } else {

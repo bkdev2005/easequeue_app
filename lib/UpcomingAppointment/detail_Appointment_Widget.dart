@@ -239,11 +239,12 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                             itemBuilder: (context, addressListIndex) {
                               final appointmentListItem =
                                   appointmentList[addressListIndex];
-                              final businessAddress = '${(getJsonField(appointmentListItem, r'''$.business_address[0].unit_number''')).toString()}, ' +
-                                  '${(getJsonField(appointmentListItem, r'''$.business_address[0].building''')).toString()}, ' +
-                                  '${(getJsonField(appointmentListItem, r'''$.business_address[0].street_1''')).toString()}, ' +
-                                  '${(getJsonField(appointmentListItem, r'''$.business_address[0].country''')).toString()}' +
-                                  '-${(getJsonField(appointmentListItem, r'''$.business_address[0].postal_code''')).toString()}';
+                              final businessAddress =
+                                  '${(getJsonField(appointmentListItem, r'''$.business_address[0].unit_number''')).toString()}, ' +
+                                      '${(getJsonField(appointmentListItem, r'''$.business_address[0].building''')).toString()}, ' +
+                                      '${(getJsonField(appointmentListItem, r'''$.business_address[0].street_1''')).toString()}, ' +
+                                      '${(getJsonField(appointmentListItem, r'''$.business_address[0].country''')).toString()}' +
+                                      '-${(getJsonField(appointmentListItem, r'''$.business_address[0].postal_code''')).toString()}';
                               return Padding(
                                 padding: const EdgeInsetsDirectional.fromSTEB(
                                     15, 15, 15, 0),
@@ -265,25 +266,26 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                     borderRadius: BorderRadius.circular(12),
                                   ),
                                   child: Padding(
-                                    padding: EdgeInsets.all(12),
-                                    child: Column(
-                                      mainAxisSize: MainAxisSize.max,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Row(
+                                      padding: EdgeInsets.all(12),
+                                      child: Column(
                                           mainAxisSize: MainAxisSize.max,
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                            Expanded(
-                                              child: Row( children: [
-                                                Text(
-                                                appointmentListItem[
-                                                        'business_name'] ??
-                                                    'N/A',
-                                                style:
-                                                    FlutterFlowTheme.of(context)
+                                            Row(
+                                              mainAxisSize: MainAxisSize.max,
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Expanded(
+                                                    child: Row(children: [
+                                                  Text(
+                                                    appointmentListItem[
+                                                            'business_name'] ??
+                                                        'N/A',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
@@ -292,31 +294,66 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                         ),
-                                              ),
-                                                Text(
-                                                  (appointmentListItem[
-                                                  'queue_name'] != null) ? ' (${appointmentListItem[
-                                                  'queue_name']})' :
-                                                      '',
-                                                  style:
-                                                  FlutterFlowTheme.of(context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 12,
-                                                    letterSpacing: 0.0,
-                                                    fontWeight:
-                                                    FontWeight.w400,
                                                   ),
+                                                  Text(
+                                                    (appointmentListItem[
+                                                                'queue_name'] !=
+                                                            null)
+                                                        ? ' (${appointmentListItem['queue_name']})'
+                                                        : '',
+                                                    style: FlutterFlowTheme.of(
+                                                            context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          fontSize: 12,
+                                                          letterSpacing: 0.0,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                        ),
+                                                  ),
+                                                      const SizedBox(
+                                                        width: 5,
+                                                      ),
+                                                      if(appointmentListItem[
+                                                      'is_scheduled'] ==
+                                                          true)
+                                                        Container(
+                                                          decoration: BoxDecoration(
+                                                            borderRadius: BorderRadius.circular(8),
+                                                            color: Colors.green.withOpacity(0.3)
+                                                          ),
+                                                          child:
+                                                            Padding(
+                                                              padding:
+                                                              const EdgeInsetsDirectional
+                                                                  .fromSTEB(
+                                                                  6, 2, 6, 2),
+                                                              child: Text(
+                                                                'Scheduled',
+                                                                style: FlutterFlowTheme.of(
+                                                                    context)
+                                                                    .bodyMedium
+                                                                    .override(
+                                                                  fontSize: 12,
+                                                                  fontWeight: FontWeight.w500,
+                                                                  color: FlutterFlowTheme
+                                                                      .of(context)
+                                                                      .primary,
+                                                                  fontFamily: 'Inter',
+                                                                  letterSpacing: 0.0,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                        )],
+                                                        ),
                                                 ),
-                                            ])
-                                            ),
-                                            Text(
-                                              appointmentListItem[
-                                                      'user_status'] ??
-                                                  'N/A',
-                                              style:
-                                                  FlutterFlowTheme.of(context)
+                                                Text(
+                                                  appointmentListItem[
+                                                          'user_status'] ??
+                                                      'N/A',
+                                                  style: FlutterFlowTheme.of(
+                                                          context)
                                                       .bodyMedium
                                                       .override(
                                                         fontFamily: 'Inter',
@@ -335,262 +372,266 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
                                                         fontWeight:
                                                             FontWeight.w400,
                                                       ),
+                                                ),
+                                              ],
                                             ),
-                                          ],
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 5, 0, 0),
-                                          child: Text(
-                                            'Token No.: ${appointmentListItem['your_token']}',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: 0.0,
-                                                ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 5, 0, 0),
-                                          child: Row( children: [
-                                            Expanded(child: Text(
-                                            businessAddress,
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: 0.0,
-                                                ),
-                                          )),
-                                            addressIcon(businessAddress, context)
-                                        ])),
-                                        Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 5, 0, 6),
-                                          child: Text(
-                                            '₹ ${appointmentListItem['total_price']}',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: 0.0,
-                                                ),
-                                          ),
-                                        ),
-
-                                        Divider(
-                                          indent: 0,
-                                          endIndent: 0,
-                                          height: 1,
-                                          color: Colors.green.shade100,
-                                        ),
-                                        const SizedBox(
-                                          height: 5,
-                                        ),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              if (appointmentListItem[
-                                                          'estimated_enqueue_time'] !=
-                                                      null &&
-                                                  appointmentListItem[
-                                                          'estimated_enqueue_time'] !=
-                                                      '')
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(0, 5, 0, 0),
-                                                  child: Text(
-                                                    'Appointment Time:',
-                                                    textAlign: TextAlign.end,
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 5, 0, 0),
+                                              child: Text(
+                                                'Token No.: ${appointmentListItem['your_token']}',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily: 'Inter',
+                                                          letterSpacing: 0.0,
+                                                        ),
+                                              ),
+                                            ),
+                                            Padding(
+                                                padding:
+                                                    const EdgeInsetsDirectional
+                                                        .fromSTEB(0, 5, 0, 0),
+                                                child: Row(children: [
+                                                  Expanded(
+                                                      child: Text(
+                                                    businessAddress,
                                                     style: FlutterFlowTheme.of(
                                                             context)
                                                         .bodyMedium
                                                         .override(
                                                           fontFamily: 'Inter',
-                                                          fontSize: 12,
                                                           letterSpacing: 0.0,
                                                         ),
-                                                  ),
-                                                ),
-                                              Padding(
-                                                padding:
-                                                const EdgeInsetsDirectional
-                                                    .fromSTEB(0, 5, 0, 0),
-                                                child: Text(
-                                                  '${appointmentListItem['estimated_enqueue_time']}',
-                                                  textAlign: TextAlign.end,
-                                                  style: FlutterFlowTheme.of(
-                                                      context)
-                                                      .bodyMedium
-                                                      .override(
-                                                    fontFamily: 'Inter',
-                                                    fontSize: 12,
-                                                    letterSpacing: 0.0,
-                                                  ),
-                                                ),
+                                                  )),
+                                                  addressIcon(
+                                                      businessAddress, context)
+                                                ])),
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsetsDirectional
+                                                      .fromSTEB(0, 5, 0, 6),
+                                              child: Text(
+                                                '₹ ${appointmentListItem['total_price']}',
+                                                style:
+                                                    FlutterFlowTheme.of(context)
+                                                        .bodyMedium
+                                                        .override(
+                                                          fontFamily: 'Inter',
+                                                          letterSpacing: 0.0,
+                                                        ),
                                               ),
-                                            ]),
-                                        Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(0, 5, 0, 0),
-                                                child: Text(
-                                                  'Service: ${serviceName(appointmentListItem['services'])}',
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 16,
-                                                        letterSpacing: 0.0,
-                                                      ),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsetsDirectional
-                                                        .fromSTEB(0, 5, 0, 0),
-                                                child: Text(
-                                                  changeFormat(
+                                            ),
+                                            Divider(
+                                              indent: 0,
+                                              endIndent: 0,
+                                              height: 1,
+                                              color: Colors.green.shade100,
+                                            ),
+                                            const SizedBox(
+                                              height: 5,
+                                            ),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  if (appointmentListItem[
+                                                              'estimated_enqueue_time'] !=
+                                                          null &&
                                                       appointmentListItem[
-                                                          'created_at']),
-                                                  textAlign: TextAlign.end,
-                                                  style: FlutterFlowTheme.of(
-                                                          context)
-                                                      .bodyMedium
-                                                      .override(
-                                                        fontFamily: 'Inter',
-                                                        fontSize: 10,
-                                                        fontWeight:
-                                                            FontWeight.w300,
-                                                        letterSpacing: 0.0,
-                                                      ),
-                                                ),
-                                              ),
-                                            ]),
-
-                                        Padding(
-                                            padding:
-                                                const EdgeInsets.only(top: 10),
-                                            child: Row(spacing: 12, children: [
-                                              Expanded(
-                                                  child: FFButtonWidget(
-                                                      text: 'Cancel',
-                                                      onPressed: () {
-                                                        showDialog(
-                                                            context: context,
-                                                            builder: (context) {
-                                                              return const Center(
-                                                                child:
-                                                                    ConfirmationWidget(
-                                                                  title:
-                                                                      'Cancel Appointment',
-                                                                  subtitle:
-                                                                      'Are your sure want to cancel appointment?',
-                                                                ),
-                                                              );
-                                                            }).then((value) {
-                                                          if (value) {
-                                                            fetchData(
-                                                                    'cancel_appointment/${appointmentListItem['queue_user_id']}',
+                                                              'estimated_enqueue_time'] !=
+                                                          '')
+                                                    Padding(
+                                                      padding:
+                                                          const EdgeInsetsDirectional
+                                                              .fromSTEB(
+                                                              0, 5, 0, 0),
+                                                      child: Text(
+                                                        'Appointment Time:',
+                                                        textAlign:
+                                                            TextAlign.end,
+                                                        style:
+                                                            FlutterFlowTheme.of(
                                                                     context)
-                                                                ?.then((value) {
-                                                              log('response: ${value}');
-                                                              if (value[
-                                                                  'success']) {
-                                                                setState(() {
-                                                                  isOutLookLoad =
-                                                                      true;
+                                                                .bodyMedium
+                                                                .override(
+                                                                  fontFamily:
+                                                                      'Inter',
+                                                                  fontSize: 12,
+                                                                  letterSpacing:
+                                                                      0.0,
+                                                                ),
+                                                      ),
+                                                    ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 5, 0, 0),
+                                                    child: Text(
+                                                      '${appointmentListItem['estimated_enqueue_time']}',
+                                                      textAlign: TextAlign.end,
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 12,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ]),
+                                            Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 5, 0, 0),
+                                                    child: Text(
+                                                      'Service: ${serviceName(appointmentListItem['services'])}',
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 16,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            0, 5, 0, 0),
+                                                    child: Text(
+                                                      changeFormat(
+                                                          appointmentListItem[
+                                                              'created_at']),
+                                                      textAlign: TextAlign.end,
+                                                      style: FlutterFlowTheme
+                                                              .of(context)
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontFamily: 'Inter',
+                                                            fontSize: 10,
+                                                            fontWeight:
+                                                                FontWeight.w300,
+                                                            letterSpacing: 0.0,
+                                                          ),
+                                                    ),
+                                                  ),
+                                                ]),
+                                            Padding(
+                                                padding: const EdgeInsets.only(
+                                                    top: 10),
+                                                child:
+                                                    Row(spacing: 12, children: [
+                                                  Expanded(
+                                                      child: FFButtonWidget(
+                                                          text: 'Cancel',
+                                                          onPressed: () {
+                                                            showDialog(
+                                                                context:
+                                                                    context,
+                                                                builder:
+                                                                    (context) {
+                                                                  return const Center(
+                                                                    child:
+                                                                        ConfirmationWidget(
+                                                                      title:
+                                                                          'Cancel Appointment',
+                                                                      subtitle:
+                                                                          'Are your sure want to cancel appointment?',
+                                                                    ),
+                                                                  );
+                                                                }).then((value) {
+                                                              if (value) {
+                                                                fetchData(
+                                                                        'cancel_appointment/${appointmentListItem['queue_user_id']}',
+                                                                        context)
+                                                                    ?.then(
+                                                                        (value) {
+                                                                  log('response: ${value}');
+                                                                  if (value[
+                                                                      'success']) {
+                                                                    setState(
+                                                                        () {
+                                                                      isOutLookLoad =
+                                                                          true;
+                                                                    });
+                                                                    context.pop(
+                                                                        true);
+                                                                  }
                                                                 });
-                                                                context
-                                                                    .pop(true);
                                                               }
                                                             });
-                                                          }
-                                                        });
-                                                      },
-                                                      options: const FFButtonOptions(
-                                                          width:
-                                                              double.infinity,
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Colors
-                                                                      .black),
-                                                          color: Colors.white,
-                                                          elevation: 0,
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black)))),
-                                              Expanded(
-                                                  child: FFButtonWidget(
-                                                      text: 'Reschedule',
-                                                      onPressed: () async{
-
-                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
-                                                         businessId: appointmentListItem['business_id'],
-                                                          lat: widget.lat,
-                                                          long: widget.long,
-                                                          rescheduleData: {
-                                                            "queue_id": appointmentListItem['queue_id'],
-                                                            "queue_date": onlyDate((appointmentListItem['estimated_enqueue_time'])),
-                                                            "token_number": appointmentListItem['your_token'].toString(),
-                                                            "estimated_enqueue_time": dateFormat(appointmentListItem['estimated_enqueue_time']),
-                                                            "estimated_dequeue_time": dateFormat(appointmentListItem['estimated_dequeue_time']),
-                                                            "notes": appointmentListItem['notes'],
-                                                            "reschedule_count": appointmentListItem['reschedule_count'],
-                                                            "joined_queue": appointmentListItem['joined_queue'],
-                                                            "is_scheduled": appointmentListItem['is_scheduled'],
-                                                            "queue_services_ids": (appointmentListItem['services'] as List)
-                                                                .map((service) => service['service_id']['uuid'].toString())
-                                                                .toList(),
-                                                            "queue_services": (appointmentListItem['services'] as List).map((service)=> service['service_id']).toList()
                                                           },
-                                                        )));
-                                                      },
-                                                      options: const FFButtonOptions(
-                                                          width:
-                                                              double.infinity,
-                                                          borderSide:
-                                                              BorderSide(
+                                                          options: const FFButtonOptions(
+                                                              width: double
+                                                                  .infinity,
+                                                              borderSide: BorderSide(
                                                                   color: Colors
                                                                       .black),
-                                                          color: Colors.white,
-                                                          elevation: 0,
-                                                          textStyle: TextStyle(
-                                                              color: Colors
-                                                                  .black))))
-                                            ])),
+                                                              color:
+                                                                  Colors.white,
+                                                              elevation: 0,
+                                                              textStyle: TextStyle(
+                                                                  color: Colors
+                                                                      .black)))),
+                                                  Expanded(
+                                                      child: FFButtonWidget(
+                                                          text: 'Reschedule',
+                                                          onPressed: () async {
+                                                            Navigator.push(
+                                                                context,
+                                                                MaterialPageRoute(
+                                                                    builder:
+                                                                        (context) =>
+                                                                            AddServicePageWidget(
+                                                                              businessId: appointmentListItem['business_id'],
+                                                                              lat: widget.lat,
+                                                                              long: widget.long,
+                                                                              rescheduleData: {
+                                                                                "queue_id": appointmentListItem['queue_id'],
+                                                                                "queue_date": onlyDate((appointmentListItem['estimated_enqueue_time'])),
+                                                                                "token_number": appointmentListItem['your_token'].toString(),
+                                                                                "estimated_enqueue_time": dateFormat(appointmentListItem['estimated_enqueue_time']),
+                                                                                "estimated_dequeue_time": dateFormat(appointmentListItem['estimated_dequeue_time']),
+                                                                                "notes": appointmentListItem['notes'],
+                                                                                "reschedule_count": appointmentListItem['reschedule_count'],
+                                                                                "joined_queue": appointmentListItem['joined_queue'],
+                                                                                "is_scheduled": appointmentListItem['is_scheduled'],
+                                                                                "queue_services_ids": (appointmentListItem['services'] as List).map((service) => service['service_id']['uuid'].toString()).toList(),
+                                                                                "queue_services": (appointmentListItem['services'] as List).map((service) => service['service_id']).toList()
+                                                                              },
+                                                                            )));
+                                                          },
+                                                          options: const FFButtonOptions(
+                                                              width: double
+                                                                  .infinity,
+                                                              borderSide: BorderSide(
+                                                                  color: Colors
+                                                                      .black),
+                                                              color:
+                                                                  Colors.white,
+                                                              elevation: 0,
+                                                              textStyle: TextStyle(
+                                                                  color: Colors
+                                                                      .black))))
+                                                ])),
 
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                          Padding(
-                                          padding: const EdgeInsetsDirectional
-                                              .fromSTEB(0, 10, 0, 0),
-                                          child: Text(
-                                            (appointmentListItem['is_scheduled'] == true)? '"Time-slot-based appointment booking"' : '"Queue-based appointment booking"',
-                                            style: FlutterFlowTheme.of(context)
-                                                .bodyMedium
-                                                .override(
-                                              fontSize: 12,
-                                              color: FlutterFlowTheme.of(context).primary,
-                                              fontFamily: 'Inter',
-                                              letterSpacing: 0.0,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ])),
+                                          ])),
                                 ),
                               );
                             });
@@ -633,8 +674,6 @@ class _DetailAppointmentsWidgetState extends State<DetailAppointmentsWidget> {
     print(onlyDate); // 👉 2025-08-16
     return onlyDate;
   }
-
-
 }
 
 // QUEUE_USER_REGISTERED = 1

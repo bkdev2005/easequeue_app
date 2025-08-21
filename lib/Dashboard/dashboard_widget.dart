@@ -359,6 +359,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   )));
                                     },
                                   ),
+                                  const SizedBox(width: 4,),
                                   GestureDetector(
                                     child: Padding(
                                         padding: const EdgeInsets.all(5),

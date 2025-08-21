@@ -214,7 +214,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                             final response = await preAuthApi(
                                 {
                                   "phone_number": _model.phoneTextController.text,
-                                  "device_info": jsonDecode(FFAppState().deviceInfo)['platform']
+                                  "device_info": (isAndroid)? 'android' : (isiOS)? 'ios' : 'android'
                                 },
                                 'send_otp').then((value) {
                               if(value!= null){

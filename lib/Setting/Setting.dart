@@ -217,29 +217,30 @@ class _SettingWidgetState extends State<SettingWidget> {
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(
-                            Icons.ios_share,
-                            color: FlutterFlowTheme.of(context).secondaryText,
+                          const Icon(
+                            Icons.logout_rounded,
+                            color: Colors.red,
                             size: 24,
                           ),
                           Expanded(
                             child: Padding(
                               padding:
-                              EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
+                              const EdgeInsetsDirectional.fromSTEB(12, 0, 0, 0),
                               child: Text(
                                 'Logout',
                                 style: FlutterFlowTheme.of(context)
                                     .bodyLarge
                                     .override(
+                                  color: Colors.red,
                                   fontFamily: 'Inter',
                                   letterSpacing: 0.0,
                                 ),
                               ),
                             ),
                           ),
-                          Icon(
-                            Icons.arrow_forward_ios,
-                            color: FlutterFlowTheme.of(context).secondaryText,
+                          const Icon(
+                            Icons.arrow_forward_ios_rounded,
+                            color: Colors.red,
                             size: 18,
                           ),
                         ],
@@ -255,6 +256,8 @@ class _SettingWidgetState extends State<SettingWidget> {
     );
   }
 
+  Color primaryColor = Color(0xff2a4b49);
+
   Widget navigatePage(String name, MaterialPageRoute pageRoute, IconData iconData){
     return Padding(
         padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
@@ -267,7 +270,7 @@ class _SettingWidgetState extends State<SettingWidget> {
             height: 60,
             decoration: BoxDecoration(
               color: FlutterFlowTheme.of(context).secondaryBackground,
-              boxShadow: [
+              boxShadow: const [
                 BoxShadow(
                   blurRadius: 5,
                   color: Color(0x3416202A),
@@ -287,7 +290,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                 children: [
                   Icon(
                     iconData,
-                    color: FlutterFlowTheme.of(context).secondaryText,
+                    color: primaryColor,
                     size: 24,
                   ),
                   Expanded(
@@ -299,7 +302,9 @@ class _SettingWidgetState extends State<SettingWidget> {
                         style: FlutterFlowTheme.of(context)
                             .bodyLarge
                             .override(
+                          color: primaryColor,
                           fontFamily: 'Inter',
+                          fontWeight: FontWeight.w500,
                           letterSpacing: 0.0,
                         ),
                       ),
@@ -308,8 +313,8 @@ class _SettingWidgetState extends State<SettingWidget> {
                   Align(
                     alignment: AlignmentDirectional(0.9, 0),
                     child: Icon(
-                      Icons.arrow_forward_ios,
-                      color: FlutterFlowTheme.of(context).secondaryText,
+                      Icons.arrow_forward_ios_rounded,
+                      color: primaryColor,
                       size: 18,
                     ),
                   ),

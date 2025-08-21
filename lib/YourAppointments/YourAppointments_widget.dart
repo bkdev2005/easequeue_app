@@ -26,14 +26,14 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
   List<dynamic> appointments = [];
   List<dynamic> status = [
     {'label': '1', 'value': 'Registered'},
-    {'label': '2', 'value': 'Completed'},
-    {'label': '3', 'value': 'Cancelled'}
+    {'label': '3', 'value': 'Completed'},
+    {'label': '5', 'value': 'Cancelled'}
   ];
   bool isMainLoading = false;
   FocusNode? textFieldFocusNode;
   TextEditingController? textController;
   String? Function(BuildContext, String?)? textControllerValidator;
-  String statusLabel = '2';
+  String statusLabel = '';
   int currentPage = 1;
   bool isFetchingMore = false;
   bool hasMoreData = true;
@@ -328,7 +328,7 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
-                                              child: Text(
+                                              child: Row( children: [ Text(
                                                 appointmentListItem[
                                                         'business_name'] ??
                                                     'N/A',
@@ -343,7 +343,39 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                                               FontWeight.w500,
                                                         ),
                                               ),
-                                            ),
+                                                const SizedBox(
+                                                  width: 5,
+                                                ),
+                                                if(appointmentListItem['is_scheduled'] == true)
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                        borderRadius: BorderRadius.circular(8),
+                                                        color: Colors.green.withOpacity(0.3)
+                                                    ),
+                                                    child:
+                                                    Padding(
+                                                      padding:
+                                                      const EdgeInsetsDirectional
+                                                          .fromSTEB(
+                                                          6, 2, 6, 2),
+                                                      child: Text(
+                                                        'Scheduled',
+                                                        style: FlutterFlowTheme.of(
+                                                            context)
+                                                            .bodyMedium
+                                                            .override(
+                                                          fontSize: 12,
+                                                          fontWeight: FontWeight.w500,
+                                                          color: FlutterFlowTheme
+                                                              .of(context)
+                                                              .primary,
+                                                          fontFamily: 'Inter',
+                                                          letterSpacing: 0.0,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
+                                            ])),
                                             Text(
                                               appointmentListItem[
                                                       'user_status'] ??
@@ -515,27 +547,6 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                                 ),
                                               ),
                                             ]),
-
-                                        Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsetsDirectional
-                                                  .fromSTEB(0, 15, 0, 0),
-                                              child: Text(
-                                                (appointmentListItem['is_scheduled'] == true)? '"Time-slot-based appointment booking"' : '"Queue-based appointment booking"',
-                                                style: FlutterFlowTheme.of(context)
-                                                    .bodyMedium
-                                                    .override(
-                                                  fontSize: 12,
-                                                  color: FlutterFlowTheme.of(context).primary,
-                                                  fontFamily: 'Inter',
-                                                  letterSpacing: 0.0,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
                                       ],
                                     ),
                                   ),

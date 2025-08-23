@@ -439,13 +439,13 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Padding(
+                                        Expanded( child:  Padding(
                                             padding: const EdgeInsetsDirectional
                                                 .fromSTEB(20, 5, 0, 0),
                                             child: Opacity(
                                               opacity: 1.0 -
                                                   opacity, // Hide text as scroll progresses
-                                              child: Text(
+                                              child:  Text(
                                                 'Skip the Wait, Get in Line Smarter 😎',
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -458,7 +458,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                           fontWeight:
                                                               FontWeight.w500,
                                                         ),
-                                              ),
+                                              )),
                                             )),
                                       ],
                                     ),

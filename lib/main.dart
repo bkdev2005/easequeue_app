@@ -36,7 +36,7 @@ void getFcmToken() async {
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  if(!isWeb){
+  if(!isWeb && !isiOS){
   await Firebase.initializeApp(); // Initialize Firebase
   }
   usePathUrlStrategy();

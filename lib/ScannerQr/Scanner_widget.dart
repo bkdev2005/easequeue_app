@@ -9,6 +9,8 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image/image.dart' as img;
+import 'package:zxing2/qrcode.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'dart:developer';
 import 'dart:io';
@@ -182,32 +184,72 @@ class _ScannerQrState extends State<ScannerQr> {
           MaterialPageRoute(
               builder: (context) => AddServicePageWidget(
                     businessId: code,
+                    lat: widget.lat,
+                    long: widget.long,
                   )));
       // Your logic here, e.g., API call or navigation
+    }
+  }
+
+  Future<void> scanQrFromImage(String filePath) async {
+    // 1. Load image file
+    final file = File(filePath);
+    final bytes = await file.readAsBytes();
+    final image = img.decodeImage(bytes);
+
+    if (image == null) {
+      print("❌ Could not decode image");
+      return;
+    }
+
+    // 2. Convert image pixels to Int32List (ARGB)
+    final rgba = image.getBytes(); // Uint8List [R, G, B, A, R, G, B, A, ...]
+    final pixels = Int32List(image.width * image.height);
+
+    for (int i = 0, j = 0; i < rgba.length; i += 4, j++) {
+      int r = rgba[i];
+      int g = rgba[i + 1];
+      int b = rgba[i + 2];
+      int a = rgba[i + 3];
+      // Pack into ARGB 32-bit int
+      pixels[j] = (a << 24) | (r << 16) | (g << 8) | b;
+    }
+
+    // 3. Pass Int32List to ZXing
+    final source = RGBLuminanceSource(image.width, image.height, pixels);
+    final bitmap = BinaryBitmap(HybridBinarizer(source));
+    final reader = QRCodeReader();
+
+    try {
+      final result = reader.decode(bitmap);
+      _handleScannedCode(result.text);
+      print("✅ QR Code Found: ${result.text}");
+    } catch (e) {
+      print("❌ No QR Code detected: $e");
     }
   }
 
   Future<void> _scanFromGallery() async {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
-
-    // final mlkit.InputImage inputImage =
-    //     mlkit.InputImage.fromFilePath(image.path);
-    // final barcodeScanner = mlkit.BarcodeScanner();
-    //
-    // try {
-    //   final List<mlkit.Barcode> barcodes =
-    //       await barcodeScanner.processImage(inputImage);
-    //   if (barcodes.isNotEmpty) {
-    //     final barcode = barcodes.first;
-    //     _handleScannedCode(barcode.rawValue);
-    //   } else {
-    //     Fluttertoast.showToast(msg: 'No qr code found in image');
-    //   }
-    // } catch (e) {
-    //   log('Error scanning image: $e');
-    // } finally {
-    //   barcodeScanner.close();
-    // }
+    scanQrFromImage(image.path);
+  //   final mlkit.InputImage inputImage =
+  //       mlkit.InputImage.fromFilePath(image.path);
+  //   final barcodeScanner = mlkit.BarcodeScanner();
+  //
+  //   try {
+  //     final List<mlkit.Barcode> barcodes =
+  //         await barcodeScanner.processImage(inputImage);
+  //     if (barcodes.isNotEmpty) {
+  //       final barcode = barcodes.first;
+  //       _handleScannedCode(barcode.rawValue);
+  //     } else {
+  //       Fluttertoast.showToast(msg: 'No qr code found in image');
+  //     }
+  //   } catch (e) {
+  //     log('Error scanning image: $e');
+  //   } finally {
+  //     barcodeScanner.close();
+  //   }
   }
 }

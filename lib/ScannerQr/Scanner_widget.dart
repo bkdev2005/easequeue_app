@@ -233,6 +233,7 @@ class _ScannerQrState extends State<ScannerQr> {
     final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
     if (image == null) return;
     scanQrFromImage(image.path);
+
   //   final mlkit.InputImage inputImage =
   //       mlkit.InputImage.fromFilePath(image.path);
   //   final barcodeScanner = mlkit.BarcodeScanner();

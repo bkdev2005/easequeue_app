@@ -261,43 +261,43 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                     });
                   },
                 ),*/
-                FlutterFlowIconButton(
-                  borderRadius: 40,
-                  icon: Icon(
-                    Icons.star_rate_sharp,
-                    color: FlutterFlowTheme.of(context).primaryBackground,
-                    size: 24,
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => BusinessRatingDialog(
-                        businessId: widget.businessId!,
-                      ),
-                    );
-                  },
-                ),
-                const SizedBox(
-                  width: 6,
-                ),
-                FlutterFlowIconButton(
-                  borderRadius: 40,
-                  icon: Icon(
-                    Icons.share_rounded,
-                    color: FlutterFlowTheme.of(context).primaryBackground,
-                    size: 24,
-                  ),
-                  onPressed: () async {
-                    final String placeName =
-                        Uri.encodeComponent(businessDetail['name']);
-                    final String googleMapsUrl =
-                        "${businessDetail['name']}\nhttps://www.google.com/maps/search/?api=1&query=$placeName";
-                    Share.share(googleMapsUrl);
-                  },
-                ),
-                const SizedBox(
-                  width: 15,
-                )
+                // FlutterFlowIconButton(
+                //   borderRadius: 40,
+                //   icon: Icon(
+                //     Icons.star_rate_sharp,
+                //     color: FlutterFlowTheme.of(context).primaryBackground,
+                //     size: 24,
+                //   ),
+                //   onPressed: () {
+                //     showDialog(
+                //       context: context,
+                //       builder: (context) => BusinessRatingDialog(
+                //         businessId: widget.businessId!,
+                //       ),
+                //     );
+                //   },
+                // ),
+                // const SizedBox(
+                //   width: 6,
+                // ),
+                // FlutterFlowIconButton(
+                //   borderRadius: 40,
+                //   icon: Icon(
+                //     Icons.share_rounded,
+                //     color: FlutterFlowTheme.of(context).primaryBackground,
+                //     size: 24,
+                //   ),
+                //   onPressed: () async {
+                //     final String placeName =
+                //         Uri.encodeComponent(businessDetail['name']);
+                //     final String googleMapsUrl =
+                //         "${businessDetail['name']}\nhttps://www.google.com/maps/search/?api=1&query=$placeName";
+                //     Share.share(googleMapsUrl);
+                //   },
+                // ),
+                // const SizedBox(
+                //   width: 15,
+                // )
               ],
             ),
           ],

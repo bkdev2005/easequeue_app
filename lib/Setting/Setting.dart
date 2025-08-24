@@ -168,7 +168,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                 navigatePage('Your Appointments', MaterialPageRoute(builder: (context)=> YourAppointmentsWidget()), Icons.assignment,),
                 navigatePage('Favorite Businesses', MaterialPageRoute(builder: (context)=> const FavoriteBusinessWidget()), Icons.favorite_rounded,),
                 // navigatePage('Address Book', MaterialPageRoute(builder: (context)=> const AddressBookWidget()), Icons.share_location_outlined,),
-                navigatePage('Settings', MaterialPageRoute(builder: (context)=> const SettingPageWidget()), Icons.settings_rounded,),
+                // navigatePage('Settings', MaterialPageRoute(builder: (context)=> const SettingPageWidget()), Icons.settings_rounded,),
                 navigatePage('Scan Qr', MaterialPageRoute(builder: (context)=> const ScannerQr()), Icons.qr_code_scanner_rounded,),
 
                 Padding(

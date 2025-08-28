@@ -265,7 +265,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                   style: TextStyle(fontSize: 16)),
                               gender()
                             ]))),
-
+                if(widget.backButton)
                 Padding(
                     padding: const EdgeInsetsDirectional.fromSTEB(15, 10, 15, 0),
                     child: GestureDetector( onTap: (){

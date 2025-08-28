@@ -181,7 +181,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                     ),
                   ),
                 ),
-                navigatePage( 'About', MaterialPageRoute(builder: (context)=> AboutWidget()), Icons.help_outline_rounded,),
+                navigatePage( 'Privacy Policy', MaterialPageRoute(builder: (context)=> AboutWidget()), Icons.help_outline_rounded,),
                 navigatePage( 'Send Feedback', MaterialPageRoute(builder: (context)=> FeedbackWidget()), Icons.feedback_outlined,),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 20),

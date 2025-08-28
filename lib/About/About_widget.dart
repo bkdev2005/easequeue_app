@@ -42,11 +42,11 @@ class _AboutWidgetState extends State<AboutWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
-        appBar: appBarWidget(context, 'About Us'),
+        appBar: appBarWidget(context, 'Privacy Policy'),
         body: SafeArea(
           top: true,
           child: FutureBuilder(
-            future: fetchData('static_content/about_us', context),
+            future: fetchData('static_content/privacy_policy', context),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return loading(context);

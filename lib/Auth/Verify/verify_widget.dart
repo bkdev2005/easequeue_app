@@ -269,7 +269,8 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                       final response = await preAuthApi({
                         "country_code": "+91",
                         "phone_number": widget.phone.toString(),
-                        "otp": _model.pinCodeController.text.toString()
+                        "otp": _model.pinCodeController.text.toString(),
+                        "is_customer": true
                       }, 'verify_otp')
                           .then((value) {
                         if (value != null) {

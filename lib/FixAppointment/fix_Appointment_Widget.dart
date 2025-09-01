@@ -285,10 +285,13 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                     return Column(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(
-                                              top: 10),
-                                          child: Text(
+                                        const SizedBox(
+                                          height: 12,
+                                        ),
+                                        Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                         Text(
                                             'Current serving number',
                                             style:
                                             FlutterFlowTheme.of(context)
@@ -302,7 +305,39 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               letterSpacing: 0.0,
                                             ),
                                           ),
-                                        ),
+                                    if(messageList['is_queue_running'])
+                                    Padding(
+                                    padding: const EdgeInsets.only( left: 8,),
+                                    child:
+                                          Container(
+                                            decoration: BoxDecoration(
+                                                borderRadius: BorderRadius.circular(8),
+                                                color: Colors.white
+                                            ),
+                                            child:
+                                            Padding(
+                                              padding:
+                                              const EdgeInsetsDirectional
+                                                  .fromSTEB(
+                                                  6, 2, 6, 2),
+                                              child: Text(
+                                                'Running',
+                                                style: FlutterFlowTheme.of(
+                                                    context)
+                                                    .bodyMedium
+                                                    .override(
+                                                  fontSize: 12,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: FlutterFlowTheme
+                                                      .of(context)
+                                                      .primary,
+                                                  fontFamily: 'Inter',
+                                                  letterSpacing: 0.0,
+                                                ),
+                                              ),
+                                            ),
+                                          ))
+                                        ]),
                                         Padding(
                                           padding:
                                           const EdgeInsetsDirectional
@@ -412,10 +447,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                     : data !=
                                                                     null
                                                                     ? (data['formatted_wait_time'] != null)
-                                                                    ? (messageList['estimated_appointment_time'].toString().length > 8)
-                                                                    ? messageList['estimated_appointment_time'].toString().substring(15)
-                                                                    : messageList['estimated_appointment_time'].toString()
-                                                                    : '0'
+                                                                    ? messageList['estimated_appointment_time'].toString()
+                                                                    : '00'
                                                                     : '00',
                                                                 style: FlutterFlowTheme.of(
                                                                     context)
@@ -1529,7 +1562,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
         child: Padding(
           padding: const EdgeInsets.all(10),
-          child: Column(
+          child: SingleChildScrollView( child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
@@ -1597,7 +1630,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                   ))
             ],
           ),
-        ));
+        )));
   }
 
   bool _isIncognito = false;

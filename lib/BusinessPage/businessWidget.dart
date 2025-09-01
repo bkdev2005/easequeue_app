@@ -107,6 +107,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
         setState(() {
           data =
               getJsonField(value, r'''$.data.data[:]''', true)?.toList() ?? [];
+          log('data length: ${data.length}');
           if (value.length < limit) {
             hasMore = false;
           } else {
@@ -142,7 +143,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
   @override
   Widget build(BuildContext context) {
-    const double maxScrollExtent = 5; // Adjust as per your requirement
+    const double maxScrollExtent = 15; // Adjust as per your requirement
     final double opacity = (_scrollOffset / maxScrollExtent).clamp(0.0, 1.0);
 
     return GestureDetector(
@@ -158,150 +159,158 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
           mainAxisSize: MainAxisSize.max,
           children: [
             Material(
-              elevation: 0,
-              color:  FlutterFlowTheme.of(context).primary,
-            borderRadius: const BorderRadius.only(
-              bottomLeft: Radius.circular(15),
-              bottomRight: Radius.circular(15),
-            ),
-            child: Column(
-            children: [
-            Padding(
-                padding: const EdgeInsets.only(
-                    left: 15, right: 15, top: 4, bottom: 0),
-                child: TextFormField(
-                    cursorColor: FlutterFlowTheme.of(context).primary,
-                    controller: _model.textController,
-                    focusNode: _model.textFieldFocusNode,
-                    onChanged: (_) {
-                      if (_.length > 3) {
-                        setState(() {
-                          data.clear();
-                        });
-                        callBusinessApi(search: _);
-                      } else {
-                        callBusinessApi();
-                      }
-                    },
-                    autofocus: false,
-                    obscureText: false,
-                    decoration: InputDecoration(
-                      isDense: true,
-                      labelStyle:
-                          FlutterFlowTheme.of(context).labelMedium.override(
-                                fontFamily: 'Inter',
-                                letterSpacing: 0.0,
-                              ),
-                      hintText: 'Search business',
-                      hintStyle:
-                          FlutterFlowTheme.of(context).labelMedium.override(
-                                fontFamily: 'Inter',
-                                letterSpacing: 0.0,
-                              ),
-                      enabledBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0x00000000),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderSide: const BorderSide(
-                          color: Color(0x00000000),
-                          width: 1,
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      contentPadding: EdgeInsets.all(0),
-                      filled: true,
-                      suffixIcon: _model.textController!.text.isNotEmpty
-                          ? GestureDetector(
-                              onTap: () async {
-                                _model.textController?.clear();
-                                setState(() {});
-                                callBusinessApi();
-                              },
-                              child: const Icon(
-                                Icons.clear,
-                                size: 22,
-                              ),
-                            )
-                          : (_isListening)
-                              ? ClipRRect(
-                                  borderRadius: BorderRadius.circular(30),
-                                  child: Image.asset(
-                                    'assets/images/voice.gif',
-                                    height: 50,
-                                    width: 50,
-                                  ))
-                              : GestureDetector(
-                                  onTap: () async {
-                                    toggleListening();
-                                    setState(() {});
-                                  },
-                                  child: const Icon(
-                                    Icons.mic,
-                                    size: 22,
-                                  ),
-                                ),
-                      fillColor: FlutterFlowTheme.of(context).primaryBackground,
-                      prefixIcon: const Icon(
-                        Icons.search_rounded,
-                      ),
-                    ))),
-            Padding(
-                padding: const EdgeInsets.only(top: 12, bottom: 16),
-                child: Align(
-                  alignment: Alignment.centerLeft,
-                  child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                scrollDirection: Axis.horizontal,
-                    child: Row(
-                      spacing: 12,
-                  children: List.generate(services.length, (index) {
-                    final service = services[index];
-                    return GestureDetector(
-                            onTap: () {
-                              final uuid = getJsonField(service, r'''$.uuid''');
+                elevation: 0,
+                color: FlutterFlowTheme.of(context).primary,
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                ),
+                child: Column(children: [
+                  Padding(
+                      padding: const EdgeInsets.only(
+                          left: 15, right: 15, top: 4, bottom: 0),
+                      child: TextFormField(
+                          cursorColor: FlutterFlowTheme.of(context).primary,
+                          controller: _model.textController,
+                          focusNode: _model.textFieldFocusNode,
+                          onChanged: (_) {
+                            if (_.length > 3) {
                               setState(() {
-                                if (selectServiceId.contains(uuid)) {
-                                  selectServiceId.remove(uuid);
-                                } else {
-                                  selectServiceId.add(uuid);
-                                }
+                                data.clear();
                               });
+                              callBusinessApi(search: _);
+                            } else {
                               callBusinessApi();
-                            },
-                            child: Container(
-                              decoration: BoxDecoration(
-                                  color: FlutterFlowTheme.of(context)
-                                      .primaryBackground,
-                                  borderRadius: BorderRadius.circular(12)),
-                              child: Padding(
-                                  padding:
-                                      const EdgeInsets.fromLTRB(13, 6, 10, 6),
-                                  child: Row(children: [
-                                    Text(
-                                      getJsonField(service, r'''$.name'''),
-                                      style: const TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.black,
+                            }
+                          },
+                          autofocus: false,
+                          obscureText: false,
+                          decoration: InputDecoration(
+                            isDense: true,
+                            labelStyle: FlutterFlowTheme.of(context)
+                                .labelMedium
+                                .override(
+                                  fontFamily: 'Inter',
+                                  letterSpacing: 0.0,
+                                ),
+                            hintText: 'Search business',
+                            hintStyle: FlutterFlowTheme.of(context)
+                                .labelMedium
+                                .override(
+                                  fontFamily: 'Inter',
+                                  letterSpacing: 0.0,
+                                ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0x00000000),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(
+                                color: Color(0x00000000),
+                                width: 1,
+                              ),
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            contentPadding: EdgeInsets.all(0),
+                            filled: true,
+                            suffixIcon: _model.textController!.text.isNotEmpty
+                                ? GestureDetector(
+                                    onTap: () async {
+                                      _model.textController?.clear();
+                                      setState(() {});
+                                      callBusinessApi();
+                                    },
+                                    child: const Icon(
+                                      Icons.clear,
+                                      size: 22,
+                                    ),
+                                  )
+                                : (_isListening)
+                                    ? ClipRRect(
+                                        borderRadius: BorderRadius.circular(30),
+                                        child: Image.asset(
+                                          'assets/images/voice.gif',
+                                          height: 50,
+                                          width: 50,
+                                        ))
+                                    : GestureDetector(
+                                        onTap: () async {
+                                          toggleListening();
+                                          setState(() {});
+                                        },
+                                        child: const Icon(
+                                          Icons.mic,
+                                          size: 22,
+                                        ),
                                       ),
-                                    ),
-                                    const SizedBox(
-                                      width: 4,
-                                    ),
-                                    if (selectServiceId.contains(
-                                        getJsonField(service, r'''$.uuid''')))
-                                      const Icon(
-                                        Icons.close_rounded,
-                                        size: 18,
-                                        color: Colors.black54,
-                                      )
-                                  ])),
-                            ));
-                  }),
-                )),))])),
+                            fillColor:
+                                FlutterFlowTheme.of(context).primaryBackground,
+                            prefixIcon: const Icon(
+                              Icons.search_rounded,
+                            ),
+                          ))),
+                  Padding(
+                      padding: const EdgeInsets.only(top: 12, bottom: 16),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 12,
+                              children: List.generate(services.length, (index) {
+                                final service = services[index];
+                                return GestureDetector(
+                                    onTap: () {
+                                      final uuid =
+                                          getJsonField(service, r'''$.uuid''');
+                                      setState(() {
+                                        if (selectServiceId.contains(uuid)) {
+                                          selectServiceId.remove(uuid);
+                                        } else {
+                                          selectServiceId.add(uuid);
+                                        }
+                                      });
+                                      callBusinessApi();
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              13, 6, 10, 6),
+                                          child: Row(children: [
+                                            Text(
+                                              getJsonField(
+                                                  service, r'''$.name'''),
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            if (selectServiceId.contains(
+                                                getJsonField(
+                                                    service, r'''$.uuid''')))
+                                              const Icon(
+                                                Icons.close_rounded,
+                                                size: 18,
+                                                color: Colors.black54,
+                                              )
+                                          ])),
+                                    ));
+                              }),
+                            )),
+                      ))
+                ])),
             Expanded(
               child: Material(
                 color: FlutterFlowTheme.of(context).primaryBackground,
@@ -310,6 +319,7 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
                   child: Builder(
                     builder: (context) {
                       final businessList = data?.toList() ?? [];
+                      log('business Length: ${data.length}');
 
                       if (isMainLoading) {
                         return Center(

@@ -305,7 +305,7 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                               letterSpacing: 0.0,
                                             ),
                                           ),
-                                    if(messageList['is_queue_running'])
+                                    if( messageList != null && messageList['is_queue_running'])
                                     Padding(
                                     padding: const EdgeInsets.only( left: 8,),
                                     child:

@@ -1,6 +1,8 @@
 import 'dart:developer';
+import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 
+import '../Component/rating_dailog.dart';
 import '../apiFunction.dart';
 import '../app_state.dart';
 import '../function.dart';
@@ -208,64 +210,66 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                             ),
                           ))),
                   Padding(
-                      padding:
-                          const EdgeInsets.only(top: 12, bottom: 16),
+                      padding: const EdgeInsets.only(top: 12, bottom: 16),
                       child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: SingleChildScrollView(
-                              padding: const EdgeInsets.symmetric(horizontal: 15),
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                  spacing: 12,
-                        children: List.generate(status.length, (index) {
-                          final statusName = status[index];
-                          return GestureDetector(
-                                  onTap: () {
-                                    setState(() {
-                                      if (statusLabel == statusName['label']) {
-                                        statusLabel = '';
-                                      } else {
-                                        statusLabel = statusName['label'];
-                                      }
-                                      appointments.clear();
-                                      currentPage = 1;
-                                      hasMoreData = true;
-                                    });
+                        alignment: Alignment.centerLeft,
+                        child: SingleChildScrollView(
+                            padding: const EdgeInsets.symmetric(horizontal: 15),
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              spacing: 12,
+                              children: List.generate(status.length, (index) {
+                                final statusName = status[index];
+                                return GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        if (statusLabel ==
+                                            statusName['label']) {
+                                          statusLabel = '';
+                                        } else {
+                                          statusLabel = statusName['label'];
+                                        }
+                                        appointments.clear();
+                                        currentPage = 1;
+                                        hasMoreData = true;
+                                      });
 
-                                    loadMoreAppointments(
-                                        search: textController.text.trim());
-                                  },
-                                  child: Container(
-                                    decoration: BoxDecoration(
-                                        color: FlutterFlowTheme.of(context)
-                                            .primaryBackground,
-                                        borderRadius: BorderRadius.circular(12)),
-                                    child: Padding(
-                                        padding: const EdgeInsets.fromLTRB(
-                                            13, 6, 10, 6),
-                                        child: Row(children: [
-                                          Text(
-                                            statusName['value'],
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: Colors.black,
+                                      loadMoreAppointments(
+                                          search: textController.text.trim());
+                                    },
+                                    child: Container(
+                                      decoration: BoxDecoration(
+                                          color: FlutterFlowTheme.of(context)
+                                              .primaryBackground,
+                                          borderRadius:
+                                              BorderRadius.circular(12)),
+                                      child: Padding(
+                                          padding: const EdgeInsets.fromLTRB(
+                                              13, 6, 10, 6),
+                                          child: Row(children: [
+                                            Text(
+                                              statusName['value'],
+                                              style: const TextStyle(
+                                                fontSize: 14,
+                                                color: Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                          const SizedBox(
-                                            width: 4,
-                                          ),
-                                          if (statusLabel ==
-                                              statusName['label'])
-                                            const Icon(
-                                              Icons.close_rounded,
-                                              size: 18,
-                                              color: Colors.black54,
-                                            )
-                                        ])),
-                                  ));
-                        }),
-                      )),
-                      )) ])),
+                                            const SizedBox(
+                                              width: 4,
+                                            ),
+                                            if (statusLabel ==
+                                                statusName['label'])
+                                              const Icon(
+                                                Icons.close_rounded,
+                                                size: 18,
+                                                color: Colors.black54,
+                                              )
+                                          ])),
+                                    ));
+                              }),
+                            )),
+                      ))
+                ])),
             Expanded(
                 child: Material(
                     color: FlutterFlowTheme.of(context).primaryBackground,
@@ -328,7 +332,8 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                               MainAxisAlignment.spaceBetween,
                                           children: [
                                             Expanded(
-                                              child: Row( children: [ Text(
+                                                child: Row(children: [
+                                              Text(
                                                 appointmentListItem[
                                                         'business_name'] ??
                                                     'N/A',
@@ -343,38 +348,42 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                                               FontWeight.w500,
                                                         ),
                                               ),
-                                                const SizedBox(
-                                                  width: 5,
-                                                ),
-                                                if(appointmentListItem['is_scheduled'] == true)
-                                                  Container(
-                                                    decoration: BoxDecoration(
-                                                        borderRadius: BorderRadius.circular(8),
-                                                        color: Colors.green.withOpacity(0.3)
-                                                    ),
-                                                    child:
-                                                    Padding(
-                                                      padding:
-                                                      const EdgeInsetsDirectional
-                                                          .fromSTEB(
-                                                          6, 2, 6, 2),
-                                                      child: Text(
-                                                        'Scheduled',
-                                                        style: FlutterFlowTheme.of(
-                                                            context)
-                                                            .bodyMedium
-                                                            .override(
-                                                          fontSize: 12,
-                                                          fontWeight: FontWeight.w500,
-                                                          color: FlutterFlowTheme
+                                              const SizedBox(
+                                                width: 5,
+                                              ),
+                                              if (appointmentListItem[
+                                                      'is_scheduled'] ==
+                                                  true)
+                                                Container(
+                                                  decoration: BoxDecoration(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      color: Colors.green
+                                                          .withOpacity(0.3)),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsetsDirectional
+                                                            .fromSTEB(
+                                                            6, 2, 6, 2),
+                                                    child: Text(
+                                                      'Scheduled',
+                                                      style: FlutterFlowTheme
                                                               .of(context)
-                                                              .primary,
-                                                          fontFamily: 'Inter',
-                                                          letterSpacing: 0.0,
-                                                        ),
-                                                      ),
+                                                          .bodyMedium
+                                                          .override(
+                                                            fontSize: 12,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: FlutterFlowTheme
+                                                                    .of(context)
+                                                                .primary,
+                                                            fontFamily: 'Inter',
+                                                            letterSpacing: 0.0,
+                                                          ),
                                                     ),
-                                                  )
+                                                  ),
+                                                )
                                             ])),
                                             Text(
                                               appointmentListItem[
@@ -547,6 +556,60 @@ class _YourAppointmentsWidgetState extends State<YourAppointmentsWidget> {
                                                 ),
                                               ),
                                             ]),
+                                        Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 10),
+                                            child: Row(spacing: 12, children: [
+                                              Expanded(
+                                                flex: 2,
+                                                  child: FFButtonWidget(
+                                                      icon: const Icon(
+                                                        Icons
+                                                            .star_border_rounded,
+                                                        color: Colors.black,
+                                                        size: 20,
+                                                      ),
+                                                      text: 'Rate',
+                                                      onPressed: () {
+                                                        showDialog(context: context,
+                                                            builder: (context){
+                                                            return BusinessRatingDialog(businessId: appointmentListItem['business_id'],);
+                                                            });
+                                                      },
+                                                      options: const FFButtonOptions(
+                                                          width:
+                                                              double.infinity,
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .black),
+                                                          color: Colors.white,
+                                                          elevation: 0,
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black)))),
+                                              Expanded(
+                                                flex: 3,
+                                                  child: FFButtonWidget(
+                                                      text: 'Re-Appointment',
+                                                      onPressed: () async {
+                                                        Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
+                                                          businessId: appointmentListItem['business_id'],
+                                                        )));
+                                                      },
+                                                      options: const FFButtonOptions(
+                                                          width:
+                                                              double.infinity,
+                                                          borderSide:
+                                                              BorderSide(
+                                                                  color: Colors
+                                                                      .black),
+                                                          color: Colors.white,
+                                                          elevation: 0,
+                                                          textStyle: TextStyle(
+                                                              color: Colors
+                                                                  .black))))
+                                            ])),
                                       ],
                                     ),
                                   ),

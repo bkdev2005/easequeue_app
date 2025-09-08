@@ -4,6 +4,7 @@ import 'package:eqlite/apiFunction.dart';
 import 'package:eqlite/app_state.dart';
 import 'package:eqlite/flutter_flow/flutter_flow_theme.dart';
 import 'package:eqlite/flutter_flow/flutter_flow_widgets.dart';
+import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
@@ -26,13 +27,15 @@ class _BusinessRatingDialogState extends State<BusinessRatingDialog> {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Container(
+        color: Colors.green.withOpacity(0.03),
         padding: EdgeInsets.all(24),
         width: MediaQuery.of(context).size.width * 0.85,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-               Icon(Icons.star_rate_rounded, size: 64, color: FlutterFlowTheme.of(context).primary),
+              Icon(Icons.star_rate_rounded,
+                  size: 64, color: FlutterFlowTheme.of(context).primary),
               SizedBox(height: 12),
               Text(
                 "Rate Our Business",
@@ -47,7 +50,7 @@ class _BusinessRatingDialogState extends State<BusinessRatingDialog> {
                 "How was your experience?",
                 style: TextStyle(fontSize: 16, color: Colors.black54),
               ),
-              const  SizedBox(height: 20),
+              const SizedBox(height: 20),
               RatingBar.builder(
                 initialRating: _rating,
                 minRating: 1,
@@ -71,14 +74,14 @@ class _BusinessRatingDialogState extends State<BusinessRatingDialog> {
                 controller: _feedbackController,
                 decoration: InputDecoration(
                   labelText: "Leave a comment (optional)",
-                  labelStyle: TextStyle(color: FlutterFlowTheme.of(context).primary),
+                  labelStyle:
+                      TextStyle(color: FlutterFlowTheme.of(context).primary),
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12)
-                  ),
+                      borderRadius: BorderRadius.circular(12)),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: FlutterFlowTheme.of(context).primary),
-                    borderRadius: BorderRadius.circular(12)
-                  ),
+                      borderSide: BorderSide(
+                          color: FlutterFlowTheme.of(context).primary),
+                      borderRadius: BorderRadius.circular(12)),
                 ),
                 maxLines: 3,
               ),
@@ -87,44 +90,50 @@ class _BusinessRatingDialogState extends State<BusinessRatingDialog> {
                 spacing: 12,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(child: FFButtonWidget(text: 'Cancel', onPressed: (){},
-                      options: FFButtonOptions(
-                          width:
-                          double.infinity,
-                          borderRadius: BorderRadius.circular(30),
-                          borderSide:
-                          const BorderSide(
-                              color: Colors
-                                  .black),
-                          color: Colors.white,
-                          elevation: 0,
-                          textStyle: const TextStyle(
-                              color: Colors
-                                  .black)))),
-                         Expanded(child: FFButtonWidget(text: 'Submit', onPressed: () async{
-                          final review = await sendData({
-                             "user_id": FFAppState().userId,
-                             "employee_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                             "queue_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                             "service_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                             "business_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                             "queue_user_id": "3fa85f64-5717-4562-b3fc-2c963f66afa6",
-                             "rating": _rating,
-                             "comment": "string",
-                             "is_verified": true
-                           }, 'review').then((response){
-                             log('response: $response');
-                          });
-                         },
-                     options: FFButtonOptions(
-                     width:
-                     double.infinity,
-                     borderRadius: BorderRadius.circular(30),
-                     color: FlutterFlowTheme.of(context).primary,
-                     elevation: 0,
-                     textStyle: const TextStyle(
-                         color: Colors
-                             .white))))
+                  Expanded(
+                      child: FFButtonWidget(
+                          text: 'Cancel',
+                          onPressed: () {
+                            context.pop();
+                          },
+                          options: FFButtonOptions(
+                              width: double.infinity,
+                              borderRadius: BorderRadius.circular(10),
+                              borderSide: const BorderSide(color: Colors.black),
+                              color: Colors.white,
+                              elevation: 0,
+                              textStyle:
+                                  const TextStyle(color: Colors.black)))),
+                  Expanded(
+                      child: FFButtonWidget(
+                          text: 'Submit',
+                          onPressed: () async {
+                            final review = await sendData({
+                              "user_id": FFAppState().userId,
+                              "employee_id":
+                                  "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                              "queue_id":
+                                  "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                              "service_id":
+                                  "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                              "business_id":
+                                  "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                              "queue_user_id":
+                                  "3fa85f64-5717-4562-b3fc-2c963f66afa6",
+                              "rating": _rating,
+                              "comment": "string",
+                              "is_verified": true
+                            }, 'review')
+                                .then((response) {
+                              log('response: $response');
+                            });
+                          },
+                          options: FFButtonOptions(
+                              width: double.infinity,
+                              borderRadius: BorderRadius.circular(10),
+                              color: FlutterFlowTheme.of(context).primary,
+                              elevation: 0,
+                              textStyle: const TextStyle(color: Colors.white))))
                 ],
               )
             ],

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:eqlite/Component/Confirmation/permissionConfirmation.dart';
+import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 
 import '../apiFunction.dart';
@@ -83,7 +84,7 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
               }
 
               return ListView.builder(
-                  padding: EdgeInsets.only(bottom: 20, top: 10),
+                  padding: const EdgeInsets.only(bottom: 20, top: 10),
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   itemCount: businessList.length,
@@ -91,7 +92,13 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                     final business = businessList[index];
                     return Padding(
                       padding: EdgeInsetsDirectional.fromSTEB(15, 10, 15, 0),
-                      child: Container(
+                      child: GestureDetector(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=> AddServicePageWidget(
+                            businessId: business['business_id'],
+                          )));
+                        },
+                        child: Container(
                         decoration: BoxDecoration(
                           border:
                               Border.all(color: Colors.green.withOpacity(0.12)),
@@ -202,7 +209,7 @@ class _FavoriteBusinessWidgetState extends State<FavoriteBusinessWidget> {
                           ],
                         ),
                       ),
-                    );
+                    ));
                   });
             })),
       ),

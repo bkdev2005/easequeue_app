@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:eqlite/BusinessPage/businessWidget.dart';
 import 'package:eqlite/function.dart';
 import 'package:go_router/go_router.dart';
@@ -88,6 +90,7 @@ class _AppointmentDayWidgetState extends State<AppointmentDayWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(20, 25, 20, 20),
             child: FFButtonWidget(
               onPressed: () {
+                log('save data');
                 // Navigator.push(context, MaterialPageRoute(builder: (context)=> BusinessPageWidget()));
               },
               text: 'Save',

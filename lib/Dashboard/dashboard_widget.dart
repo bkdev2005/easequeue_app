@@ -829,9 +829,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                         children: [
                                                                                           _buildInfoColumn('Running token', '${message['current_token'] ?? '0'}'),
                                                                                           _buildDivider(),
-                                                                                          _buildInfoColumn('Your position', '${message['position'] ?? ''}'),
+                                                                                          _buildInfoColumn('Your position', '${message['position'] ?? '0'}'),
                                                                                           _buildDivider(),
-                                                                                          _buildInfoColumn('Appointment time', '${message['estimated_appointment_time'].toString()}'),
+                                                                                          _buildInfoColumn('Appointment time', '${message['estimated_appointment_time']??''}'),
                                                                                         ],
                                                                                       ),
                                                                                     ),

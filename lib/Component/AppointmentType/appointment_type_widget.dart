@@ -221,7 +221,7 @@ class _AppointmentTypeWidgetState extends State<AppointmentTypeWidget> {
             padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
             child: FFButtonWidget(
               onPressed: () async {
-
+                log('save');
               },
               text: 'Save',
               options: FFButtonOptions(

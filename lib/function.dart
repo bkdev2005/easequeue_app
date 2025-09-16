@@ -495,7 +495,9 @@ InputDecoration searchInputDecoration(BuildContext context, String hintText) {
     suffixIcon: IconButton(
       icon: Icon(Icons.close),
       iconSize: 24,
-      onPressed: () {},
+      onPressed: () {
+        log('close button');
+      },
     ),
     fillColor: const Color(0xFFF4F4F4),
     prefixIcon: const Icon(

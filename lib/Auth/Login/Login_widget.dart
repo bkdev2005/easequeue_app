@@ -58,6 +58,7 @@ class _LoginWidgetState extends State<LoginWidget> {
           child: Scaffold(
             key: scaffoldKey,
             backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+            appBar: appBarWidget(context, 'Authorization', isShowBackButton: false),
             body: SafeArea(
               top: true,
               child: Column(
@@ -120,14 +121,18 @@ class _LoginWidgetState extends State<LoginWidget> {
                                       'assets/images/india.png',
                                     ),
                                   ),
-                                  const Icon(
-                                    Icons.arrow_drop_down_rounded,
-                                    color: Color(0xFF828282),
-                                    size: 24,
+                                  // const Icon(
+                                  //   Icons.arrow_drop_down_rounded,
+                                  //   color: Color(0xFF828282),
+                                  //   size: 24,
+                                  // ),
+                                  const SizedBox(
+                                    width: 5,
                                   ),
+                                  Text('+91'),
                                   Padding(
                                     padding:
-                                    EdgeInsetsDirectional.fromSTEB(0, 0, 0, 0),
+                                    EdgeInsetsDirectional.fromSTEB(5, 0, 0, 0),
                                     child: Text(
                                       '|',
                                       style: FlutterFlowTheme.of(context)
@@ -189,7 +194,7 @@ class _LoginWidgetState extends State<LoginWidget> {
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(20, 15, 20, 0),
                           child: Text(
-                            'A 4 digit OTP will be sent via SMS to verify your mobile number !',
+                            'A 6 digit OTP will be sent via SMS to verify your mobile number !',
                             style: FlutterFlowTheme.of(context).bodyMedium.override(
                               fontFamily: 'Inter',
                               color: Color(0xFF828282),

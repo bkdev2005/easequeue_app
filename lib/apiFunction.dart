@@ -16,7 +16,7 @@ import 'flutter_flow/flutter_flow_util.dart';
 
 // API url
 
-const String apiUrl = 'http://43.204.107.110/api/v1';
+const String apiUrl = 'https://staging-api.easequeue.com/api/v1';
 
 // Get API
 

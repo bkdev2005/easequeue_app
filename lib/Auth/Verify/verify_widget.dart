@@ -103,6 +103,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
       child: Scaffold(
         key: scaffoldKey,
         backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+        appBar: appBarWidget(context, 'Authorization'),
         body: SafeArea(
           top: true,
           child: Column(
@@ -132,7 +133,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                         child: Text(
-                          'Enter the OTP you received to',
+                          'Enter the OTP you received to +91-${widget.phone}',
                           style:
                               FlutterFlowTheme.of(context).bodyMedium.override(
                                     fontFamily: 'Inter',
@@ -143,19 +144,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                   ),
                         ),
                       ),
-                      Padding(
-                        padding: EdgeInsetsDirectional.fromSTEB(0, 5, 0, 0),
-                        child: Text(
-                          '+91-${widget.phone}',
-                          style:
-                              FlutterFlowTheme.of(context).bodyMedium.override(
-                                    fontFamily: 'Inter',
-                                    color: Colors.black54,
-                                    fontSize: 15,
-                                    letterSpacing: 0.0,
-                                  ),
-                        ),
-                      ),
+                      Align( alignment: Alignment.centerLeft, child:
                       Padding(
                         padding: EdgeInsetsDirectional.fromSTEB(0, 20, 20, 0),
                         child: PinCodeTextField(
@@ -168,7 +157,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                                     color: Colors.black,
                                     letterSpacing: 0.0,
                                   ),
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           enableActiveFill: false,
                           autoFocus: true,
                           enablePinAutofill: false,
@@ -179,8 +168,8 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                           hintCharacter: '-',
                           keyboardType: TextInputType.number,
                           pinTheme: PinTheme(
-                            fieldHeight: 44,
-                            fieldWidth: 44,
+                            fieldHeight: 48,
+                            fieldWidth: 48,
                             borderWidth: 2,
                             borderRadius: const BorderRadius.only(
                               bottomLeft: Radius.circular(8),
@@ -194,12 +183,16 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                             selectedColor: FlutterFlowTheme.of(context).primary,
                           ),
                           controller: _model.pinCodeController,
-                          onChanged: (_) {},
+                          onChanged: (_) {
+                            if(_.length == 6){
+                            verifyOTP();
+                            }
+                          },
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           validator: _model.pinCodeControllerValidator
                               .asValidator(context),
                         ),
-                      ),
+                      )),
                       // Padding(
                       //   padding: EdgeInsetsDirectional.fromSTEB(0, 15, 0, 0),
                       //   child: Text(
@@ -265,59 +258,7 @@ class _VerifyWidgetState extends State<VerifyWidget> {
                 padding: EdgeInsetsDirectional.fromSTEB(20, 0, 20, 20),
                 child: FFButtonWidget(
                   onPressed: () async {
-                    if (_model.pinCodeController!.text.isNotEmpty) {
-                      final response = await preAuthApi({
-                        "country_code": "+91",
-                        "phone_number": widget.phone.toString(),
-                        "otp": _model.pinCodeController.text.toString(),
-                        "is_customer": true
-                      }, 'verify_otp')
-                          .then((value) {
-                        if (value != null) {
-                          log('value: $value');
-                          if (value['data'] != null) {
-                            final data = value['data'];
-                            setState(() {
-                              FFAppState().phone = widget.phone.toString();
-                              FFAppState().token =
-                                  getJsonField(data, r'''$.access_token''');
-                              FFAppState().user =
-                                  getJsonField(data, r'''$.user''');
-                            });
-
-                            fetchData('user/me', context)?.then((value) async {
-                              if (value != null) {
-                                log('data: $value');
-                                if (value['data'] != null) {
-                                  final data = value['data'];
-                                  setState(() {
-                                    FFAppState().user = data;
-                                    FFAppState().userId = data['uuid'];
-                                  });
-                                }
-
-                                if (checkNull(FFAppState().user['full_name']) ==
-                                    true) {
-                                  final storeToken = await sendData({},
-                                          'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}')
-                                      .then((response) {
-                                    log('response: $response');
-                                  });
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              const HomePageWidget()));
-                                } else {
-                                  navigateTo(context,
-                                      const ProfileWidget(backButton: false));
-                                }
-                              }
-                            });
-                          }
-                        }
-                      });
-                    }
+                    verifyOTP();
                   },
                   text: 'Save',
                   options: FFButtonOptions(
@@ -342,5 +283,63 @@ class _VerifyWidgetState extends State<VerifyWidget> {
         ),
       ),
     );
+  }
+
+  void verifyOTP() async{
+      if(_model.pinCodeController!.text.length == 6){
+      final response = await preAuthApi({
+        "country_code": "+91",
+        "phone_number": widget.phone.toString(),
+        "otp": _model.pinCodeController.text.toString(),
+        "is_customer": true
+      }, 'verify_otp')
+          .then((value) {
+        if (value != null) {
+          log('value: $value');
+          if (value['data'] != null) {
+            final data = value['data'];
+            setState(() {
+              FFAppState().phone = widget.phone.toString();
+              FFAppState().token =
+                  getJsonField(data, r'''$.access_token''');
+              FFAppState().user =
+                  getJsonField(data, r'''$.user''');
+            });
+
+            fetchData('user/me', context)?.then((value) async {
+              if (value != null) {
+                log('data: $value');
+                if (value['data'] != null) {
+                  final data = value['data'];
+                  setState(() {
+                    FFAppState().user = data;
+                    FFAppState().userId = data['uuid'];
+                  });
+                }
+
+                if (checkNull(FFAppState().user['full_name']) ==
+                    true) {
+                  final storeToken = await sendData({},
+                      'store-token/?user_id=${FFAppState().user['uuid']}&token=${FFAppState().fcmToken}')
+                      .then((response) {
+                    log('response: $response');
+                  });
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                          const HomePageWidget()));
+                } else {
+                  navigateTo(context,
+                      const ProfileWidget(backButton: false));
+                }
+              }
+            });
+          }
+        }
+      });
+      }else{
+        Fluttertoast.showToast(msg: 'Please enter valid OTP');
+      }
   }
 }

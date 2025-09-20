@@ -4,6 +4,7 @@ import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter_image_compress/flutter_image_compress.dart';
@@ -383,11 +384,11 @@ Color appBarColor = const Color(0xFF37625A);
 
 // AppBar
 
-AppBar appBarWidget(BuildContext context, String name) {
+AppBar appBarWidget(BuildContext context, String name, {bool? isShowBackButton}) {
   return AppBar(
     backgroundColor: const Color(0xFF37625A),
     automaticallyImplyLeading: false,
-    leading: FlutterFlowIconButton(
+    leading: (isShowBackButton ?? true)? FlutterFlowIconButton(
       borderColor: Colors.transparent,
       borderRadius: 30,
       borderWidth: 1,
@@ -400,7 +401,7 @@ AppBar appBarWidget(BuildContext context, String name) {
       onPressed: () async {
         context.pop();
       },
-    ),
+    ) : null,
     title: Text(
       name,
       style: FlutterFlowTheme.of(context).headlineSmall.override(
@@ -608,6 +609,39 @@ Future<void> launchInstagram(String url) async {
     await launchUrl(instagramUri);
   } else {
     throw 'Could not launch $url';
+  }
+}
+
+Future<void> takeScreenshotAndSave() async {
+  try {
+    // 1. Capture screenshot
+    Uint8List? imageBytes = await screenshotController.capture();
+    if (imageBytes == null) return;
+
+    // 2. Get external storage (Android) or app dir (iOS)
+    Directory? directory;
+    if (Platform.isAndroid) {
+      directory = Directory("/storage/emulated/0/DCIM/Camera"); // Gallery folder
+    } else {
+      directory = await getApplicationDocumentsDirectory();
+    }
+
+    // 3. Create file
+    final String filePath =
+        '${directory!.path}/eq_master_appointment_${DateTime.now().millisecondsSinceEpoch}.png';
+    File file = File(filePath);
+    await file.writeAsBytes(imageBytes);
+
+    // 4. Refresh MediaStore (Android only)
+    if (Platform.isAndroid) {
+      const platform = MethodChannel('media_store');
+      await platform.invokeMethod('scanFile', {'path': file.path});
+    }
+
+    Fluttertoast.showToast(msg: "Business card download successfully");
+  } catch (e) {
+    Fluttertoast.showToast(msg: "Error saving image: $e");
+    print('error: $e');
   }
 }
 

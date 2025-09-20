@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:sliding_action_button/sliding_action_button.dart';
@@ -21,6 +22,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'dart:io';
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/io.dart';
 import 'fix_appointment_model.dart';
 export 'fix_appointment_model.dart';
 
@@ -45,7 +48,7 @@ class FixAppointmentWidget extends StatefulWidget {
 
 class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   late FixAppointmentModel _model;
-  WebSocket? _webSocket;
+  late WebSocketChannel _webSocket;
   final scaffoldKey = GlobalKey<ScaffoldState>();
   List<dynamic> queueList = [];
   dynamic messageList;
@@ -53,7 +56,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   String url = 'running_queues/?';
   StreamController<dynamic>? _messageStreamController;
   // final webSocketClient = WebSocketClient();
-  WebSocketChannel? webSocketChannel;
   int selectedLunchTimeIndex = -1;
   String? selectedTimeSlot;
   WebSocketService? _webSocketService;
@@ -106,13 +108,23 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
     log('queueId: ${queueList[0]['queue_id']}');
     log('date: ${widget.date}');
     try {
-      _webSocket = await WebSocket.connect(
-          'ws://43.204.107.110/api/v1/ws/$url/${widget.date}',
-          headers: {'Authorization': 'Bearer $token'});
-      print("Connected to WebSocket at $url");
+        final webUrl =
+            'wss://staging-api.easequeue.com/api/v1/ws/$url/${widget.date}?token=$token';
+        log('url: $url');
+        if (kIsWeb) {
+          // For Flutter Web
+          _webSocket = HtmlWebSocketChannel.connect(webUrl);
+        } else {
+          // For Mobile/Desktop
+          _webSocket = IOWebSocketChannel.connect(
+            Uri.parse('wss://staging-api.easequeue.com/api/v1/ws/$url/${widget.date}'),
+            headers: {'Authorization': 'Bearer $token'},
+          );
+        }
+
 
       // Listen to incoming messages
-      _webSocket?.listen(
+      _webSocket?.stream.listen(
             (message) {
           _messageStreamController?.add(message);
           setState(() {

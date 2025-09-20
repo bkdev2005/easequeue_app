@@ -239,7 +239,6 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                             size: 36,
                           ),
                           onPressed: () async {
-                            log('call ');
                             await decodeBase64ToFile().then((onValue) {
                               navigateTo(context, HomePageWidget());
                             });
@@ -258,8 +257,7 @@ class _CongratulationWidgetState extends State<CongratulationWidget> {
                             size: 36,
                           ),
                           onPressed: () async {
-                            log('call ');
-                            await decodeBase64ToFile().then((_) {
+                            await takeScreenshotAndSave().then((_){
                               navigateTo(context, HomePageWidget());
                             });
                           },

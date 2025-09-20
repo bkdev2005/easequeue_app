@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
+import 'package:web_socket_channel/html.dart';
+import 'package:web_socket_channel/io.dart';
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:eqlite/BusinessPage/businessWidget.dart';
@@ -15,7 +17,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:screenshot/screenshot.dart';
-
+import 'package:web_socket_channel/web_socket_channel.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 import '../Component/Confirmation/exitConfirmation.dart';
 import '../UpcomingAppointment/detail_Appointment_Widget.dart';
 import '../apiFunction.dart';
@@ -48,7 +51,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
   Timer? _timer;
   bool isMainLoading = false;
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  WebSocket? _webSocket;
+  late WebSocketChannel _webSocket;
   StreamController<dynamic>? _messageStreamController;
   List<dynamic> messageList = [];
   final PageController _pageController = PageController();
@@ -140,15 +143,23 @@ class _HomePageWidgetState extends State<HomePageWidget> {
 
   Future<void> connect(String queueId) async {
     log('Calling Queue: $queueId websocket');
+    final token = FFAppState().token;
     try {
-      final socket = await WebSocket.connect(
-        'ws://43.204.107.110/api/v1/ws/$queueId/${todayDate()}',
-        headers: {'Authorization': 'Bearer ${FFAppState().token}'},
-      );
+      final webUrl =
+          'wss://staging-api.easequeue.com/api/v1/ws/$queueId/${todayDate()}?token=$token';
+      if (kIsWeb) {
+        // For Flutter Web
+        _webSocket = HtmlWebSocketChannel.connect(webUrl);
+      } else {
+        // For Mobile/Desktop
+        _webSocket = IOWebSocketChannel.connect(
+          Uri.parse(
+              'wss://staging-api.easequeue.com/api/v1/ws/$queueId/${todayDate()}'),
+          headers: {'Authorization': 'Bearer $token'},
+        );
+      }
 
-      _webSocketMap[queueId] = socket;
-
-      socket.listen(
+      _webSocket.stream.listen(
         (message) {
           log('message data: $message');
           _messageStreamController?.add(message);
@@ -359,7 +370,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                   )));
                                     },
                                   ),
-                                  const SizedBox(width: 4,),
+                                  const SizedBox(
+                                    width: 4,
+                                  ),
                                   GestureDetector(
                                     child: Padding(
                                         padding: const EdgeInsets.all(5),
@@ -439,13 +452,14 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
                                       children: [
-                                        Expanded( child:  Padding(
-                                            padding: const EdgeInsetsDirectional
-                                                .fromSTEB(20, 5, 0, 0),
-                                            child: Opacity(
+                                        Expanded(
+                                            child: Padding(
+                                          padding: const EdgeInsetsDirectional
+                                              .fromSTEB(20, 5, 0, 0),
+                                          child: Opacity(
                                               opacity: 1.0 -
                                                   opacity, // Hide text as scroll progresses
-                                              child:  Text(
+                                              child: Text(
                                                 'Skip the Wait, Get in Line Smarter 😎',
                                                 style:
                                                     FlutterFlowTheme.of(context)
@@ -459,7 +473,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               FontWeight.w500,
                                                         ),
                                               )),
-                                            )),
+                                        )),
                                       ],
                                     ),
                                     Padding(
@@ -688,8 +702,8 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                               {};
                                                       return Padding(
                                                           padding:
-                                                              const EdgeInsets.all(
-                                                                  15),
+                                                              const EdgeInsets
+                                                                  .all(15),
                                                           child: Material(
                                                               clipBehavior: Clip
                                                                   .antiAliasWithSaveLayer,
@@ -831,7 +845,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                           _buildDivider(),
                                                                                           _buildInfoColumn('Your position', '${message['position'] ?? '0'}'),
                                                                                           _buildDivider(),
-                                                                                          _buildInfoColumn('Appointment time', '${message['estimated_appointment_time']??''}'),
+                                                                                          _buildInfoColumn('Appointment time', '${message['estimated_appointment_time'] ?? ''}'),
                                                                                         ],
                                                                                       ),
                                                                                     ),

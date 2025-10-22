@@ -274,7 +274,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             borderRadius:
                                                 BorderRadius.circular(30),
                                             child: Image.network(
-                                              'http://43.204.107.110/shared/${FFAppState().user['profile_picture']}',
+                                              'https://staging-api.easequeue.com/shared/${FFAppState().user['profile_picture']}',
                                               errorBuilder:
                                                   (context, error, stackTrace) {
                                                 return Icon(
@@ -761,7 +761,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                                                       borderRadius: BorderRadius.circular(8)),
                                                                                                   child: (appointmentDetail['profile_picture'] != null)
                                                                                                       ? Image.network(
-                                                                                                          'http://43.204.107.110/shared/${appointmentDetail['profile_picture']}',
+                                                                                                          'https://staging-api.easequeue.com/shared/${appointmentDetail['profile_picture']}',
                                                                                                           fit: BoxFit.cover,
                                                                                                         )
                                                                                                       : Padding(padding: EdgeInsets.all(8), child: Image.asset('assets/images/images.png')))),
@@ -1063,7 +1063,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                                             .circular(8),
                                                                     child: Image
                                                                         .network(
-                                                                      'http://43.204.107.110/shared/${categoryListItem['image']}',
+                                                                      'https://staging-api.easequeue.com/shared/${categoryListItem['image']}',
                                                                       width: 45,
                                                                       height:
                                                                           45,

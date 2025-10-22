@@ -327,7 +327,7 @@ class _GlobalSearchWidgetState extends State<GlobalSearchWidget> {
                                                               'profile_picture'] !=
                                                           null)
                                                       ? Image.network(
-                                                          'http://43.204.107.110/shared/${businessItem['profile_picture']}',
+                                                          'https://staging-api.easequeue.com/shared/${businessItem['profile_picture']}',
                                                           fit: BoxFit.cover,
                                                         )
                                                       : Padding(

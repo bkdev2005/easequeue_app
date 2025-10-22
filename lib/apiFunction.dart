@@ -199,7 +199,7 @@ Future<dynamic> profileApi(XFile image, String endpoint) async {
   try {
     Dio dio = Dio();
     final response = await dio.post(
-      'http://43.204.107.110/api/v1/$endpoint',
+      'https://staging-api.easequeue.com/api/v1/$endpoint',
       options: Options(headers: {
         "Content-Type": "multipart/form-data", // Important for file upload
         "accept": "application/json",

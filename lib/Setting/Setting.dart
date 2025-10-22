@@ -103,7 +103,7 @@ class _SettingWidgetState extends State<SettingWidget> {
                                 borderRadius: BorderRadius.circular(50),
                                 child: Image.network(
                                     (FFAppState().user != null)?
-                                  'http://43.204.107.110/shared/${FFAppState().user['profile_picture']}': '',
+                                  'https://staging-api.easequeue.com/shared/${FFAppState().user['profile_picture']}': '',
                                   errorBuilder: (context, error, stackTrace) {
                                     return const Icon(Icons.person_rounded, size: 40, color: Colors.white,); // Show fallback image
                                   },

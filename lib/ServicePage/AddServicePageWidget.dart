@@ -1365,22 +1365,28 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                   '${selectDay['year']}-${getMonthNumber(selectDay['month'])}-${selectDay['date'].toString().padLeft(2, '0')}';
 
                               log('date select: $date');
+                              log('data: ${{
+                                'businessName':
+                                businessDetail['name'],
+                                'formatDate': formatAppointmentDate,
+                                'services': selectedServiceData,
+                                'date': date,
+                                'rescheduleData':
+                                widget.rescheduleData,
+                                'uuid': FFAppState().userId,
+                              }}');
                               if (selectedServiceData.isNotEmpty) {
                                 log('services: $selectedServiceData');
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            FixAppointmentWidget(
-                                              businessName:
-                                                  businessDetail['name'],
-                                              formatDate: formatAppointmentDate,
-                                              services: selectedServiceData,
-                                              date: date,
-                                              rescheduleData:
-                                                  widget.rescheduleData,
-                                              uuid: FFAppState().userId,
-                                            )));
+                                context.pushNamed('fixAppointment', queryParameters: {
+                                  'businessName':
+                                  businessDetail['name'],
+                                  'formatDate': formatAppointmentDate,
+                                  'services': '${selectedServiceData}',
+                                  'date': date,
+                                  'rescheduleData':
+                                  widget.rescheduleData,
+                                  'uuid': FFAppState().userId,
+                                });
                               } else {
                                 Fluttertoast.showToast(msg: 'Select service');
                               }

@@ -4,6 +4,32 @@ import 'package:eqlite/Auth/Login/Login_widget.dart';
 import 'package:eqlite/Auth/Verify/verify_widget.dart';
 import 'package:eqlite/Dashboard/dashboard_widget.dart';
 import 'package:eqlite/SplashScreen/SplashScreen_widget.dart';
+// Added routes imports
+import 'package:eqlite/About/About_widget.dart';
+import 'package:eqlite/AddAddress/NewAddress_widget.dart';
+import 'package:eqlite/AddressBook/AddressBook_widget.dart';
+import 'package:eqlite/BusinessPage/businessWidget.dart';
+import 'package:eqlite/CompleteLocation/CompleteLocation_widget.dart';
+import 'package:eqlite/Component/AddAnotherPerson/AddOtherWidget.dart';
+import 'package:eqlite/Component/AppointmentTime/AppointmentTimeWidget.dart';
+import 'package:eqlite/Component/AppointmentType/appointment_type_widget.dart';
+import 'package:eqlite/Component/BusinessDetail/business_info_widget.dart';
+import 'package:eqlite/Component/Confirmation/exitConfirmation.dart';
+import 'package:eqlite/Component/Confirmation/permissionConfirmation.dart';
+import 'package:eqlite/Component/Congratulate/confirm_ui_widget.dart';
+import 'package:eqlite/Component/Congratulate/congratulation_widget.dart';
+import 'package:eqlite/FavoriteBusiness/FavoriteBusiness_widget.dart';
+import 'package:eqlite/Feedback/Feedback_widget.dart';
+import 'package:eqlite/FixAppointment/fix_Appointment_Widget.dart';
+import 'package:eqlite/GlobalSearch/globalSearch_Widget.dart';
+import 'package:eqlite/Profile/Profile_widget.dart';
+import 'package:eqlite/ScannerQr/Scanner_widget.dart';
+import 'package:eqlite/SelectCity/select_city_widget.dart';
+import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
+import 'package:eqlite/Setting/Setting.dart';
+import 'package:eqlite/SettingPage/setting_widget.dart';
+import 'package:eqlite/UpcomingAppointment/detail_Appointment_Widget.dart';
+import 'package:eqlite/YourAppointments/YourAppointments_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
@@ -61,121 +87,147 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           path: '/loginpage',
           builder: (context, params) => LoginWidget(),
         ),
-
-        // FFRoute(
-        //   name: 'merchantPage',
-        //   path: '/merchantPage',
-        //   builder: (context, params) => MerchantPageWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'detailPage',
-        //   path: '/detailPage',
-        //   builder: (context, params) => DetailPageWidget(
-        //     id: params.getParam('id', ParamType.String),
-        //     categoryName: params.getParam('categoryName', ParamType.String),
-        //   ),
-        // ),
-        // FFRoute(
-        //   name: 'AppoinmentPage',
-        //   path: '/appoinmentPage',
-        //   builder: (context, params) => AppoinmentPageWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'profilePage',
-        //   path: '/profilePage',
-        //   builder: (context, params) => ProfilePageWidget(type: '',),
-        // ),
-        // FFRoute(
-        //   name: 'Setting',
-        //   path: '/setting',
-        //   builder: (context, params) => SettingWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'InviteContact',
-        //   path: '/inviteContact',
-        //   builder: (context, params) => InviteContactWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'Feedback',
-        //   path: '/feedback',
-        //   builder: (context, params) => FeedbackWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'History',
-        //   path: '/history',
-        //   builder: (context, params) => HistoryWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'BusinessAppoinment',
-        //   path: '/businessAppoinment',
-        //   builder: (context, params) => (params.isEmpty)?
-        //   NavBarPage(initialPage: 'BusinessAppoinment'):
-        //   BusinessAppoinmentWidget(queueId: '', EmployeeId: '',),
-        // ),
-        // FFRoute(
-        //   name: 'chatPage',
-        //   path: '/chatPage',
-        //   builder: (context, params) => ChatPageWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'chatUser',
-        //   path: '/chatUser',
-        //   builder: (context, params) => ChatUserWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'businessHome',
-        //   path: '/businessHome',
-        //   builder: (context, params) => (params.isEmpty)?
-        //   NavBarPage(initialPage: 'businessHome'):
-        //   BusinessHomeWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'businessEmployee',
-        //   path: '/businessEmployee',
-        //   builder: (context, params) => BusinessEmployeeWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'LogIn_InviteCode_Page',
-        //   path: '/logInInviteCodePage',
-        //   builder: (context, params) => LogInInviteCodePageWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'BusinessAppoinment2',
-        //   path: '/businessAppoinment2',
-        //   builder: (context, params) => BusinessAppoinment2Widget(type: '',),
-        // ),
-        // FFRoute(
-        //   name: 'staffMember_Home',
-        //   path: '/staffMemberHome',
-        //   builder: (context, params) => StaffMemberHomeWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'Employees_Appointment',
-        //   path: '/employeesAppointment',
-        //   builder: (context, params) => EmployeesAppointmentWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'BusinessAbout',
-        //   path: '/businessAbout',
-        //   builder: (context, params) => (params.isEmpty)?
-        //   NavBarPage(initialPage: 'BusinessAbout'):
-        //  BusinessAboutWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'About_Employee',
-        //   path: '/aboutEmployee',
-        //   builder: (context, params) => AboutEmployeeWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'set_appointment',
-        //   path: '/setAppointment',
-        //   builder: (context, params) => SetAppointmentWidget(),
-        // ),
-        // FFRoute(
-        //   name: 'add_Employee',
-        //   path: '/addEmployee',
-        //   builder: (context, params) => AddEmployeeWidget(businessDetail: '',),
-        // )
+        // Additional pages
+        FFRoute(
+          name: 'verify',
+          path: '/verify',
+          builder: (context, params) => VerifyWidget(
+            phone: params.getParam('phone', ParamType.String) ?? '',
+            otp: params.getParam('otp', ParamType.String) ?? '',
+          ),
+        ),
+        FFRoute(
+          name: 'about',
+          path: '/about',
+          builder: (context, params) => AboutWidget(),
+        ),
+        FFRoute(
+          name: 'addressBook',
+          path: '/addressBook',
+          builder: (context, params) => AddressBookWidget(),
+        ),
+        FFRoute(
+          name: 'businessLocation',
+          path: '/businessLocation',
+          builder: (context, params) => BusinessLocationWidget(),
+        ),
+        FFRoute(
+          name: 'completeLocation',
+          path: '/completeLocation',
+          builder: (context, params) => BusinessCompletelocationWidget(
+            address: params.getParam('address', ParamType.JSON),
+            id: params.getParam('id', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'business',
+          path: '/business',
+          builder: (context, params) => BusinessPageWidget(
+            categoryId: params.getParam('categoryId', ParamType.String) ?? '',
+            categoryName: params.getParam('categoryName', ParamType.String) ?? '',
+            latitude: params.getParam('latitude', ParamType.String),
+            longitude: params.getParam('longitude', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'appointmentType',
+          path: '/appointmentType',
+          builder: (context, params) => AppointmentTypeWidget(
+            userId: params.getParam('userId', ParamType.String) ?? '',
+            queueId: params.getParam('queueId', ParamType.String) ?? '',
+            queueDate: params.getParam('queueDate', ParamType.String) ?? '',
+            queueServices: params.getParam('queueServices', ParamType.JSON, true) ?? const [],
+          ),
+        ),
+        FFRoute(
+          name: 'congratulation',
+          path: '/congratulation',
+          builder: (context, params) => CongratulationWidget(
+            response: params.getParam('response', ParamType.JSON),
+          ),
+        ),
+        FFRoute(
+          name: 'favoriteBusiness',
+          path: '/favoriteBusiness',
+          builder: (context, params) => FavoriteBusinessWidget(),
+        ),
+        FFRoute(
+          name: 'feedback',
+          path: '/feedback',
+          builder: (context, params) => FeedbackWidget(),
+        ),
+        FFRoute(
+          name: 'fixAppointment',
+          path: '/fixAppointment',
+          builder: (context, params) => FixAppointmentWidget(
+            services: params.getParam('services', ParamType.JSON, true) ?? const [],
+            date: params.getParam('date', ParamType.String) ?? '',
+            businessName: params.getParam('businessName', ParamType.String) ?? '',
+            formatDate: params.getParam('formatDate', ParamType.String) ?? '',
+            uuid: params.getParam('uuid', ParamType.String) ?? '',
+            rescheduleData: params.getParam('rescheduleData', ParamType.JSON),
+          ),
+        ),
+        FFRoute(
+          name: 'globalSearch',
+          path: '/globalSearch',
+          builder: (context, params) => GlobalSearchWidget(
+            lat: params.getParam('lat', ParamType.String),
+            long: params.getParam('long', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'profile',
+          path: '/profile',
+          builder: (context, params) => ProfileWidget(
+            backButton: params.getParam('backButton', ParamType.bool) ?? true,
+          ),
+        ),
+        FFRoute(
+          name: 'scanner',
+          path: '/scanner',
+          builder: (context, params) => ScannerQr(
+            lat: params.getParam('lat', ParamType.String),
+            long: params.getParam('long', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'selectCity',
+          path: '/selectCity',
+          builder: (context, params) => SelectCityWidget(),
+        ),
+        FFRoute(
+          name: 'addService',
+          path: '/addService',
+          builder: (context, params) => AddServicePageWidget(
+            businessId: params.getParam('businessId', ParamType.String) ?? '',
+            lat: params.getParam('lat', ParamType.String),
+            long: params.getParam('long', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'setting',
+          path: '/setting',
+          builder: (context, params) => SettingWidget(),
+        ),
+        FFRoute(
+          name: 'settingPage',
+          path: '/settingPage',
+          builder: (context, params) => SettingPageWidget(),
+        ),
+        FFRoute(
+          name: 'upcomingAppointmentDetail',
+          path: '/upcomingAppointmentDetail',
+          builder: (context, params) => DetailAppointmentsWidget(
+            lat: params.getParam('lat', ParamType.String),
+            long: params.getParam('long', ParamType.String),
+          ),
+        ),
+        FFRoute(
+          name: 'yourAppointments',
+          path: '/yourAppointments',
+          builder: (context, params) => YourAppointmentsWidget(),
+        ),
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
     );
 

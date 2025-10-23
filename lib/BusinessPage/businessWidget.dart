@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:eqlite/Component/BusinessDetail/business_info_widget.dart';
 import 'package:eqlite/ServicePage/AddServicePageWidget.dart';
@@ -347,16 +348,11 @@ class _BusinessPageWidgetState extends State<BusinessPageWidget> {
 
                           return GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => AddServicePageWidget(
-                                      lat: widget.latitude,
-                                      long: widget.longitude,
-                                      businessId: businessListItem['uuid'],
-                                    ),
-                                  ),
-                                ).then((value) {
+                                context.pushNamed('addService', queryParameters: {
+                                  'lat': widget.latitude,
+                                  'long': widget.longitude,
+                                  'businessId': businessListItem['uuid'],
+                                }).then((value) {
                                   callBusinessApi();
                                   setState(() {});
                                 });

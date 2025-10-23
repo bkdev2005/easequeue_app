@@ -19,6 +19,7 @@ import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:screenshot/screenshot.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:go_router/go_router.dart';
 import '../Component/Confirmation/exitConfirmation.dart';
 import '../UpcomingAppointment/detail_Appointment_Widget.dart';
 import '../apiFunction.dart';
@@ -252,15 +253,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                 children: [
                                   GestureDetector(
                                       onTap: () {
-                                        Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        const ProfileWidget(
-                                                            backButton: true)))
-                                            .then((value) {
-                                          setState(() {});
-                                        });
+                                        context
+                                            .pushNamed('profile', queryParameters: {
+                                          'backButton': 'true',
+                                        }).then((value) => setState(() {}));
                                       },
                                       child: Container(
                                         decoration: BoxDecoration(
@@ -317,10 +313,9 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                         ),
                                         GestureDetector(
                                             onTap: () {
-                                              navigateTo(context,
-                                                      const SelectCityWidget())
-                                                  .then((onValue) =>
-                                                      setState(() {}));
+                                              context
+                                                  .pushNamed('selectCity')
+                                                  .then((onValue) => setState(() {}));
                                             },
                                             child: Row(children: [
                                               Padding(
@@ -361,13 +356,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                             FlutterFlowTheme.of(context).info,
                                         size: 24),
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) => ScannerQr(
-                                                    lat: latitude,
-                                                    long: longitude,
-                                                  )));
+                                      context.pushNamed('scanner', queryParameters: {
+                                        'lat': latitude ?? '',
+                                        'long': longitude ?? '',
+                                      });
                                     },
                                   ),
                                   const SizedBox(
@@ -382,14 +374,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           width: 25,
                                         )),
                                     onTap: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  DetailAppointmentsWidget(
-                                                    lat: latitude,
-                                                    long: longitude,
-                                                  )));
+                                      context.pushNamed('upcomingAppointmentDetail', queryParameters: {
+                                        'lat': latitude ?? '',
+                                        'long': longitude ?? '',
+                                      });
                                     },
                                   ),
                                   FlutterFlowIconButton(
@@ -403,11 +391,7 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                       size: 24,
                                     ),
                                     onPressed: () {
-                                      Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                              builder: (context) =>
-                                                  const SettingWidget()));
+                                      context.pushNamed('setting');
                                     },
                                   ),
                                 ],
@@ -485,14 +469,10 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                           controller: _model.textController,
                                           focusNode: _model.textFieldFocusNode,
                                           onTap: () {
-                                            Navigator.push(
-                                                context,
-                                                MaterialPageRoute(
-                                                    builder: (context) =>
-                                                        GlobalSearchWidget(
-                                                          lat: latitude,
-                                                          long: longitude,
-                                                        )));
+                                            context.pushNamed('globalSearch', queryParameters: {
+                                              'lat': latitude ?? '',
+                                              'long': longitude ?? '',
+                                            });
                                           },
                                           readOnly: true,
                                           autofocus: false,
@@ -967,23 +947,17 @@ class _HomePageWidgetState extends State<HomePageWidget> {
                                                         categoryListIndex];
                                                 return GestureDetector(
                                                     onTap: () async {
-                                                      Navigator.push(
-                                                        context,
-                                                        MaterialPageRoute(
-                                                          builder: (context) =>
-                                                              BusinessPageWidget(
-                                                            categoryId:
-                                                                categoryListItem[
-                                                                    'uuid'],
-                                                            categoryName:
-                                                                categoryListItem[
-                                                                    'name'],
-                                                            latitude: latitude,
-                                                            longitude:
-                                                                longitude,
-                                                          ),
-                                                        ),
-                                                      ).then((value) {
+                                                      context.pushNamed('business', queryParameters: {
+                                                        'categoryId':
+                                                        categoryListItem[
+                                                        'uuid'],
+                                                        'categoryName':
+                                                        categoryListItem[
+                                                        'name'],
+                                                        'latitude': latitude,
+                                                        'longitude':
+                                                        longitude,
+                                                      }).then((value) {
                                                         callAppointments();
                                                       });
                                                     },

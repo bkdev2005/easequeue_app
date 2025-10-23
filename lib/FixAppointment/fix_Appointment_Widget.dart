@@ -1440,6 +1440,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                               }
                             }
 
+                            log('accesss token: ${FFAppState().fcmToken}');
+
                             if (widget.rescheduleData == null) {
                               final apiCall = await sendData({
                                 "user_id": appointeeUUID,

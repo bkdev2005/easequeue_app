@@ -64,7 +64,9 @@ class _SettingWidgetState extends State<SettingWidget> {
                   padding: EdgeInsetsDirectional.fromSTEB(0, 1, 0, 0),
                   child: GestureDetector(
                     onTap: (){
-                      Navigator.push(context, MaterialPageRoute(builder: (context)=> ProfileWidget(backButton: true,)));
+                      context.pushNamed('profile', queryParameters: {
+                        'backButton': 'true'
+                      });
                     },
                     child: Container(
                     width: double.infinity,
@@ -164,12 +166,26 @@ class _SettingWidgetState extends State<SettingWidget> {
                     ),
                   ),
                 ),
-                navigatePage('Edit Profile', MaterialPageRoute(builder: (context)=> ProfileWidget(backButton: true,)), Icons.account_circle),
-                navigatePage('Your Appointments', MaterialPageRoute(builder: (context)=> YourAppointmentsWidget()), Icons.assignment,),
-                navigatePage('Favorite Businesses', MaterialPageRoute(builder: (context)=> const FavoriteBusinessWidget()), Icons.favorite_rounded,),
+                navigatePage('Edit Profile', 'profile', Icons.account_circle, {
+                  'backButton': 'true'
+                },),
+                navigatePage('Your Appointments',
+                  'yourAppointments',
+                  Icons.assignment,
+                  {}
+                ),
+                navigatePage('Favorite Businesses',
+                  'favoriteBusiness',
+                  Icons.favorite_rounded,
+                  {}
+                ),
                 // navigatePage('Address Book', MaterialPageRoute(builder: (context)=> const AddressBookWidget()), Icons.share_location_outlined,),
                 // navigatePage('Settings', MaterialPageRoute(builder: (context)=> const SettingPageWidget()), Icons.settings_rounded,),
-                navigatePage('Scan Qr', MaterialPageRoute(builder: (context)=> const ScannerQr()), Icons.qr_code_scanner_rounded,),
+                navigatePage('Scan Qr',
+                  'scanner',
+                  Icons.qr_code_scanner_rounded,
+                  {}
+                ),
 
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 20, 0, 0),
@@ -181,8 +197,16 @@ class _SettingWidgetState extends State<SettingWidget> {
                     ),
                   ),
                 ),
-                navigatePage( 'Privacy Policy', MaterialPageRoute(builder: (context)=> AboutWidget()), Icons.help_outline_rounded,),
-                navigatePage( 'Send Feedback', MaterialPageRoute(builder: (context)=> FeedbackWidget()), Icons.feedback_outlined,),
+                navigatePage( 'Privacy Policy',
+                  'about',
+                  Icons.help_outline_rounded,
+                  {}
+                ),
+                navigatePage( 'Send Feedback',
+                  'feedback',
+                  Icons.feedback_outlined,
+                  {}
+                ),
                 Padding(
                   padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 20),
                   child:  GestureDetector(
@@ -258,12 +282,12 @@ class _SettingWidgetState extends State<SettingWidget> {
 
   Color primaryColor = Color(0xff2a4b49);
 
-  Widget navigatePage(String name, MaterialPageRoute pageRoute, IconData iconData){
+  Widget navigatePage(String name, String pageName, IconData iconData, Map<String, dynamic> queryParameter){
     return Padding(
         padding: EdgeInsetsDirectional.fromSTEB(16, 12, 16, 0),
         child: GestureDetector(
           onTap: (){
-            Navigator.push(context, pageRoute).then((value) => setState(() { }));
+            context.pushNamed(pageName, queryParameters: queryParameter).then((value) => setState(() { }));
           },
           child: Container(
             width: double.infinity,

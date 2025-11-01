@@ -2,7 +2,9 @@ import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:eqlite/Auth/Login/Login_widget.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
@@ -188,6 +190,82 @@ Future<dynamic> sendData(Object body, String endpoint) async {
     return null;
   }
 }
+
+Future<dynamic> pickAndUploadFileWeb(String endpoint) async {
+  try {
+    // Step 1️⃣ Pick file (image, pdf, etc.)
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.any, // change to FileType.image or FileType.custom if needed
+      allowMultiple: false,
+    );
+
+    if (result == null || result.files.isEmpty) {
+      Fluttertoast.showToast(msg: '❌ No file selected');
+      return null;
+    }
+
+    final file = result.files.first;
+    final Uint8List? fileBytes = file.bytes;
+    final String fileName = file.name;
+
+    if (fileBytes == null) {
+      Fluttertoast.showToast(msg: '❌ Could not read file bytes');
+      return null;
+    }
+
+    // Step 2️⃣ Prepare multipart form data
+    final multipartFile = MultipartFile.fromBytes(
+      fileBytes,
+      filename: fileName,
+      contentType: DioMediaType('application', 'octet-stream'),
+    );
+
+    final formData = FormData.fromMap({
+      'file': multipartFile,
+    });
+
+    // Step 3️⃣ Create Dio instance and upload
+    final dio = Dio();
+
+    final response = await dio.post(
+      'https://staging-api.easequeue.com/api/v1/$endpoint',
+      data: formData,
+      options: Options(
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'multipart/form-data',
+          'Authorization': 'Bearer ${FFAppState().token}', // if using auth
+        },
+      ),
+      onSendProgress: (sent, total) {
+        if (total != 0) {
+          final progress = (sent / total * 100).toStringAsFixed(1);
+          log('Uploading... $progress%');
+        }
+      },
+    );
+
+    // Step 4️⃣ Handle response
+    if (response.statusCode == 200 || response.statusCode == 201) {
+      final dynamic data = response.data['data'];
+      log('✅ Upload success: $data');
+      Fluttertoast.showToast(msg: '✅ Upload successful');
+      return data;
+    } else {
+      log('❌ Upload failed: ${response.statusCode}');
+      Fluttertoast.showToast(
+        msg: response.data['message'] ?? 'Upload failed',
+      );
+      return null;
+    }
+  } catch (e, s) {
+    log('🚨 Error uploading file: $e');
+    log('Stack: $s');
+    Fluttertoast.showToast(msg: 'Something went wrong while uploading');
+    return null;
+  }
+}
+
 
 // image upload api
 Future<dynamic> profileApi(XFile image, String endpoint) async {

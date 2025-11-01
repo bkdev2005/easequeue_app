@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'package:eqlite/Dashboard/dashboard_widget.dart';
 import 'package:eqlite/flutter_flow/nav/nav.dart';
 import 'package:eqlite/function.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_picker/image_picker.dart';
 import '../Auth/Login/Login_widget.dart';
@@ -31,6 +33,17 @@ class _ProfileWidgetState extends State<ProfileWidget> {
   late ProfileModel _model;
 
   final scaffoldKey = GlobalKey<ScaffoldState>();
+
+  Future<void> pickFile() async {
+    final result = await FilePicker.platform.pickFiles();
+    if (result != null) {
+      Uint8List? fileBytes = result.files.first.bytes;
+      String fileName = result.files.first.name;
+
+      // You can now upload `fileBytes` directly to Firebase or S3
+      print('Picked: $fileName (${fileBytes?.lengthInBytes} bytes)');
+    }
+  }
 
   @override
   void initState() {
@@ -113,7 +126,35 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       GestureDetector(
-                          onTap: () {
+                          onTap: () async{
+                            if(kIsWeb){
+                            final profile = await pickAndUploadFileWeb('user/profile-picture');
+                            print('profile: $profile');
+                            if(profile != null){
+                                fetchData('user/me', context)
+                                    ?.then((value) {
+                                  if (value != null) {
+                                    log('data: $value');
+                                    if (value['data'] != null) {
+                                      final data = value['data'];
+                                      setState(() {
+                                        FFAppState().user = data;
+                                        FFAppState().userId = data['uuid'];
+                                      });
+                                    }
+                                  }
+                                });
+                                log('user: ${FFAppState().user}');
+                                if(profile != null){
+                                setState(() {
+                                  imageUrl =
+                                  "https://staging-api.easequeue.com/shared/${profile['image_url']}";
+                                });
+                                }
+
+                                log('image: $imageUrl');
+                            }
+                            }else{
                             pickImageFile().then((value) async {
                               if (value != null) {
                                 profileApi(value, 'user/profile-picture')
@@ -144,6 +185,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                                 });
                               }
                             });
+                            }
                           },
                           child: Stack(children: [
                             Container(

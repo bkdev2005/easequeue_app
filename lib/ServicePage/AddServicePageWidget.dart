@@ -1376,17 +1376,20 @@ class _AddServicePageWidgetState extends State<AddServicePageWidget> {
                                 'uuid': FFAppState().userId,
                               }}');
                               if (selectedServiceData.isNotEmpty) {
-                                log('services: $selectedServiceData');
-                                context.pushNamed('fixAppointment', queryParameters: {
-                                  'businessName':
-                                  businessDetail['name'],
-                                  'formatDate': formatAppointmentDate,
-                                  'services': '${selectedServiceData}',
-                                  'date': date,
-                                  'rescheduleData':
-                                  widget.rescheduleData,
-                                  'uuid': FFAppState().userId,
-                                });
+                                log('selected services: $selectedServiceData');
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FixAppointmentWidget(
+                                      services: selectedServiceData,
+                                      date: date,
+                                      businessName: businessDetail['name'],
+                                      formatDate: formatAppointmentDate,
+                                      rescheduleData: widget.rescheduleData,
+                                      uuid: FFAppState().userId,
+                                    ),
+                                  ),
+                                );
                               } else {
                                 Fluttertoast.showToast(msg: 'Select service');
                               }

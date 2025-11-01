@@ -549,6 +549,7 @@ Future<String?> getToken() async {
 }
 
 List<String> getAllQueueServiceUuids(List<dynamic> services) {
+  print('services: $services');
   return services
       .expand(
           (service) => List<String>.from(service["queue_service_uuids"] ?? []))

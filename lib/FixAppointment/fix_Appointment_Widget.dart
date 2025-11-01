@@ -167,9 +167,10 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
   @override
   void initState() {
     super.initState();
+    print('selected services: ${widget.services}');
     appointeeUUID = widget.uuid;
-    List<String> allQueueServiceUuids =
-    getAllQueueServiceUuids(widget.services);
+      List<String> allQueueServiceUuids = getAllQueueServiceUuids(widget.services);
+      log('allQueueServiceUuids: $allQueueServiceUuids');
     addIdInUrl(allQueueServiceUuids);
     fetchData(url, context)?.then((value) {
       log('queue: ${getJsonField(value!, r'''$.data[:]''', true)}');
@@ -392,19 +393,19 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                     const EdgeInsetsDirectional
                                                         .fromSTEB(
                                                         10, 0, 0, 0),
-                                                    child: InkWell(
-                                                      onTap: () {
-                                                        if (times
-                                                            .isNotEmpty) {
-                                                          showDialog(
-                                                              context:
-                                                              context,
-                                                              builder:
-                                                                  (context) {
-                                                                return slotTime();
-                                                              });
-                                                        }
-                                                      },
+                                                    // child: InkWell(
+                                                    //   onTap: () {
+                                                    //     if (times
+                                                    //         .isNotEmpty) {
+                                                    //       showDialog(
+                                                    //           context:
+                                                    //           context,
+                                                    //           builder:
+                                                    //               (context) {
+                                                    //             return slotTime();
+                                                    //           });
+                                                    //     }
+                                                    //   },
                                                       child: Column(
                                                           mainAxisSize:
                                                           MainAxisSize
@@ -426,22 +427,22 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                                       letterSpacing: 0.0,
                                                                     ),
                                                                   ),
-                                                                  if (times
-                                                                      .isNotEmpty)
-                                                                    const SizedBox(
-                                                                      width:
-                                                                      5,
-                                                                    ),
-                                                                  if (times
-                                                                      .isNotEmpty)
-                                                                    const Icon(
-                                                                      Icons
-                                                                          .edit_calendar_rounded,
-                                                                      color:
-                                                                      Colors.white,
-                                                                      size:
-                                                                      16,
-                                                                    )
+                                                                  // if (times
+                                                                  //     .isNotEmpty)
+                                                                  //   const SizedBox(
+                                                                  //     width:
+                                                                  //     5,
+                                                                  //   ),
+                                                                  // if (times
+                                                                  //     .isNotEmpty)
+                                                                  //   const Icon(
+                                                                  //     Icons
+                                                                  //         .edit_calendar_rounded,
+                                                                  //     color:
+                                                                  //     Colors.white,
+                                                                  //     size:
+                                                                  //     16,
+                                                                  //   )
                                                                 ]),
                                                             Padding(
                                                               padding:
@@ -480,7 +481,8 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                                               ),
                                                             ),
                                                           ]),
-                                                    ))),
+                                                    )),
+                                    // ),
                                             SizedBox(
                                               height: 90,
                                               child: VerticalDivider(
@@ -1439,7 +1441,6 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                 }
                               }
                             }
-                            log('accesses token: ${FFAppState().fcmToken}');
 
                             if (widget.rescheduleData == null) {
                               final apiCall = await sendData({
@@ -1450,11 +1451,12 @@ class _FixAppointmentWidgetState extends State<FixAppointmentWidget> {
                                 "token_number": "string",
                                 "turn_time": 0,
                                 "queue_services": services,
-                                "estimated_enqueue_time": convertToIsoUtc(
-                                    widget.date,
-                                    (selectedTimeSlot != null)
-                                        ? selectedTimeSlot!
-                                        : appointmentTime!),
+                                "estimated_enqueue_time": '2025-11-02T18:04:41.624Z',
+                                // convertToIsoUtc(
+                                //     widget.date,
+                                //     (selectedTimeSlot != null)
+                                //         ? selectedTimeSlot!
+                                //         : appointmentTime!),
                                 "notes": "string",
                                 "cancellation_reason": "string",
                                 "reschedule_count": 0,

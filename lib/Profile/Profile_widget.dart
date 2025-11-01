@@ -125,6 +125,7 @@ class _ProfileWidgetState extends State<ProfileWidget> {
                     mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+
                       GestureDetector(
                           onTap: () async{
                             if(kIsWeb){

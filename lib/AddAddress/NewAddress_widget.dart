@@ -69,6 +69,9 @@ class _BusinessLocationWidgetState extends State<BusinessLocationWidget> {
           centerTitle: false,
           elevation: 2,
         ),
+
+
+
         body: SafeArea(
             top: true,
             child: Stack( children: [ Column(

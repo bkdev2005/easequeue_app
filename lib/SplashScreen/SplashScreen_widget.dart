@@ -53,7 +53,7 @@ class _SplashScreenState extends State<SplashScreen> {
     return  Scaffold(
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
       body: Center(
-        child: Image.asset('assets/images/GOLDEN (2).gif'),)
+        child: Text('EaseQueue', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w600, color: FlutterFlowTheme.of(context).primary),),)
     );
   }
 }

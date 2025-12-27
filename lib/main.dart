@@ -153,7 +153,7 @@ class _NavBarPageState extends State<NavBarPage> {
         onWillPop: () async{
           showDialog(context: context,
               builder: (context){
-                return Center( child: ExitWidget());
+                return const Center( child: ExitWidget());
               }).then((value) {
             if(value){
               return value;
@@ -163,7 +163,7 @@ class _NavBarPageState extends State<NavBarPage> {
           });
           return false;
         },
-        child: Scaffold(
+        child: const Scaffold(
         body: HomePageWidget())
     );
   }

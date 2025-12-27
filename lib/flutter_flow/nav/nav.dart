@@ -183,14 +183,14 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
             backButton: params.getParam('backButton', ParamType.bool) ?? true,
           ),
         ),
-        FFRoute(
-          name: 'scanner',
-          path: '/scanner',
-          builder: (context, params) => ScannerQr(
-            lat: params.getParam('lat', ParamType.String),
-            long: params.getParam('long', ParamType.String),
-          ),
-        ),
+        // FFRoute(
+        //   name: 'scanner',
+        //   path: '/scanner',
+        //   builder: (context, params) => ScannerQr(
+        //     lat: params.getParam('lat', ParamType.String),
+        //     long: params.getParam('long', ParamType.String),
+        //   ),
+        // ),
         FFRoute(
           name: 'selectCity',
           path: '/selectCity',

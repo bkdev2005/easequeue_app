@@ -52,8 +52,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return  Scaffold(
       backgroundColor: FlutterFlowTheme.of(context).primaryBackground,
+
       body: Center(
-        child: Text('EaseQueue', style: TextStyle(fontSize: 45, fontWeight: FontWeight.w600, color: FlutterFlowTheme.of(context).primary),),)
+        child: Text('EaseQueue', style: TextStyle(fontSize: 45,
+            fontWeight: FontWeight.w600, color: FlutterFlowTheme.of(context).primary),),)
     );
   }
 }
